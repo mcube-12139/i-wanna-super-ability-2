@@ -21,6 +21,7 @@ export class PlayerController extends Component {
     private gravity: number = 0.2777777777777778;
     private jumpSpeed: number = 7.027777777777778;
     private doubleJumpSpeed: number = 5.777777777777778;
+    private maxFallSpeed: number = 7.555555555555555;
 
     private doubleJumpEnabled = true;
 
@@ -45,7 +46,7 @@ export class PlayerController extends Component {
             runDir = 1;
         }
 
-        if (runDir != 0) {
+        if (runDir !== 0) {
             // 有横移动
             this.node.setScale(runDir, this.node.scale.y);
             this.speedX = 2.5 * runDir;
@@ -54,6 +55,12 @@ export class PlayerController extends Component {
             this.speedX = 0;
         }
 
+        // 限制下落速度
+        if (this.speedY * SweetGlobal.grav > this.maxFallSpeed) {
+            this.speedY = SweetGlobal.grav * this.maxFallSpeed;
+        }
+
+        // 处理动画改变
         if (!this.collider.collideWithTag(TagId.SOLID, this.node.position.x, this.node.position.y - SweetGlobal.grav)) {
             if (this.speedY >= 0) {
                 newAnimName = "playerJump";
@@ -61,15 +68,14 @@ export class PlayerController extends Component {
                 newAnimName = "playerFall";
             }
         } else {
-            if (runDir != 0) {
+            if (runDir !== 0) {
                 newAnimName = "playerRun";
             } else {
                 newAnimName = "playerStand";
             }
         }
 
-        if (newAnimName != this.animName) {
-            // 改变动画
+        if (newAnimName !== this.animName) {
             this.animName = newAnimName;
             this.anim.play(newAnimName);
         }

@@ -78,6 +78,13 @@ export class SweetCollider extends Component {
         return false;
     }
 
+    /**
+     * 判断是否在指定位置与带标签的节点碰撞。目标节点应该带 SweetCollider 组件。
+     * @param tag 要判断的标签
+     * @param x 指定位置 x
+     * @param y 指定位置 y
+     * @returns 判断结果
+     */
     public collideWithTag(tag: TagId, x: number, y: number): boolean {
         // 遍历带该标签的节点
         const top = Math.round(this.top + y);
@@ -123,6 +130,12 @@ export class SweetCollider extends Component {
         return false;
     }
 
+    /**
+     * 向指定方向移动，直到碰撞带标签节点或达到指定最大距离。目标节点应该带 SweetCollider 组件。
+     * @param tag 指定标签
+     * @param dir 移动方向
+     * @param maxDist 最大距离
+     */
     public moveContactWithTag(tag: TagId, dir: number, maxDist: number) {
         let dist = 0;
         for ( ; ; ) {
