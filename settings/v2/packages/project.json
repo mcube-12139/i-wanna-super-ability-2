@@ -5,5 +5,15 @@
       "width": 800,
       "height": 450
     }
+  },
+  "sorting-layer": {
+    "layers": [
+      {
+        "id": 0,
+        "name": "default",
+        "value": 0
+      }
+    ],
+    "increaseId": 1
   }
 }

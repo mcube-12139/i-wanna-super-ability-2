@@ -5,6 +5,8 @@ export enum TagId {
     SOLID = 0,
     DEADLY = 1,
     PLAYER = 2,
+    PLATFORM = 3,
+    BULLET = 4,
 }
 
 @ccclass('Tag')
@@ -49,6 +51,9 @@ export class Tag extends Component {
      * @returns 节点数量
      */
     public static getNodeCount(tag: TagId) {
+        if (!this.map.has(tag)) {
+            return 0;
+        }
         return this.map.get(tag).length;
     }
 

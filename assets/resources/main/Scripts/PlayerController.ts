@@ -1,7 +1,9 @@
-import { _decorator, Component, EventMouse, Input, input, Node, Vec3, Animation, EventKeyboard, KeyCode, Sprite, view, macro } from 'cc';
+import { _decorator, Component, Input, input, Animation, EventKeyboard, KeyCode, resources, instantiate, Prefab, director, AudioClip, AudioSource } from 'cc';
 import { Tag, TagId } from './Tag';
 import { SweetCollider } from './SweetCollider';
 import { SweetGlobal } from './SweetGlobal';
+import { PlatformController } from './PlatformController';
+import { BulletController } from './BulletController';
 const { ccclass, property } = _decorator;
 
 export const BLOCK_SIZE = 40;
@@ -10,14 +12,22 @@ export const BLOCK_SIZE = 40;
 export class PlayerController extends Component {
     private anim: Animation = null;
     private collider: SweetCollider = null;
+    private audioSource: AudioSource = null;
 
     private animName: string = "playerStand";
+
+    private jumpClip: AudioClip = null;
+    private doubleJumpClip: AudioClip = null;
+    private dieClip: AudioClip = null;
+    private shootClip: AudioClip = null;
 
     private runningLeft: boolean = false;
     private runningRight: boolean = false;
 
-    private speedX: number = 0;
-    private speedY: number = 0;
+    private onPlatform: boolean = false;
+
+    speedX: number = 0;
+    speedY: number = 0;
     private gravity: number = 0.2777777777777778;
     private jumpSpeed: number = 7.027777777777778;
     private doubleJumpSpeed: number = 5.777777777777778;
@@ -28,11 +38,17 @@ export class PlayerController extends Component {
     start() {
         this.anim = this.getComponent(Animation);
         this.collider = this.getComponent(SweetCollider);
+        this.audioSource = this.getComponent(AudioSource);
 
         input.on(Input.EventType.KEY_DOWN, this.onKeyDown, this);
         input.on(Input.EventType.KEY_UP, this.onKeyUp, this);
 
         this.anim.play(this.animName);
+
+        this.jumpClip = resources.get("main/Sound/jump");
+        this.doubleJumpClip = resources.get("main/Sound/double jump");
+        this.dieClip = resources.get("main/Sound/die");
+        this.shootClip = resources.get("main/Sound/shoot");
     }
 
     update(_: number) {
@@ -55,29 +71,16 @@ export class PlayerController extends Component {
             this.speedX = 0;
         }
 
+        // 更新在平板上状态
+        if (this.onPlatform) {
+            if (!this.collider.collideWithTag(TagId.PLATFORM, this.node.position.x, this.node.position.y - 4 * SweetGlobal.grav)) {
+                this.onPlatform = false;
+            }
+        }
+
         // 限制下落速度
-        if (this.speedY * SweetGlobal.grav > this.maxFallSpeed) {
-            this.speedY = SweetGlobal.grav * this.maxFallSpeed;
-        }
-
-        // 处理动画改变
-        if (!this.collider.collideWithTag(TagId.SOLID, this.node.position.x, this.node.position.y - SweetGlobal.grav)) {
-            if (this.speedY >= 0) {
-                newAnimName = "playerJump";
-            } else {
-                newAnimName = "playerFall";
-            }
-        } else {
-            if (runDir !== 0) {
-                newAnimName = "playerRun";
-            } else {
-                newAnimName = "playerStand";
-            }
-        }
-
-        if (newAnimName !== this.animName) {
-            this.animName = newAnimName;
-            this.anim.play(newAnimName);
+        if (this.speedY * SweetGlobal.grav < -this.maxFallSpeed) {
+            this.speedY = -SweetGlobal.grav * this.maxFallSpeed;
         }
 
         // 改变位置
@@ -85,6 +88,7 @@ export class PlayerController extends Component {
         const previousX = this.node.position.x;
         const previousY = this.node.position.y;
         this.node.setPosition(previousX + this.speedX, previousY + this.speedY);
+
         // 处理碰撞固体
         if (this.collider.collideWithTag(TagId.SOLID, this.node.position.x, this.node.position.y)) {
             this.node.setPosition(previousX, previousY);
@@ -118,28 +122,95 @@ export class PlayerController extends Component {
                 this.speedX = 0;
             }
 
+            // 修正后重新移动
             this.node.setPosition(this.node.position.x + this.speedX, this.node.position.y + this.speedY);
+        }
+
+        // 处理碰撞平板
+        for (const platform of this.collider.iterCollidedWithTag(TagId.PLATFORM, this.node.position.x, this.node.position.y)) {
+            const platCollider = platform.getComponent(SweetCollider);
+            const platCtrl = platform.getComponent(PlatformController);
+            if (SweetGlobal.grav === 1) {
+                // 正常
+                const otherTop = platform.position.y + platCollider.top;
+                if (this.node.position.y - this.speedY / 2 >= otherTop) {
+                    this.node.setPosition(this.node.position.x, otherTop + 9);
+                    this.speedY = platCtrl.speedY < 0 ? platCtrl.speedY : 0;
+                    this.onPlatform = true;
+                    this.doubleJumpEnabled = true;
+                }
+            } else {
+                // 翻转
+                const otherBottom = platform.position.y + platCollider.bottom;
+                if (this.node.position.y - this.speedY / 2 <= otherBottom + 1) {
+                    this.node.setPosition(this.node.position.x, otherBottom - 9);
+                    this.speedY = platCtrl.speedY > 0 ? platCtrl.speedY : 0;
+                    this.onPlatform = true;
+                    this.doubleJumpEnabled = true;
+                }
+            }
         }
 
         // 处理碰撞致死物
         if (this.collider.collideWithTag(TagId.DEADLY, this.node.position.x, this.node.position.y)) {
-            this.node.setPosition(0, 40);
+            this.audioSource.playOneShot(this.dieClip);
+            this.node.destroy();
+        }
+
+        // 处理动画改变
+        if (!this.collider.collideWithTag(TagId.SOLID, this.node.position.x, this.node.position.y - SweetGlobal.grav) && !this.onPlatform) {
+            if (this.speedY >= 0) {
+                newAnimName = "playerJump";
+            } else {
+                newAnimName = "playerFall";
+            }
+        } else {
+            if (runDir !== 0) {
+                newAnimName = "playerRun";
+            } else {
+                newAnimName = "playerStand";
+            }
+        }
+
+        if (newAnimName !== this.animName) {
+            this.animName = newAnimName;
+            this.anim.play(newAnimName);
         }
     }
 
     jump() {
-        if (this.collider.collideWithTag(TagId.SOLID, this.node.position.x, this.node.position.y - SweetGlobal.grav)) {
+        if (
+            this.collider.collideWithTag(TagId.SOLID, this.node.position.x, this.node.position.y - SweetGlobal.grav) ||
+            this.collider.collideWithTag(TagId.PLATFORM, this.node.position.x, this.node.position.y - SweetGlobal.grav) ||
+            this.onPlatform
+        ) {
             this.speedY = this.jumpSpeed;
             this.doubleJumpEnabled = true;
+            this.audioSource.playOneShot(this.jumpClip);
         } else if (this.doubleJumpEnabled) {
             this.speedY = this.doubleJumpSpeed;
             this.doubleJumpEnabled = false;
+            this.audioSource.playOneShot(this.doubleJumpClip);
         }
     }
 
     releaseJump() {
         if (this.speedY * SweetGlobal.grav > 0) {
             this.speedY *= 0.45;
+        }
+    }
+
+    shoot() {
+        if (Tag.getNodeCount(TagId.BULLET) < 4) {
+            // 子弹数小于4，射击
+            const bullet = instantiate(resources.get("main/Prefab/Bullet") as Prefab);
+            const bulletCtrl = bullet.getComponent(BulletController);
+            bullet.setPosition(this.node.position.x, this.node.position.y);
+            bulletCtrl.speedX = this.node.scale.x * 13.333333333333334;
+
+            director.getScene().getChildByName("Canvas").addChild(bullet);
+
+            this.audioSource.playOneShot(this.shootClip);
         }
     }
 
@@ -150,6 +221,8 @@ export class PlayerController extends Component {
             this.runningRight = true;
         } else if (event.keyCode === KeyCode.SHIFT_LEFT) {
             this.jump();
+        } else if (event.keyCode === KeyCode.KEY_Z) {
+            this.shoot();
         }
     }
 

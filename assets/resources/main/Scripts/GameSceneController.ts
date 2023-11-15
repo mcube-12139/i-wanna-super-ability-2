@@ -1,4 +1,4 @@
-import { _decorator, Component, Director, EventKeyboard, Input, input, KeyCode, Node, Scene } from 'cc';
+import { _decorator, Component, director, EventKeyboard, Input, input, KeyCode, Node, Scene } from 'cc';
 import { Tag, TagId } from './Tag';
 const { ccclass, property } = _decorator;
 
@@ -14,7 +14,7 @@ export class GameSceneController extends Component {
 
     onKeyDown(event: EventKeyboard) {
         if (event.keyCode === KeyCode.KEY_R) {
-            Director.instance.loadScene("game");
+            director.loadScene("game");
         }
     }
 }

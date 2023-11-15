@@ -3,8 +3,18 @@ import { Tag, TagId } from './Tag';
 const { ccclass, property } = _decorator;
 
 enum SweetColliderType {
-    RECT,
-    PRECISE
+    /**
+     * 矩形
+     */
+    RECT = 0,
+    /**
+     * 使用点阵图
+     */
+    PRECISE = 1,
+    /**
+     * 使用多帧点阵图
+     */
+    PRECISE_PER_FRAME = 2
 }
 
 enum SweetColliderBitmapId {
@@ -40,6 +50,13 @@ export class SweetCollider extends Component {
         }
     })
     bitmapId: SweetColliderBitmapId = SweetColliderBitmapId.NONE;
+    @property({
+        type: [Enum(SweetColliderBitmapId)],
+        visible: function (this: SweetCollider) {
+            return this.type === SweetColliderType.PRECISE_PER_FRAME;
+        }
+    })
+    bitmapIdList: SweetColliderBitmapId[] = [];
 
     private static bitmapMap = new Map<SweetColliderBitmapId, boolean[]>([
         [ SweetColliderBitmapId.NEEDLE_U, [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, true, true, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, true, true, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, true, true, true, true, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, true, true, true, true, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, true, true, true, true, true, true, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, true, true, true, true, true, true, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, true, true, true, true, true, true, true, true, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, true, true, true, true, true, true, true, true, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, false, false, false, false, false, false, false, false, false, false, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, false, false, false, false, false, false, false, false, false, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, false, false, false, false, false, false, false, false, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, false, false, false, false, false, false, false, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, false, false, false, false, false, false, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, false, false, false, false, false, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, false, false, false, false, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, false, false, false, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, false, false, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, false, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true] ],
@@ -55,14 +72,20 @@ export class SweetCollider extends Component {
     ]);
 
     private bitmap: boolean[] | null = null;
+    private bitmapList: boolean[][] = [];
 
     private static getBitmap(id: SweetColliderBitmapId): boolean[] {
         return this.bitmapMap.get(id);
     }
 
     start() {
-        if (this.bitmapId !== SweetColliderBitmapId.NONE) {
+        // 初始化获取点阵图
+        if (this.type === SweetColliderType.PRECISE) {
             this.bitmap = SweetCollider.getBitmap(this.bitmapId);
+        } else if (this.type === SweetColliderType.PRECISE_PER_FRAME) {
+            for (const [i, id] of this.bitmapIdList.entries()) {
+                this.bitmapList.push(SweetCollider.getBitmap(id));
+            }
         }
     }
 
@@ -70,8 +93,8 @@ export class SweetCollider extends Component {
         if (this.type === SweetColliderType.RECT) {
             return true;
         }
-        if (this.type === SweetColliderType.PRECISE) {
-            const flippedY = this.top + this.bottom - y;
+        if (this.type === SweetColliderType.PRECISE || this.type === SweetColliderType.PRECISE_PER_FRAME) {
+            const flippedY = this.top - this.bottom - y - 1;
             return this.bitmap[(this.right - this.left) * flippedY + x];
         }
 
@@ -79,13 +102,35 @@ export class SweetCollider extends Component {
     }
 
     /**
-     * 判断是否在指定位置与带标签的节点碰撞。目标节点应该带 SweetCollider 组件。
-     * @param tag 要判断的标签
+     * 设置 PRECISE_PER_FRAME 类型的点阵图号码。
+     * @param index 号码
+     */
+    public setFrame(index: number) {
+        this.bitmap = this.bitmapList[index];
+    }
+
+    /**
+     * 判断是否在指定位置与带标签节点碰撞。目标节点应该带 SweetCollider 组件。
+     * @param tag 指定标签
      * @param x 指定位置 x
      * @param y 指定位置 y
      * @returns 判断结果
      */
     public collideWithTag(tag: TagId, x: number, y: number): boolean {
+        for (const _ of this.iterCollidedWithTag(tag, x, y)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * 迭代在指定位置碰撞的带标签节点。目标节点应该带 SweetCollider 组件。
+     * @param tag 指定标签
+     * @param x 指定位置 x
+     * @param y 指定位置 y
+     */
+    public *iterCollidedWithTag(tag: TagId, x: number, y: number) {
         // 遍历带该标签的节点
         const top = Math.round(this.top + y);
         const bottom = Math.round(this.bottom + y);
@@ -108,26 +153,24 @@ export class SweetCollider extends Component {
                 // 矩形区域重叠
                 if (this.type === SweetColliderType.RECT && other.type === SweetColliderType.RECT) {
                     // 双方都是矩形，直接肯定
-                    return true;
+                    yield node;
                 } else {
                     // 双方不都是矩形，在重叠区内逐点判断
                     const overlappedTop = top < otherTop ? top : otherTop;
                     const overlappedBottom = bottom < otherBottom ? otherBottom : bottom;
                     const overlappedLeft = left < otherLeft ? otherLeft : left;
                     const overlappedRight = right < otherRight ? right : otherRight;
-                    
+
                     for (let i = overlappedLeft; i < overlappedRight; ++i) {
                         for (let j = overlappedBottom; j < overlappedTop; ++j) {
                             if (this.collideInnerPoint(i - left, j - bottom) && other.collideInnerPoint(i - otherLeft, j - otherBottom)) {
-                                return true;
+                                yield node;
                             }
                         }
                     }
                 }
             }
         }
-
-        return false;
     }
 
     /**
@@ -136,10 +179,12 @@ export class SweetCollider extends Component {
      * @param dir 移动方向
      * @param maxDist 最大距离
      */
-    public moveContactWithTag(tag: TagId, dir: number, maxDist: number) {
+    public moveContactWithTag(tag: TagId, dir: 0 | 90 | 180 | 270, maxDist: number) {
         let dist = 0;
+        // 逐一像素移动
         for ( ; ; ) {
             if (this.collideWithTag(tag, this.node.position.x, this.node.position.y)) {
+                // 发生碰撞，如果移动过，返回 1 像素
                 if (dist !== 0) {
                     if (dir === 0) {
                         this.node.setPosition(this.node.position.x - 1, this.node.position.y);
@@ -154,10 +199,12 @@ export class SweetCollider extends Component {
                 break;
             }
 
+            // 达到最大距离，停止
             if (dist >= maxDist) {
                 break;
             }
     
+            // 前进 1 像素
             if (dir === 0) {
                 this.node.setPosition(this.node.position.x + 1, this.node.position.y);
             } else if (dir === 90) {
