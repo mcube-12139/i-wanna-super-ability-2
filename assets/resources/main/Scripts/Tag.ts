@@ -40,9 +40,15 @@ export class Tag extends Component {
      * @param tag 指定标签
      */
     public static *iterNodes(tag: TagId) {
-        for (const node of this.map.get(tag)) {
-            yield node;
+        if (this.map.has(tag)) {
+            for (const node of this.map.get(tag)) {
+                yield node;
+            }
         }
+    }
+
+    public static hasNode(tag: TagId) {
+        return this.getNodeCount(tag) !== 0;
     }
 
     /**

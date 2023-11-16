@@ -10,16 +10,20 @@ export const BLOCK_SIZE = 40;
 
 @ccclass('PlayerController')
 export class PlayerController extends Component {
+    @property(AudioClip)
+    private jumpClip: AudioClip = null;
+    @property(AudioClip)
+    private doubleJumpClip: AudioClip = null;
+    @property(AudioClip)
+    private dieClip: AudioClip = null;
+    @property(AudioClip)
+    private shootClip: AudioClip = null;
+
     private anim: Animation = null;
     private collider: SweetCollider = null;
     private audioSource: AudioSource = null;
 
     private animName: string = "playerStand";
-
-    private jumpClip: AudioClip = null;
-    private doubleJumpClip: AudioClip = null;
-    private dieClip: AudioClip = null;
-    private shootClip: AudioClip = null;
 
     private runningLeft: boolean = false;
     private runningRight: boolean = false;
@@ -45,10 +49,15 @@ export class PlayerController extends Component {
 
         this.anim.play(this.animName);
 
-        this.jumpClip = resources.get("main/Sound/jump");
-        this.doubleJumpClip = resources.get("main/Sound/double jump");
-        this.dieClip = resources.get("main/Sound/die");
-        this.shootClip = resources.get("main/Sound/shoot");
+        if (SweetGlobal.loaded) {
+            // 从存档中读取状态
+            this.node.setPosition(SweetGlobal.savedData.playerX, SweetGlobal.savedData.playerY);
+            this.node.setScale(SweetGlobal.savedData.playerScaleX, SweetGlobal.savedData.grav);
+        }
+        if (SweetGlobal.autosave) {
+            // 自动存档
+            SweetGlobal.save();
+        }
     }
 
     update(_: number) {
@@ -184,10 +193,12 @@ export class PlayerController extends Component {
             this.collider.collideWithTag(TagId.PLATFORM, this.node.position.x, this.node.position.y - SweetGlobal.grav) ||
             this.onPlatform
         ) {
+            // 一段跳
             this.speedY = this.jumpSpeed;
             this.doubleJumpEnabled = true;
             this.audioSource.playOneShot(this.jumpClip);
         } else if (this.doubleJumpEnabled) {
+            // 二段跳
             this.speedY = this.doubleJumpSpeed;
             this.doubleJumpEnabled = false;
             this.audioSource.playOneShot(this.doubleJumpClip);

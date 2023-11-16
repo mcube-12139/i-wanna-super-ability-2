@@ -1,5 +1,6 @@
 import { _decorator, Component, director, EventKeyboard, Input, input, KeyCode, Node, Scene } from 'cc';
 import { Tag, TagId } from './Tag';
+import { SweetGlobal } from './SweetGlobal';
 const { ccclass, property } = _decorator;
 
 @ccclass('GameSceneController')
@@ -14,7 +15,7 @@ export class GameSceneController extends Component {
 
     onKeyDown(event: EventKeyboard) {
         if (event.keyCode === KeyCode.KEY_R) {
-            director.loadScene("game");
+            SweetGlobal.load();
         }
     }
 }
