@@ -5,7 +5,7 @@ const { ccclass, property } = _decorator;
 export class StartSceneController extends Component {
     start() {
         resources.loadDir("main", (_, __) => {
-            director.loadScene("game");
+            director.loadScene("title");
         });
     }
 }

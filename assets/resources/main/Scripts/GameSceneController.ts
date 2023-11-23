@@ -16,6 +16,9 @@ export class GameSceneController extends Component {
     onKeyDown(event: EventKeyboard) {
         if (event.keyCode === KeyCode.KEY_R) {
             SweetGlobal.load();
+        } else if (event.keyCode === KeyCode.F2) {
+            SweetGlobal.reset();
+            director.loadScene("title");
         }
     }
 }

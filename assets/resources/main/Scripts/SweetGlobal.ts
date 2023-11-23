@@ -2,6 +2,8 @@ import { director } from "cc";
 import { Tag, TagId } from "./Tag";
 
 export class SweetGlobal {
+    static START_GAME_SCENE_NAME = "game";
+
     static grav = 1;
     static autosave = true;
     static loaded = false;
@@ -12,6 +14,10 @@ export class SweetGlobal {
         playerScaleX: 0,
         grav: 1
     };
+
+    static reset() {
+        this.grav = 1;
+    }
 
     static save() {
         if (Tag.hasNode(TagId.PLAYER)) {
@@ -53,5 +59,14 @@ export class SweetGlobal {
         //*/
 
         this.load();
+    }
+
+    static hasData() {
+        //* WEB_DESKTOP
+        return localStorage.getItem("gameData") !== null;
+        //*/
+
+        /* DOUYIN_MICROGAME
+        //*/
     }
 }

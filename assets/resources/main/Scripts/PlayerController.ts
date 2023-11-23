@@ -51,11 +51,13 @@ export class PlayerController extends Component {
 
         if (SweetGlobal.loaded) {
             // 从存档中读取状态
+            SweetGlobal.loaded = false;
             this.node.setPosition(SweetGlobal.savedData.playerX, SweetGlobal.savedData.playerY);
             this.node.setScale(SweetGlobal.savedData.playerScaleX, SweetGlobal.savedData.grav);
         }
         if (SweetGlobal.autosave) {
             // 自动存档
+            SweetGlobal.autosave = false;
             SweetGlobal.save();
         }
     }
