@@ -1,4 +1,4 @@
-import { director } from "cc";
+import { Prefab, director, instantiate, resources, Node, find, Component } from "cc";
 import { Tag, TagId } from "./Tag";
 
 export class SweetGlobal {
@@ -14,6 +14,16 @@ export class SweetGlobal {
         playerScaleX: 0,
         grav: 1
     };
+
+    static createByPrefab(name: string): Node {
+        return instantiate(resources.get(`main/Prefab/${name}`) as Prefab);
+    }
+
+    static createOnLayerByPrefab(prefabName: string, layerName: string): Node {
+        const node = instantiate(resources.get(`main/Prefab/${prefabName}`) as Prefab);
+        find(`Canvas/${layerName}`).addChild(node);
+        return node;
+    }
 
     static reset() {
         this.grav = 1;

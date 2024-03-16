@@ -1,9 +1,9 @@
-import { CCBoolean, Color, Label, input } from 'cc';
+import { CCBoolean, Color, Label } from 'cc';
 import { Enum } from 'cc';
 import { director } from 'cc';
 import { Input } from 'cc';
 import { CCFloat } from 'cc';
-import { _decorator, Component, Graphics, Node } from 'cc';
+import { _decorator, Component, Graphics } from 'cc';
 import { SweetGlobal } from './SweetGlobal';
 const { ccclass, property } = _decorator;
 
@@ -19,7 +19,7 @@ export class ButtonController extends Component {
     static actionIdMap = new Map<ButtonActionId, (controller: ButtonController) => void>([
         [ButtonActionId.START_GAME, controller => {
             SweetGlobal.autosave = true;
-            director.loadScene(SweetGlobal.START_GAME_SCENE_NAME);
+            director.loadScene("edit");
         }],
         [ButtonActionId.LOAD_GAME, controller => {
             SweetGlobal.loadFile();

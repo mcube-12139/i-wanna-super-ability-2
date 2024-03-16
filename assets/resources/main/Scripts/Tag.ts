@@ -7,6 +7,7 @@ export enum TagId {
     PLAYER = 2,
     PLATFORM = 3,
     BULLET = 4,
+    PLAYER_START = 5
 }
 
 @ccclass('Tag')
