@@ -8,47 +8,78 @@ export class StageController extends Component {
     @property(Node)
     objectShadow: Node;
 
-    mouseX: number = 0;
-    mouseY: number = 0;
+    mouseX = 0;
+    mouseY = 0;
     // 按住 Alt 时鼠标无视网格
-    altHeld: boolean = false;
+    altHeld = false;
+    leftMouseHeld = false;
+    rightMouseHeld = false;
 
     start() {
-        this.node.on(Node.EventType.TOUCH_START, this.onTouchStart, this);
-        this.node.on(Node.EventType.TOUCH_MOVE, this.onTouchMove, this);
+        this.node.on(Node.EventType.MOUSE_DOWN, this.onMouseDown, this);
         this.node.on(Node.EventType.MOUSE_MOVE, this.onMouseMove, this);
+        this.node.on(Node.EventType.MOUSE_UP, this.onMouseUp, this);
         input.on(Input.EventType.KEY_DOWN, this.onKeyDown, this);
         input.on(Input.EventType.KEY_UP, this.onKeyUp, this);
     }
 
-    onTouchStart(event: EventTouch) {
-        const uiLocation = event.getUILocation();
-        this.setMousePosition(uiLocation.x, uiLocation.y);
-        this.createObject(this.mouseX, this.mouseY);
-    }
-
-    onTouchMove(event: EventTouch) {
-        const uiLocation = event.getUILocation();
-        const updated = this.setMousePosition(uiLocation.x, uiLocation.y);
-        if (updated && !this.altHeld) {
-            this.createObject(this.mouseX, this.mouseY);
+    onMouseDown(event: EventMouse) {
+        if (EditSceneController.instance.nowWindow === null) {
+            const button = event.getButton();
+            const uiLocation = event.getUILocation();
+            this.setMousePosition(uiLocation.x, uiLocation.y);
+            if (button === EventMouse.BUTTON_LEFT) {
+                // 左键创建
+                this.leftMouseHeld = true;
+                this.createObject();
+            } else if (button === EventMouse.BUTTON_RIGHT) {
+                // 右键删除
+                this.rightMouseHeld = true;
+                this.deleteObject();
+            }
         }
     }
 
     onMouseMove(event: EventMouse) {
-        const uiLocation = event.getUILocation();
-        this.setMousePosition(uiLocation.x, uiLocation.y);
+        if (EditSceneController.instance.nowWindow === null) {
+            const uiLocation = event.getUILocation();
+            const updated = this.setMousePosition(uiLocation.x, uiLocation.y);
+            if (this.leftMouseHeld) {
+                if (updated && !this.altHeld) {
+                    this.createObject();
+                }
+            } else if (this.rightMouseHeld) {
+                if (updated && !this.altHeld) {
+                    this.deleteObject();
+                }
+            }
+        }
+    }
+
+    onMouseUp(event: EventMouse) {
+        if (EditSceneController.instance.nowWindow === null) {
+            const button = event.getButton();
+            if (button === EventMouse.BUTTON_LEFT) {
+                this.leftMouseHeld = false;
+            } else if (button === EventMouse.BUTTON_RIGHT) {
+                this.rightMouseHeld = false;
+            }
+        }
     }
 
     onKeyDown(event: EventKeyboard) {
-        if (event.keyCode === KeyCode.ALT_LEFT) {
-            this.altHeld = true;
+        if (EditSceneController.instance.nowWindow === null) {
+            if (event.keyCode === KeyCode.ALT_LEFT) {
+                this.altHeld = true;
+            }
         }
     }
 
     onKeyUp(event: EventKeyboard) {
-        if (event.keyCode === KeyCode.ALT_LEFT) {
-            this.altHeld = false;
+        if (EditSceneController.instance.nowWindow === null) {
+            if (event.keyCode === KeyCode.ALT_LEFT) {
+                this.altHeld = false;
+            }
         }
     }
 
@@ -74,8 +105,11 @@ export class StageController extends Component {
         return updated;
     }
 
-    createObject(x: number, y: number) {
-        const node = SweetGlobal.createOnLayerByPrefab(EditSceneController.instance.nowPrefabName, EditSceneController.instance.nowPrefabData.layer);
-        node.setPosition(x, y);
+    createObject() {
+        EditSceneController.instance.addObject(this.mouseX, this.mouseY);
+    }
+
+    deleteObject() {
+        EditSceneController.instance.deleteObject(this.mouseX, this.mouseY);
     }
 }
