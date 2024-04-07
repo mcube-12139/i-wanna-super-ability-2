@@ -8,6 +8,8 @@ export class StageController extends Component {
     @property(Node)
     objectShadow: Node;
 
+    noSnapMouseX = 0;
+    noSnapMouseY = 0;
     mouseX = 0;
     mouseY = 0;
     // 按住 Alt 时鼠标无视网格
@@ -84,6 +86,9 @@ export class StageController extends Component {
     }
 
     setMousePosition(x: number, y: number): boolean {
+        this.noSnapMouseX = x;
+        this.noSnapMouseY = y;
+
         let mouseX: number;
         let mouseY: number;
         // 根据 Alt 是否按住，计算网格坐标
@@ -110,6 +115,6 @@ export class StageController extends Component {
     }
 
     deleteObject() {
-        EditSceneController.instance.deleteObject(this.mouseX, this.mouseY);
+        EditSceneController.instance.deleteObject(this.noSnapMouseX, this.noSnapMouseY);
     }
 }
