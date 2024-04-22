@@ -1,7 +1,7 @@
 [
   {
     "__type__": "cc.Prefab",
-    "_name": "PlayerStart",
+    "_name": "EditorExample",
     "_objFlags": 0,
     "__editorExtras__": {},
     "_native": "",
@@ -13,7 +13,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "PlayerStart",
+    "_name": "EditorExample",
     "_objFlags": 0,
     "__editorExtras__": {},
     "_parent": null,
@@ -76,22 +76,22 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 100,
-      "height": 100
+      "width": 32,
+      "height": 32
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
-      "x": 0.5,
-      "y": 0.5
+      "x": 0,
+      "y": 0
     },
     "_id": ""
   },
   {
     "__type__": "cc.CompPrefabInfo",
-    "fileId": "77sxpEXNxCyK4ggHcvHvOa"
+    "fileId": "06XfHEDihGX4p6k6KKc2t8"
   },
   {
-    "__type__": "490efpJUWtCfKMIeKLDZzkT",
+    "__type__": "cc.Sprite",
     "_name": "",
     "_objFlags": 0,
     "__editorExtras__": {},
@@ -102,17 +102,38 @@
     "__prefab": {
       "__id__": 5
     },
-    "idSet": [
-      5
-    ],
+    "_customMaterial": null,
+    "_srcBlendFactor": 2,
+    "_dstBlendFactor": 4,
+    "_color": {
+      "__type__": "cc.Color",
+      "r": 255,
+      "g": 255,
+      "b": 255,
+      "a": 255
+    },
+    "_spriteFrame": null,
+    "_type": 0,
+    "_fillType": 0,
+    "_sizeMode": 2,
+    "_fillCenter": {
+      "__type__": "cc.Vec2",
+      "x": 0,
+      "y": 0
+    },
+    "_fillStart": 0,
+    "_fillRange": 0,
+    "_isTrimmedMode": false,
+    "_useGrayscale": false,
+    "_atlas": null,
     "_id": ""
   },
   {
     "__type__": "cc.CompPrefabInfo",
-    "fileId": "31AhszgolDZ5QomNdrWtHN"
+    "fileId": "feGqDPLrNDN43vbU01Mz7b"
   },
   {
-    "__type__": "868b9LGwURF44rzhDgb813J",
+    "__type__": "4b6b5EodIVJepkZaJCB9Op9",
     "_name": "",
     "_objFlags": 0,
     "__editorExtras__": {},
@@ -127,7 +148,7 @@
   },
   {
     "__type__": "cc.CompPrefabInfo",
-    "fileId": "88YaoJ4itG8bWFe2gW4dMb"
+    "fileId": "75W0eF8x9HSqGyl1D4y8WE"
   },
   {
     "__type__": "cc.PrefabInfo",
@@ -137,7 +158,7 @@
     "asset": {
       "__id__": 0
     },
-    "fileId": "c2hSdLDmVGXqtEjIvuCeTq",
+    "fileId": "3405iGDpZHNYelKRLE3xu8",
     "instance": null,
     "targetOverrides": null
   }

@@ -1,6 +1,7 @@
-import { _decorator, Component, EventKeyboard, EventMouse, EventTouch, Input, input, KeyCode, Node } from 'cc';
+import { _decorator, Component, director, EventKeyboard, EventMouse, Input, input, KeyCode, Node } from 'cc';
 import { EditSceneController } from './EditSceneController';
-import { SweetGlobal } from './SweetGlobal';
+import { MainMenuOptionId } from './MainMenuOptionController';
+import { EditorData } from './EditorData';
 const { ccclass, property } = _decorator;
 
 @ccclass('StageController')
@@ -12,6 +13,7 @@ export class StageController extends Component {
     noSnapMouseY = 0;
     mouseX = 0;
     mouseY = 0;
+    ctrlHeld = false;
     // 按住 Alt 时鼠标无视网格
     altHeld = false;
     leftMouseHeld = false;
@@ -73,6 +75,14 @@ export class StageController extends Component {
         if (EditSceneController.instance.nowWindow === null) {
             if (event.keyCode === KeyCode.ALT_LEFT) {
                 this.altHeld = true;
+            } else if (event.keyCode === KeyCode.CTRL_LEFT) {
+                this.ctrlHeld = true;
+            } else if (event.keyCode === KeyCode.F3) {
+                // F3 - 打开"物体"页面
+                EditSceneController.instance.openMainMenuWindow(MainMenuOptionId.OBJECT);
+            } else if (event.keyCode === KeyCode.KEY_R && this.ctrlHeld) {
+                // Ctrl + R - 运行预览
+                director.loadScene("preview");
             }
         }
     }
@@ -81,6 +91,8 @@ export class StageController extends Component {
         if (EditSceneController.instance.nowWindow === null) {
             if (event.keyCode === KeyCode.ALT_LEFT) {
                 this.altHeld = false;
+            } else if (event.keyCode === KeyCode.CTRL_LEFT) {
+                this.ctrlHeld = false;
             }
         }
     }
@@ -93,8 +105,8 @@ export class StageController extends Component {
         let mouseY: number;
         // 根据 Alt 是否按住，计算网格坐标
         if (!this.altHeld) {
-            mouseX = EditSceneController.instance.gridWidth * Math.floor(x / EditSceneController.instance.gridWidth);
-            mouseY = EditSceneController.instance.gridHeight * Math.floor(y / EditSceneController.instance.gridHeight);
+            mouseX = EditorData.gridWidth * Math.floor(x / EditorData.gridWidth);
+            mouseY = EditorData.gridHeight * Math.floor(y / EditorData.gridHeight);
         } else {
             mouseX = x;
             mouseY = y;
@@ -111,10 +123,10 @@ export class StageController extends Component {
     }
 
     createObject() {
-        EditSceneController.instance.addObject(this.mouseX, this.mouseY);
+        EditorData.addObject(this.mouseX, this.mouseY);
     }
 
     deleteObject() {
-        EditSceneController.instance.deleteObject(this.noSnapMouseX, this.noSnapMouseY);
+        EditorData.deleteObject(this.noSnapMouseX, this.noSnapMouseY);
     }
 }
