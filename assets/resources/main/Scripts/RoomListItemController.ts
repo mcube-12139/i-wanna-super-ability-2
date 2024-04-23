@@ -1,4 +1,6 @@
 import { _decorator, Component, Label, math, Node, Sprite } from 'cc';
+import { EditorData } from './EditorData';
+import { EditSceneController } from './EditSceneController';
 const { ccclass, property } = _decorator;
 
 export class RoomListItemData {
@@ -19,9 +21,13 @@ export class RoomListItemController extends Component {
     @property(Label)
     editTimeLabel: Label;
 
+    index: number;
+    selected: boolean;
+
     onLoad() {
         this.node.on(Node.EventType.MOUSE_ENTER, this.onMouseEnter, this);
         this.node.on(Node.EventType.MOUSE_LEAVE, this.onMouseLeave, this);
+        this.node.on(Node.EventType.MOUSE_UP, this.onMouseUp, this);
     }
 
     onMouseEnter(_) {
@@ -29,12 +35,27 @@ export class RoomListItemController extends Component {
     }
 
     onMouseLeave(_) {
-        this.backSprite.enabled = false;
+        if (!this.selected) {
+            this.backSprite.enabled = false;
+        }
     }
 
-    setData(data: RoomListItemData) {
+    onMouseUp(_) {
+        if (!this.selected) {
+            EditSceneController.instance.closeWindow();
+            EditorData.loadRoom(this.index);
+        }
+    }
+
+    setData(index: number, data: RoomListItemData, selected: boolean) {
+        this.index = index;
         this.nameLabel.string = data.name;
         this.editTimeLabel.string = data.editTime;
+        this.selected = selected;
+
+        if (selected) {
+            this.backSprite.enabled = true;
+        }
     }
 }
 

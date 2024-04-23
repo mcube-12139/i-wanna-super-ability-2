@@ -1,5 +1,6 @@
 import { _decorator, Button, Component, EditBox, Label } from 'cc';
 import { EditSceneController } from './EditSceneController';
+import { EditorData } from './EditorData';
 const { ccclass, property } = _decorator;
 
 @ccclass('CreateRoomButtonController')
@@ -19,6 +20,7 @@ export class CreateRoomButtonController extends Component {
             this.illegalLabel.string = "房间名不能是空";
         } else {
             EditSceneController.instance.closeWindow();
+            EditorData.createRoom(roomName);
         }
     }
 }

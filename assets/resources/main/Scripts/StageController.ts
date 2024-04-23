@@ -83,6 +83,9 @@ export class StageController extends Component {
             } else if (event.keyCode === KeyCode.KEY_R && this.ctrlHeld) {
                 // Ctrl + R - 运行预览
                 director.loadScene("preview");
+            } else if (event.keyCode === KeyCode.KEY_S && this.ctrlHeld) {
+                // Ctrl + S - 保存
+                EditorData.saveRoom();
             }
         }
     }

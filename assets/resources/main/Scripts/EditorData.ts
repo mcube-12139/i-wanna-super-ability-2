@@ -1,8 +1,9 @@
-import { math, Node, UITransform } from "cc";
+import { find, math, Node, sys, UITransform } from "cc";
 import { PrefabData } from "./PrefabData";
 import { SweetGlobal } from "./SweetGlobal";
 import { EditorExampleController } from "./EditorExampleController";
 import { MainMenuOptionId } from "./MainMenuOptionController";
+import { SweetDate } from "./SweetDate";
 
 class NodeData {
     prefabName: string;
@@ -32,6 +33,50 @@ class LayerData {
     }
 }
 
+class NodeFile {
+    prefabName: string;
+    x: number;
+    y: number;
+
+    constructor(prefabName: string, x: number, y: number) {
+        this.prefabName = prefabName;
+        this.x = x;
+        this.y = y;
+    }
+}
+
+class LayerFile {
+    name: string;
+    objects: NodeFile[];
+
+    constructor(name: string, objects: NodeFile[]) {
+        this.name = name;
+        this.objects = objects;
+    }
+
+    static newEmpty(name: string) {
+        return new LayerFile(name, []);
+    }
+}
+
+class RoomMetadata {
+    name: string;
+    editTime: string;
+
+    constructor(name: string, editTime: string) {
+        this.name = name;
+        this.editTime = editTime;
+    }
+}
+
+class RoomFile {
+    layers: LayerFile[];
+
+    constructor(layers: LayerFile[]) {
+        this.layers = layers;
+    }
+}
+
 export class EditorData {
     static gridWidth: number;
     static gridHeight: number;
@@ -43,11 +88,26 @@ export class EditorData {
     static nowLayerData: LayerData;
     
     static prefabData: PrefabData[];
+    static prefabDataMap: Map<string, PrefabData>;
     static nowPrefabIndex: number;
     static nowPrefabData: PrefabData;
     static mainMenuOptionIndex: MainMenuOptionId;
 
+    static roomMetadataList: RoomMetadata[];
+    static nowRoomIndex: number;
+    static nowRoomMetadata: RoomMetadata;
+
     static init() {
+        // 读取房间
+        const roomListItem = sys.localStorage.getItem("editorRoomMetadatas")
+        if (roomListItem !== null) {
+            this.roomMetadataList = JSON.parse(roomListItem);
+        } else {
+            this.roomMetadataList = [];
+        }
+        this.nowRoomIndex = -1;
+        this.nowRoomMetadata = null;
+
         this.gridWidth = 32;
         this.gridHeight = 32;
         this.gridColor = new math.Color(0, 0, 0, 128);
@@ -64,15 +124,25 @@ export class EditorData {
             ["BlockLayer", this.layers[1]],
             ["FruitLayer", this.layers[2]],
             ["PlayerLayer", this.layers[3]],
-        ])
+        ]);
         this.nowLayerData = this.layers[0];
 
+        this.nowPrefabIndex = 0;
         this.prefabData = PrefabData.createData();
+        this.prefabDataMap = new Map<string, PrefabData>();
+        for (const [_, data] of this.prefabData.entries()) {
+            this.prefabDataMap.set(data.name, data);
+        }
+    }
+
+    static selectLayer(name: string) {
+        this.nowLayerData = this.layerMap.get(name);
     }
 
     static selectPrefab(index: number) {
         this.nowPrefabIndex = index;
         this.nowPrefabData = this.prefabData[index];
+        this.selectLayer(this.nowPrefabData.defaultLayer);
     }
 
     static *validNodes(): Generator<[number, Node], any, unknown> {
@@ -128,5 +198,80 @@ export class EditorData {
                 break;
             }
         }
+    }
+
+    static loadRoom(index: number) {
+        this.nowRoomIndex = index;
+        this.nowRoomMetadata = this.roomMetadataList[index];
+
+        const roomFileItem = sys.localStorage.getItem(`editorRoom${this.nowRoomMetadata.name}`);
+        let roomFile: RoomFile;
+        if (roomFileItem !== null) {
+            roomFile = JSON.parse(roomFileItem);
+        } else {
+            alert(`room not found: ${this.nowRoomMetadata.name}`);
+            return;
+        }
+
+        // 创建节点
+        for (const layer of roomFile.layers) {
+            find(`Canvas/${layer.name}`).removeAllChildren();
+        }
+        this.layers.length = 0;
+        this.layerMap.clear();
+        for (const layerFile of roomFile.layers) {
+            const objects = [];
+            const layerData = new LayerData(layerFile.name, objects);
+            this.layers.push(layerData);
+            this.layerMap.set(layerFile.name, layerData);
+            
+            for (const nodeFile of layerFile.objects) {
+                const prefabData = this.prefabDataMap.get(nodeFile.prefabName);
+
+                const node = SweetGlobal.createOnLayerByPrefab("EditorExample", layerFile.name);
+                const control = node.getComponent(EditorExampleController);
+                control.setSprite(prefabData.sprite);
+                
+                node.setPosition(nodeFile.x, nodeFile.y);
+                if (prefabData.x !== 0 || prefabData.y !== 0) {
+                    // 原点不在 0, 0，变换
+                    const nodeControl = node.getComponent(UITransform);
+                    nodeControl.setAnchorPoint(-prefabData.x / prefabData.width, -prefabData.y / prefabData.height);
+                }
+
+                objects.push(new NodeData(nodeFile.prefabName, nodeFile.x, nodeFile.y, node));
+            }
+        }
+        this.nowLayerData = this.layers[0];
+    }
+
+    static createRoom(name: string) {
+        const time = SweetDate.now();
+        const metadata = new RoomMetadata(name, time);
+        this.roomMetadataList.push(metadata);
+
+        const room = new RoomFile([
+            LayerFile.newEmpty("NeedleLayer"),
+            LayerFile.newEmpty("BlockLayer"),
+            LayerFile.newEmpty("FruitLayer"),
+            LayerFile.newEmpty("PlayerLayer")
+        ]);
+
+        sys.localStorage.setItem("editorRoomMetadatas", JSON.stringify(this.roomMetadataList));
+        sys.localStorage.setItem(`editorRoom${name}`, JSON.stringify(room));
+
+        this.loadRoom(this.roomMetadataList.length - 1);
+    }
+
+    static saveRoom() {
+        this.nowRoomMetadata.editTime = SweetDate.now();
+        sys.localStorage.setItem("editorRoomMetadatas", JSON.stringify(this.roomMetadataList));
+
+        const roomFile = new RoomFile(this.layers.map(
+            layer => new LayerFile(layer.name, layer.objects.map(
+                object => new NodeFile(object.prefabName, object.x, object.y)
+            ))
+        ));
+        sys.localStorage.setItem(`editorRoom${this.nowRoomMetadata.name}`, JSON.stringify(roomFile));
     }
 }

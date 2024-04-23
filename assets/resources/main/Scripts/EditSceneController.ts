@@ -1,9 +1,7 @@
-import { _decorator, Component, EventKeyboard, find, input, Input, instantiate, KeyCode, math, Node, Prefab, resources, UITransform } from 'cc';
+import { _decorator, Component, Node } from 'cc';
 import { SweetGlobal } from './SweetGlobal';
 import { GridController } from './GridController';
 import { ObjectShadowController } from './ObjectShadowController';
-import { PrefabData } from './PrefabData';
-import { EditorExampleController } from './EditorExampleController';
 import { MainMenuOptionId } from './MainMenuOptionController';
 import { EditorData } from './EditorData';
 const { ccclass, property } = _decorator;
@@ -28,11 +26,15 @@ export class EditSceneController extends Component {
         this.objectShadowController = this.objectShadow.getComponent(ObjectShadowController);
         const gridController = this.gridNode.getComponent(GridController);
 
-        EditorData.init();
         gridController.redraw();
 
-        this.selectPrefab(0);
-        this.toggleWindow("SelectRoomWindow");
+        this.selectPrefab(EditorData.nowPrefabIndex);
+
+        if (EditorData.nowRoomIndex === -1) {
+            this.toggleWindow("SelectRoomWindow");
+        } else {
+            EditorData.loadRoom(EditorData.nowRoomIndex);
+        }
     }
 
     onDisable() {

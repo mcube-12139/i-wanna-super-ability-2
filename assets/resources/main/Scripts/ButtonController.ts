@@ -5,6 +5,7 @@ import { Input } from 'cc';
 import { CCFloat } from 'cc';
 import { _decorator, Component, Graphics } from 'cc';
 import { SweetGlobal } from './SweetGlobal';
+import { EditorData } from './EditorData';
 const { ccclass, property } = _decorator;
 
 enum ButtonActionId {
@@ -19,6 +20,7 @@ export class ButtonController extends Component {
     static actionIdMap = new Map<ButtonActionId, (controller: ButtonController) => void>([
         [ButtonActionId.START_GAME, controller => {
             SweetGlobal.autosave = true;
+            EditorData.init();
             director.loadScene("edit");
         }],
         [ButtonActionId.LOAD_GAME, controller => {

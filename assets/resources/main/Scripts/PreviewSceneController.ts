@@ -7,6 +7,7 @@ const { ccclass, property } = _decorator;
 export class PreviewSceneController extends Component {
     start() {
         // 创建节点
+        console.log(EditorData.layers);
         for (const layer of EditorData.layers) {
             for (const object of layer.objects) {
                 const node = SweetGlobal.createOnLayerByPrefab(object.prefabName, layer.name);
