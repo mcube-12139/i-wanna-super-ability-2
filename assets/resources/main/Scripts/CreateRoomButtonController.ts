@@ -19,8 +19,12 @@ export class CreateRoomButtonController extends Component {
         if (roomName === "") {
             this.illegalLabel.string = "房间名不能是空";
         } else {
-            EditSceneController.instance.closeWindow();
-            EditorData.createRoom(roomName);
+            const result = EditorData.createRoom(roomName);
+            if (result.ok) {
+                EditSceneController.instance.closeWindow();
+            } else {
+                this.illegalLabel.string = result.error;
+            }
         }
     }
 }

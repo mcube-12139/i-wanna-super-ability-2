@@ -15,6 +15,7 @@ export class EditSceneController extends Component {
     @property(Node)
     objectShadow: Node;
 
+    gridController: GridController;
     objectShadowController: ObjectShadowController;
 
     nowWindow: Node | null = null;
@@ -24,9 +25,9 @@ export class EditSceneController extends Component {
     start() {
         EditSceneController.instance = this;
         this.objectShadowController = this.objectShadow.getComponent(ObjectShadowController);
-        const gridController = this.gridNode.getComponent(GridController);
+        this.gridController = this.gridNode.getComponent(GridController);
 
-        gridController.redraw();
+        this.gridController.redraw();
 
         this.selectPrefab(EditorData.nowPrefabIndex);
 
@@ -65,6 +66,21 @@ export class EditSceneController extends Component {
     openMainMenuWindow(option: MainMenuOptionId) {
         EditorData.mainMenuOptionIndex = option;
         this.toggleWindow("MainMenuWindow");
+    }
+
+    setGridSize(x: number, y: number) {
+        EditorData.setGridSize(x, y);
+        this.gridController.redraw();
+    }
+
+    setGridVisible(visible: boolean) {
+        EditorData.gridVisible = visible;
+        this.gridController.redraw();
+    }
+
+    setGridColor(color: string) {
+        EditorData.gridColor = color;
+        this.gridController.redraw();
     }
 }
 

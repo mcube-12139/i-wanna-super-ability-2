@@ -77,8 +77,17 @@ export class StageController extends Component {
                 this.altHeld = true;
             } else if (event.keyCode === KeyCode.CTRL_LEFT) {
                 this.ctrlHeld = true;
+            } else if (event.keyCode === KeyCode.F1) {
+                // F1 - 打开"文件"页面
+                EditSceneController.instance.openMainMenuWindow(MainMenuOptionId.FILE);
+            } else if (event.keyCode === KeyCode.F2) {
+                // F2 - 打开"编辑"页面
+                EditSceneController.instance.openMainMenuWindow(MainMenuOptionId.EDIT);
             } else if (event.keyCode === KeyCode.F3) {
-                // F3 - 打开"物体"页面
+                // F3 - 打开"房间"页面
+                EditSceneController.instance.openMainMenuWindow(MainMenuOptionId.ROOM);
+            } else if (event.keyCode === KeyCode.F4) {
+                // F4 - 打开"物体"页面
                 EditSceneController.instance.openMainMenuWindow(MainMenuOptionId.OBJECT);
             } else if (event.keyCode === KeyCode.KEY_R && this.ctrlHeld) {
                 // Ctrl + R - 运行预览

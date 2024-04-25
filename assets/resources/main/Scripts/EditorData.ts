@@ -1,4 +1,4 @@
-import { find, math, Node, sys, UITransform } from "cc";
+import { find, Node, sys, UITransform } from "cc";
 import { PrefabData } from "./PrefabData";
 import { SweetGlobal } from "./SweetGlobal";
 import { EditorExampleController } from "./EditorExampleController";
@@ -80,7 +80,7 @@ class RoomFile {
 export class EditorData {
     static gridWidth: number;
     static gridHeight: number;
-    static gridColor: math.Color;
+    static gridColor: string;
     static gridVisible: boolean;
     
     static layers: LayerData[];
@@ -110,7 +110,7 @@ export class EditorData {
 
         this.gridWidth = 32;
         this.gridHeight = 32;
-        this.gridColor = new math.Color(0, 0, 0, 128);
+        this.gridColor = "#0000007f";
         this.gridVisible = true;
 
         this.layers = [
@@ -246,6 +246,14 @@ export class EditorData {
     }
 
     static createRoom(name: string) {
+        // 检查房间名是否重复
+        if (this.roomMetadataList.findIndex(v => v.name === name) !== -1) {
+            return {
+                ok: false,
+                error: "房间名重复"
+            };
+        }
+
         const time = SweetDate.now();
         const metadata = new RoomMetadata(name, time);
         this.roomMetadataList.push(metadata);
@@ -261,6 +269,10 @@ export class EditorData {
         sys.localStorage.setItem(`editorRoom${name}`, JSON.stringify(room));
 
         this.loadRoom(this.roomMetadataList.length - 1);
+
+        return {
+            ok: true
+        };
     }
 
     static saveRoom() {
@@ -273,5 +285,10 @@ export class EditorData {
             ))
         ));
         sys.localStorage.setItem(`editorRoom${this.nowRoomMetadata.name}`, JSON.stringify(roomFile));
+    }
+
+    static setGridSize(x: number, y: number) {
+        this.gridWidth = x;
+        this.gridHeight = y;
     }
 }

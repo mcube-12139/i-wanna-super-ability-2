@@ -1,4 +1,4 @@
-import { _decorator, Component, Graphics } from 'cc';
+import { _decorator, Component, Graphics, math } from 'cc';
 import { EditorData } from './EditorData';
 const { ccclass, property } = _decorator;
 
@@ -13,7 +13,8 @@ export class GridController extends Component {
     redraw() {
         if (EditorData.gridVisible) {
             this.graphics.enabled = true;
-            this.graphics.fillColor = EditorData.gridColor;
+            this.graphics.fillColor = new math.Color(EditorData.gridColor);
+            this.graphics.clear();
             for (let i = 0; i < 800; i += EditorData.gridWidth) {
                 this.graphics.rect(i, 0, 1, 450);
             }

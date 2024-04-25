@@ -10,10 +10,9 @@ export class MenuOptionController extends Component {
     @property(Prefab)
     view: Prefab;
 
-    selected: boolean;
+    selected: boolean = false;
 
     start() {
-        this.selected = false;
         this.node.on(Node.EventType.MOUSE_ENTER, this.onMouseEnter, this);
         this.node.on(Node.EventType.MOUSE_LEAVE, this.onMouseLeave, this);
         this.node.on(Node.EventType.MOUSE_UP, this.onMouseUp, this);
