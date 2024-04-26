@@ -1,4 +1,4 @@
-import { _decorator, Component, Node } from 'cc';
+import { _decorator, Component, find, Node } from 'cc';
 import { SweetGlobal } from './SweetGlobal';
 import { GridController } from './GridController';
 import { ObjectShadowController } from './ObjectShadowController';
@@ -34,7 +34,8 @@ export class EditSceneController extends Component {
         if (EditorData.nowRoomIndex === -1) {
             this.toggleWindow("SelectRoomWindow");
         } else {
-            EditorData.loadRoom(EditorData.nowRoomIndex);
+            // 打开过，只需要重新创建
+            EditorData.rebuildRoom();
         }
     }
 
@@ -53,7 +54,7 @@ export class EditSceneController extends Component {
     }
 
     closeWindow() {
-        this.windowLayer.removeChild(this.nowWindow);
+        this.nowWindow.destroy();
         this.nowWindow = null;
         this.objectShadowController.enable();
     }
@@ -81,6 +82,11 @@ export class EditSceneController extends Component {
     setGridColor(color: string) {
         EditorData.gridColor = color;
         this.gridController.redraw();
+    }
+
+    setLayerVisible(name: string, visible: boolean) {
+        EditorData.getLayerData(name).visible = visible;
+        find(`Canvas/${name}`).active = visible;
     }
 }
 

@@ -22,6 +22,7 @@ export class PreviewSceneController extends Component {
         if (event.keyCode === KeyCode.KEY_R) {
             SweetGlobal.load();
         } else if (event.keyCode === KeyCode.ESCAPE) {
+            console.log("escape");
             director.loadScene("edit");
         }
     }

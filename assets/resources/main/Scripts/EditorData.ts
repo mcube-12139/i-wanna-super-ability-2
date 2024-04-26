@@ -21,15 +21,19 @@ class NodeData {
 
 class LayerData {
     name: string;
+    visible: boolean;
+    locked: boolean;
     objects: NodeData[];
 
-    constructor(name: string, objects: NodeData[]) {
+    constructor(name: string, visible: boolean, locked: boolean, objects: NodeData[]) {
         this.name = name;
+        this.visible = visible;
+        this.locked = locked;
         this.objects = objects;
     }
 
     static newEmpty(name: string) {
-        return new LayerData(name, []);
+        return new LayerData(name, true, false, []);
     }
 }
 
@@ -139,6 +143,10 @@ export class EditorData {
         this.nowLayerData = this.layerMap.get(name);
     }
 
+    static getLayerData(name: string) {
+        return this.layerMap.get(name);
+    }
+
     static selectPrefab(index: number) {
         this.nowPrefabIndex = index;
         this.nowPrefabData = this.prefabData[index];
@@ -213,15 +221,18 @@ export class EditorData {
             return;
         }
 
-        // 创建节点
-        for (const layer of roomFile.layers) {
-            find(`Canvas/${layer.name}`).removeAllChildren();
+        // 摧毁现有节点
+        for (const layer of this.layers) {
+            for (const nodeData of layer.objects) {
+                nodeData.node.destroy();
+            }
         }
         this.layers.length = 0;
         this.layerMap.clear();
+        // 创建节点
         for (const layerFile of roomFile.layers) {
             const objects = [];
-            const layerData = new LayerData(layerFile.name, objects);
+            const layerData = new LayerData(layerFile.name, true, false, objects);
             this.layers.push(layerData);
             this.layerMap.set(layerFile.name, layerData);
             
@@ -285,6 +296,28 @@ export class EditorData {
             ))
         ));
         sys.localStorage.setItem(`editorRoom${this.nowRoomMetadata.name}`, JSON.stringify(roomFile));
+    }
+
+    static rebuildRoom() {
+        // 创建节点
+        for (const layerData of this.layers) {
+            for (const nodeData of layerData.objects) {
+                const prefabData = this.prefabDataMap.get(nodeData.prefabName);
+
+                const node = SweetGlobal.createOnLayerByPrefab("EditorExample", layerData.name);
+                const control = node.getComponent(EditorExampleController);
+                control.setSprite(prefabData.sprite);
+                
+                node.setPosition(nodeData.x, nodeData.y);
+                if (prefabData.x !== 0 || prefabData.y !== 0) {
+                    // 原点不在 0, 0，变换
+                    const nodeControl = node.getComponent(UITransform);
+                    nodeControl.setAnchorPoint(-prefabData.x / prefabData.width, -prefabData.y / prefabData.height);
+                }
+
+                nodeData.node = node;
+            }
+        }
     }
 
     static setGridSize(x: number, y: number) {

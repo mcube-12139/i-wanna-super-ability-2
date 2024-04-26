@@ -10,6 +10,7 @@ export class MainMenuWindowController extends Component {
 
     onKeyDown(e: EventKeyboard) {
         if (e.keyCode === KeyCode.ESCAPE) {
+            console.log(this.node);
             EditSceneController.instance.closeWindow();
         }
     }
