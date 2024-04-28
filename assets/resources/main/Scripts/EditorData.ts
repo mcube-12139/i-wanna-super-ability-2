@@ -74,9 +74,15 @@ class RoomMetadata {
 }
 
 class RoomFile {
+    width: number;
+    height: number;
+    backColor: string;
     layers: LayerFile[];
 
-    constructor(layers: LayerFile[]) {
+    constructor(width: number, height: number, backColor: string, layers: LayerFile[]) {
+        this.width = width;
+        this.height = height;
+        this.backColor = backColor;
         this.layers = layers;
     }
 }
@@ -100,6 +106,9 @@ export class EditorData {
     static roomMetadataList: RoomMetadata[];
     static nowRoomIndex: number;
     static nowRoomMetadata: RoomMetadata;
+    static nowRoomWidth: number;
+    static nowRoomHeight: number;
+    static nowRoomBackColor: string;
 
     static init() {
         // 读取房间
@@ -111,6 +120,9 @@ export class EditorData {
         }
         this.nowRoomIndex = -1;
         this.nowRoomMetadata = null;
+        this.nowRoomWidth = 800;
+        this.nowRoomHeight = 450;
+        this.nowRoomBackColor = "#7F7F7F";
 
         this.gridWidth = 32;
         this.gridHeight = 32;
@@ -221,6 +233,10 @@ export class EditorData {
             return;
         }
 
+        this.nowRoomWidth = roomFile.width;
+        this.nowRoomWidth = roomFile.height;
+        this.nowRoomBackColor = roomFile.backColor;
+
         // 摧毁现有节点
         for (const layer of this.layers) {
             for (const nodeData of layer.objects) {
@@ -256,9 +272,13 @@ export class EditorData {
         this.nowLayerData = this.layers[0];
     }
 
+    static hasRoom(name: string) {
+        return this.roomMetadataList.findIndex(v => v.name === name) !== -1;
+    }
+
     static createRoom(name: string) {
         // 检查房间名是否重复
-        if (this.roomMetadataList.findIndex(v => v.name === name) !== -1) {
+        if (this.hasRoom(name)) {
             return {
                 ok: false,
                 error: "房间名重复"
@@ -269,7 +289,7 @@ export class EditorData {
         const metadata = new RoomMetadata(name, time);
         this.roomMetadataList.push(metadata);
 
-        const room = new RoomFile([
+        const room = new RoomFile(800, 450, "#7F7F7F", [
             LayerFile.newEmpty("NeedleLayer"),
             LayerFile.newEmpty("BlockLayer"),
             LayerFile.newEmpty("FruitLayer"),
@@ -290,7 +310,7 @@ export class EditorData {
         this.nowRoomMetadata.editTime = SweetDate.now();
         sys.localStorage.setItem("editorRoomMetadatas", JSON.stringify(this.roomMetadataList));
 
-        const roomFile = new RoomFile(this.layers.map(
+        const roomFile = new RoomFile(this.nowRoomWidth, this.nowRoomHeight, this.nowRoomBackColor, this.layers.map(
             layer => new LayerFile(layer.name, layer.objects.map(
                 object => new NodeFile(object.prefabName, object.x, object.y)
             ))
@@ -318,6 +338,21 @@ export class EditorData {
                 nodeData.node = node;
             }
         }
+    }
+
+    static renameRoom(name: string) {
+        // 检查房间名是否重复
+        if (this.hasRoom(name)) {
+            return {
+                ok: false,
+                error: "房间名重复"
+            };
+        }
+
+        this.nowRoomMetadata.name = name;
+        return {
+            ok: true
+        };
     }
 
     static setGridSize(x: number, y: number) {
