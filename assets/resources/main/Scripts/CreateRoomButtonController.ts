@@ -22,6 +22,7 @@ export class CreateRoomButtonController extends Component {
             const result = EditorData.createRoom(roomName);
             if (result.ok) {
                 EditSceneController.instance.closeWindow();
+                EditSceneController.instance.rebuildRoom();
             } else {
                 this.illegalLabel.string = result.error;
             }

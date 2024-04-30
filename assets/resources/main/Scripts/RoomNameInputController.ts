@@ -16,10 +16,12 @@ export class RoomNameInputController extends Component {
 
     onEditEnd(editBox: EditBox) {
         const name = editBox.textLabel.string;
-        const result = EditorData.renameRoom(name);
-        if (!result.ok) {
-            editBox.string = EditorData.nowRoomMetadata.name;
-            this.errorLabel.string = result.error;
+        if (name !== EditorData.nowRoomMetadata.name) {
+            const result = EditorData.renameRoom(name);
+            if (!result.ok) {
+                editBox.string = EditorData.nowRoomMetadata.name;
+                this.errorLabel.string = result.error;
+            }
         }
     }
 }

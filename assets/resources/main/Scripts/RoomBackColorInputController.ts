@@ -3,21 +3,21 @@ import { EditorData } from './EditorData';
 import { EditSceneController } from './EditSceneController';
 const { ccclass, property } = _decorator;
 
-@ccclass('GridColorInputController')
-export class GridColorInputController extends Component {
+@ccclass('RoomBackColorInputController')
+export class RoomBackColorInputController extends Component {
     start() {
         this.node.on("editing-did-ended", this.onEditEnd, this);
 
         const input = this.getComponent(EditBox);
-        input.string = EditorData.gridColor;
+        input.string = EditorData.nowRoomBackColor;
     }
 
     onEditEnd(input: EditBox) {
         const color = input.string;
         if (/^#[0-9a-fA-F]+$/.test(color)) {
-            EditSceneController.instance.setGridColor(color);
+            EditSceneController.instance.setBackColor(color);
         } else {
-            input.string = EditorData.gridColor;
+            input.string = EditorData.nowRoomBackColor;
         }
     }
 }

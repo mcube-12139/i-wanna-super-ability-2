@@ -21,7 +21,7 @@ export class RoomListItemController extends Component {
     @property(Label)
     editTimeLabel: Label;
 
-    index: number;
+    roomName: string;
     selected: boolean;
 
     onLoad() {
@@ -43,12 +43,12 @@ export class RoomListItemController extends Component {
     onMouseUp(_) {
         if (!this.selected) {
             EditSceneController.instance.closeWindow();
-            EditorData.loadRoom(this.index);
+            EditSceneController.instance.loadRoom(this.roomName);
         }
     }
 
-    setData(index: number, data: RoomListItemData, selected: boolean) {
-        this.index = index;
+    setData(data: RoomListItemData, selected: boolean) {
+        this.roomName = data.name;
         this.nameLabel.string = data.name;
         this.editTimeLabel.string = data.editTime;
         this.selected = selected;

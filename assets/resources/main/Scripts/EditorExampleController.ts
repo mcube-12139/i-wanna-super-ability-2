@@ -3,6 +3,7 @@ const { ccclass, property } = _decorator;
 
 @ccclass('EditorExampleController')
 export class EditorExampleController extends Component {
+    exampleId: string;
     sprite: Sprite;
 
     onLoad() {

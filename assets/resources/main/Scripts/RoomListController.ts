@@ -15,7 +15,7 @@ export class RoomListController extends Component {
             const item = instantiate(this.itemPrefab);
             this.contentNode.addChild(item);
             const itemData = new RoomListItemData(data.name, data.editTime);
-            item.getComponent(RoomListItemController).setData(i, itemData, i === EditorData.nowRoomIndex);
+            item.getComponent(RoomListItemController).setData(itemData, EditorData.nowRoomMetadata !== null ? itemData.name === EditorData.nowRoomMetadata.name : false);
         }
     }
 }

@@ -1,9 +1,12 @@
-import { _decorator, Component, find, Node } from 'cc';
+import { _decorator, Camera, Component, math, Node, UITransform } from 'cc';
 import { SweetGlobal } from './SweetGlobal';
 import { GridController } from './GridController';
 import { ObjectShadowController } from './ObjectShadowController';
 import { MainMenuOptionId } from './MainMenuOptionController';
 import { EditorData } from './EditorData';
+import { EditorExampleController } from './EditorExampleController';
+import { EditorActionCreateObject, EditorActionDeleteObject } from './EditorAction';
+import { PrefabData } from './PrefabData';
 const { ccclass, property } = _decorator;
 
 @ccclass('EditSceneController')
@@ -20,6 +23,8 @@ export class EditSceneController extends Component {
 
     nowWindow: Node | null = null;
 
+    nodeMap: Map<string, Node>;
+
     static instance: EditSceneController;
 
     start() {
@@ -31,11 +36,13 @@ export class EditSceneController extends Component {
 
         this.selectPrefab(EditorData.nowPrefabIndex);
 
-        if (EditorData.nowRoomIndex === -1) {
+        this.nodeMap = new Map<string, Node>();
+
+        if (EditorData.nowRoomMetadata === null) {
             this.toggleWindow("SelectRoomWindow");
         } else {
             // 打开过，只需要重新创建
-            EditorData.rebuildRoom();
+            this.rebuildRoom();
         }
     }
 
@@ -86,7 +93,162 @@ export class EditSceneController extends Component {
 
     setLayerVisible(name: string, visible: boolean) {
         EditorData.getLayerData(name).visible = visible;
-        find(`Canvas/${name}`).active = visible;
+        this.node.getChildByName(name).active = visible;
+    }
+
+    setBackColor(color: string) {
+        this.node.getChildByName("Camera").getComponent(Camera).clearColor = new math.Color(color);
+        EditorData.nowRoomBackColor = color;
+    }
+
+    createLayer(before: string, name: string) {
+        const node = new Node(name);
+        node.setPosition(-400, -225);
+
+        let indexBefore: number;
+        if (before !== "") {
+            indexBefore = this.node.children.findIndex(v => v.name === before);
+        } else {
+            indexBefore = this.node.children.findIndex(v => v.name === "Stage");
+        }
+        this.node.insertChild(node, indexBefore);
+        EditorData.createLayer(before, name);
+    }
+
+    renameLayer(oldName: string, newName: string) {
+        const result = EditorData.renameLayer(oldName, newName);
+        if (result.ok) {
+            this.node.getChildByName(oldName).name = newName;
+        } else {
+            return result;
+        }
+        return {
+            ok: true
+        };
+    }
+
+    deleteLayer(name: string) {
+        this.node.getChildByName(name).destroy();
+        EditorData.deleteLayer(name);
+    }
+
+    moveUpLayer(name: string) {
+        const node = this.node.getChildByName(name);
+        const index = this.node.children.indexOf(node);
+
+        this.node.removeChild(node);
+        this.node.insertChild(node, index - 1);
+
+        EditorData.moveUpLayer(name);
+    }
+
+    moveDownLayer(name: string) {
+        const node = this.node.getChildByName(name);
+        const index = this.node.children.indexOf(node);
+
+        this.node.removeChild(node);
+        this.node.insertChild(node, index + 1);
+
+        EditorData.moveDownLayer(name);
+    }
+
+    addNode(id: string, layer: string, prefabData: PrefabData, x: number, y: number) {
+        const node = SweetGlobal.createOnLayerByPrefab("EditorExample", layer);
+        const control = node.getComponent(EditorExampleController);
+        control.exampleId = id;
+        control.setSprite(prefabData.sprite);
+        
+        node.setPosition(x, y);
+        if (prefabData.x !== 0 || prefabData.y !== 0) {
+            // 原点不在 0, 0，变换
+            const transform = node.getComponent(UITransform);
+            transform.setAnchorPoint(-prefabData.x / prefabData.width, -prefabData.y / prefabData.height);
+        }
+
+        this.nodeMap.set(id, node);
+    }
+
+    removeNode(id: string) {
+        this.nodeMap.get(id).destroy();
+        this.nodeMap.delete(id);
+    }
+
+    createObject(x: number, y: number) {
+        const nodeExist = EditorData.isShadowCollide(x, y);
+        if (!nodeExist) {
+            const id = EditorData.createObject(x, y);
+
+            this.addNode(id, EditorData.nowLayerData.name, EditorData.nowPrefabData, x, y);
+        }
+    }
+
+    deleteObject(x: number, y: number) {
+        const id = EditorData.getObjectAt(x, y);
+        if (id !== "") {
+            EditorData.deleteObject(id);
+            this.nodeMap.get(id).destroy();
+            this.nodeMap.delete(id);
+        }
+    }
+
+    selectObject(id: string) {
+        
+    }
+
+    undoCreateObject(action: EditorActionCreateObject) {
+        for (const object of action.created) {
+            this.removeNode(object.id);
+        }
+    }
+
+    undoDeleteObject(action: EditorActionDeleteObject) {
+        for (const object of action.deleted) {
+            this.addNode(object.id, action.layer, EditorData.prefabDataMap.get(object.prefab), object.x, object.y);
+        }
+    }
+
+    redoCreateObject(action: EditorActionCreateObject) {
+        for (const object of action.created) {
+            this.addNode(object.id, action.layer, EditorData.prefabDataMap.get(object.prefab), object.x, object.y);
+        }
+    }
+
+    redoDeleteObject(action: EditorActionDeleteObject) {
+        for (const object of action.deleted) {
+            this.removeNode(object.id);
+        }
+    }
+
+    loadRoom(name: string) {
+        // 摧毁现有层
+        for (const layer of EditorData.layers) {
+            this.node.getChildByName(layer.name).destroy();
+        }
+
+        EditorData.loadRoom(name);
+
+        this.nodeMap.clear();
+        this.rebuildRoom();
+    }
+
+    rebuildRoom() {
+        this.node.getChildByName("Camera").getComponent(Camera).clearColor = new math.Color(EditorData.nowRoomBackColor);
+
+        // 重新创建层
+        for (const layerData of EditorData.layers) {
+            const layerNode = new Node(layerData.name);
+            layerNode.setPosition(-400, -225);
+
+            let indexBefore = this.node.children.findIndex(v => v.name === "Stage");
+            this.node.insertChild(layerNode, indexBefore);
+
+            // 创建节点
+            for (const nodeData of layerData.objects) {
+                const prefabData = EditorData.prefabDataMap.get(nodeData.prefabName);
+
+                this.addNode(nodeData.id, layerData.name, prefabData, nodeData.x, nodeData.y);
+            }
+        }
     }
 }
 
