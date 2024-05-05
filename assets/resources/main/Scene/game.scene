@@ -193,7 +193,7 @@
     "_priority": 0,
     "_fov": 45,
     "_fovAxis": 0,
-    "_orthoHeight": 231.6268486916951,
+    "_orthoHeight": 274.75538160469665,
     "_near": 0,
     "_far": 1000,
     "_color": {
@@ -3318,6 +3318,7 @@
       "z": 0
     },
     "_distance": 0,
+    "_planeBias": 1,
     "_shadowColor": {
       "__type__": "cc.Color",
       "r": 76,

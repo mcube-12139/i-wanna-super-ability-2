@@ -50,11 +50,7 @@ export class PrefabData {
                     vspeed: 0
                 })
             ]),
-            new PrefabData("Fruit", -10, -12, 21, 24, "fruit 0", "FruitLayer", [
-                new DefaultComponent("FruitComponent", {
-                    animSpeed: 0.055556
-                })
-            ]),
+            new PrefabData("Fruit", -10, -12, 21, 24, "fruit 0", "FruitLayer", []),
             new PrefabData("PlayerStart", 0, 0, 32, 32, "player start", "PlayerLayer", []),
         ];
     }
