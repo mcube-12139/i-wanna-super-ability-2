@@ -1,6 +1,5 @@
 import { _decorator, Component, instantiate, Node, resources } from 'cc';
 import { RoomLayerItemController } from './RoomLayerItemController';
-import { EditorData } from './EditorData';
 import { EditSceneController } from './EditSceneController';
 const { ccclass, property } = _decorator;
 
@@ -13,7 +12,7 @@ export class RoomLayerListController extends Component {
     selectedItem: RoomLayerItemController = null;
 
     start() {
-        for (const [i, data] of EditorData.layers.entries()) {
+        for (const [i, data] of EditSceneController.layers.entries()) {
             const item = instantiate(resources.get("main/Prefab/RoomLayerItem"));
             this.content.addChild(item);
             const control = item.getComponent(RoomLayerItemController);
@@ -55,7 +54,7 @@ export class RoomLayerListController extends Component {
             this.updateIndex(newIndex + 1);
         }
         const control = item.getComponent(RoomLayerItemController);
-        const newName = EditorData.getNewLayerName();
+        const newName = EditSceneController.getNewLayerName();
         control.setData(newIndex, newName);
         if (this.selectedIndex !== -1) {
             this.selectItem(newIndex);

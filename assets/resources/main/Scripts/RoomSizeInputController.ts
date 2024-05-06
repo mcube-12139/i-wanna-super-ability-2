@@ -1,5 +1,5 @@
 import { _decorator, CCInteger, Component, EditBox, Node } from 'cc';
-import { EditorData } from './EditorData';
+import { EditSceneController } from './EditSceneController';
 const { ccclass, property } = _decorator;
 
 @ccclass('RoomSizeInputController')
@@ -10,9 +10,9 @@ export class RoomSizeInputController extends Component {
     start() {
         const editBox = this.getComponent(EditBox);
         if (this.index === 0) {
-            editBox.string = EditorData.nowRoomWidth.toString();
+            editBox.string = EditSceneController.nowRoomWidth.toString();
         } else {
-            editBox.string = EditorData.nowRoomHeight.toString();
+            editBox.string = EditSceneController.nowRoomHeight.toString();
         }
 
         this.node.on("editing-did-ended", this.onEditEnd, this);
@@ -22,9 +22,9 @@ export class RoomSizeInputController extends Component {
         const num = parseInt(editBox.textLabel.string);
         if (!isNaN(num) && num > 0) {
             if (this.index === 0) {
-                EditorData.nowRoomWidth = num;
+                EditSceneController.nowRoomWidth = num;
             } else {
-                EditorData.nowRoomHeight = num;
+                EditSceneController.nowRoomHeight = num;
             }
         }
     }

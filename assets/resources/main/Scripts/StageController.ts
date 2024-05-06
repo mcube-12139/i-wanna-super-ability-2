@@ -1,7 +1,6 @@
 import { _decorator, Component, director, EventKeyboard, EventMouse, Input, input, KeyCode, Node } from 'cc';
 import { EditSceneController } from './EditSceneController';
 import { MainMenuOptionId } from './MainMenuOptionController';
-import { EditorData } from './EditorData';
 const { ccclass, property } = _decorator;
 
 const enum StageAction {
@@ -40,23 +39,29 @@ export class StageController extends Component {
             this.setMousePosition(uiLocation.x, uiLocation.y);
             if (button === EventMouse.BUTTON_LEFT) {
                 // 左键，创建或选中
-                const id = EditorData.getObjectAt(uiLocation.x, uiLocation.y);
+                const id = EditSceneController.getObjectAt(uiLocation.x, uiLocation.y);
                 if (id === "") {
                     // 没点到物体，创建
                     this.action = StageAction.CREATE;
-                    EditorData.startCreateObject();
+                    EditSceneController.startCreateObject();
                     this.createObject();
                 } else {
                     // 点到物体了，选中
                     this.action = StageAction.DRAG;
-                    EditSceneController.instance.selectObject(id);
+                    EditSceneController.instance.selectObjects([id]);
                     EditSceneController.instance.startDrag(this.mouseX, this.mouseY);
                 }
             } else if (button === EventMouse.BUTTON_RIGHT) {
-                // 右键删除
+                // 右键取消选择，并开始删除
+                const id = EditSceneController.getObjectAt(this.noSnapMouseX, this.noSnapMouseY);
+                if (id === "") {
+                    EditSceneController.instance.selectObjects([]);
+                } else {
+                    EditSceneController.instance.deleteObject(id);
+                }
+
                 this.action = StageAction.DELETE;
-                EditorData.startDeleteObject();
-                this.deleteObject();
+                EditSceneController.startDeleteObject();
             }
         }
     }
@@ -73,7 +78,10 @@ export class StageController extends Component {
                 EditSceneController.instance.dragTo(this.mouseX, this.mouseY);
             }else if (this.action === StageAction.DELETE) {
                 if (updated && !this.altHeld) {
-                    this.deleteObject();
+                    const id = EditSceneController.getObjectAt(this.noSnapMouseX, this.noSnapMouseY);
+                    if (id !== "") {
+                        EditSceneController.instance.deleteObject(id);
+                    }
                 }
             }
         }
@@ -85,7 +93,7 @@ export class StageController extends Component {
             if (button === EventMouse.BUTTON_LEFT) {
                 if (this.action === StageAction.CREATE) {
                     this.action = StageAction.NONE;
-                    EditorData.endCreateObject();
+                    EditSceneController.endCreateObject();
                 } else if (this.action === StageAction.DRAG) {
                     this.action = StageAction.NONE;
                     EditSceneController.instance.endDrag();
@@ -94,7 +102,7 @@ export class StageController extends Component {
                 if (this.action === StageAction.DELETE) {
                     this.action = StageAction.NONE;
                 }
-                EditorData.endDeleteObject();
+                EditSceneController.endDeleteObject();
             }
         }
     }
@@ -117,18 +125,21 @@ export class StageController extends Component {
             } else if (event.keyCode === KeyCode.F4) {
                 // F4 - 打开"物体"页面
                 EditSceneController.instance.openMainMenuWindow(MainMenuOptionId.OBJECT);
+            } else if (event.keyCode === KeyCode.F5) {
+                // F5 - 打开"实例"页面
+                EditSceneController.instance.openMainMenuWindow(MainMenuOptionId.INSTANCE);
             } else if (event.keyCode === KeyCode.KEY_Z && this.ctrlHeld) {
                 // Ctrl + Z - 撤销
-                EditorData.undo();
+                EditSceneController.undo();
             } else if (event.keyCode === KeyCode.KEY_Y && this.ctrlHeld) {
                 // Ctrl + Y - 重做
-                EditorData.redo();
+                EditSceneController.redo();
             } else if (event.keyCode === KeyCode.KEY_R && this.ctrlHeld) {
                 // Ctrl + R - 运行
                 director.loadScene("preview");
             } else if (event.keyCode === KeyCode.KEY_S && this.ctrlHeld) {
                 // Ctrl + S - 保存
-                EditorData.saveRoom();
+                EditSceneController.saveRoom();
             }
         }
     }
@@ -151,8 +162,8 @@ export class StageController extends Component {
         let mouseY: number;
         // 根据 Alt 是否按住，计算网格坐标
         if (!this.altHeld) {
-            mouseX = EditorData.gridWidth * Math.floor(x / EditorData.gridWidth);
-            mouseY = EditorData.gridHeight * Math.floor(y / EditorData.gridHeight);
+            mouseX = EditSceneController.gridWidth * Math.floor(x / EditSceneController.gridWidth);
+            mouseY = EditSceneController.gridHeight * Math.floor(y / EditSceneController.gridHeight);
         } else {
             mouseX = x;
             mouseY = y;
@@ -170,9 +181,5 @@ export class StageController extends Component {
 
     createObject() {
         EditSceneController.instance.createObject(this.mouseX, this.mouseY);
-    }
-
-    deleteObject() {
-        EditSceneController.instance.deleteObject(this.noSnapMouseX, this.noSnapMouseY);
     }
 }

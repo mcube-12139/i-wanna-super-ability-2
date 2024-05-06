@@ -1,7 +1,7 @@
 [
   {
     "__type__": "cc.Prefab",
-    "_name": "Platform",
+    "_name": "Selector",
     "_objFlags": 0,
     "__editorExtras__": {},
     "_native": "",
@@ -13,7 +13,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "Platform",
+    "_name": "Selector",
     "_objFlags": 0,
     "__editorExtras__": {},
     "_parent": null,
@@ -28,24 +28,15 @@
       },
       {
         "__id__": 6
-      },
-      {
-        "__id__": 8
-      },
-      {
-        "__id__": 10
-      },
-      {
-        "__id__": 12
       }
     ],
     "_prefab": {
-      "__id__": 14
+      "__id__": 8
     },
     "_lpos": {
       "__type__": "cc.Vec3",
-      "x": 64,
-      "y": 64,
+      "x": 0,
+      "y": 0,
       "z": 0
     },
     "_lrot": {
@@ -85,22 +76,22 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 32,
-      "height": 16
+      "width": 100,
+      "height": 100
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
-      "x": 0,
-      "y": 0
+      "x": 0.5,
+      "y": 0.5
     },
     "_id": ""
   },
   {
     "__type__": "cc.CompPrefabInfo",
-    "fileId": "f5rqJRjqpBxJMRL3qcglLH"
+    "fileId": "3b+jqiU/JFuqaKPipBKzgJ"
   },
   {
-    "__type__": "cc.Sprite",
+    "__type__": "cc.Graphics",
     "_name": "",
     "_objFlags": 0,
     "__editorExtras__": {},
@@ -121,31 +112,32 @@
       "b": 255,
       "a": 255
     },
-    "_spriteFrame": {
-      "__uuid__": "c299cf4f-2e7b-476d-be88-0e84b05d103b@f9941",
-      "__expectedType__": "cc.SpriteFrame"
+    "_lineWidth": 1,
+    "_strokeColor": {
+      "__type__": "cc.Color",
+      "r": 0,
+      "g": 127,
+      "b": 255,
+      "a": 255
     },
-    "_type": 0,
-    "_fillType": 0,
-    "_sizeMode": 1,
-    "_fillCenter": {
-      "__type__": "cc.Vec2",
-      "x": 0,
-      "y": 0
+    "_lineJoin": 2,
+    "_lineCap": 0,
+    "_fillColor": {
+      "__type__": "cc.Color",
+      "r": 255,
+      "g": 255,
+      "b": 255,
+      "a": 255
     },
-    "_fillStart": 0,
-    "_fillRange": 0,
-    "_isTrimmedMode": true,
-    "_useGrayscale": false,
-    "_atlas": null,
+    "_miterLimit": 10,
     "_id": ""
   },
   {
     "__type__": "cc.CompPrefabInfo",
-    "fileId": "0afhDhHblEi4pyb/Yw+L6q"
+    "fileId": "e55/4vPYVGpKVi+W9ZX1KI"
   },
   {
-    "__type__": "490efpJUWtCfKMIeKLDZzkT",
+    "__type__": "d69e3QKT0RLSa340tK8KrIp",
     "_name": "",
     "_objFlags": 0,
     "__editorExtras__": {},
@@ -156,76 +148,11 @@
     "__prefab": {
       "__id__": 7
     },
-    "idSet": [
-      3
-    ],
     "_id": ""
   },
   {
     "__type__": "cc.CompPrefabInfo",
-    "fileId": "8aNZWcSZlHeokaLgLdNJZn"
-  },
-  {
-    "__type__": "a0d46etC+NBaZWdgZN3iUHO",
-    "_name": "",
-    "_objFlags": 0,
-    "__editorExtras__": {},
-    "node": {
-      "__id__": 1
-    },
-    "_enabled": true,
-    "__prefab": {
-      "__id__": 9
-    },
-    "type": 0,
-    "top": 16,
-    "bottom": 0,
-    "left": 0,
-    "right": 32,
-    "bitmapId": 0,
-    "bitmapIdList": [],
-    "_id": ""
-  },
-  {
-    "__type__": "cc.CompPrefabInfo",
-    "fileId": "336BHxzpNFwodO1CM4mRW5"
-  },
-  {
-    "__type__": "6807cUe8o1PdZJ0a+SMRDZP",
-    "_name": "",
-    "_objFlags": 0,
-    "__editorExtras__": {},
-    "node": {
-      "__id__": 1
-    },
-    "_enabled": true,
-    "__prefab": {
-      "__id__": 11
-    },
-    "bounce": true,
-    "_id": ""
-  },
-  {
-    "__type__": "cc.CompPrefabInfo",
-    "fileId": "cfFF+wUZhLfKrzfChBiC6N"
-  },
-  {
-    "__type__": "ff072YBVJJA95sTEILq4oAc",
-    "_name": "",
-    "_objFlags": 0,
-    "__editorExtras__": {},
-    "node": {
-      "__id__": 1
-    },
-    "_enabled": true,
-    "__prefab": {
-      "__id__": 13
-    },
-    "_id": ""
-  },
-  {
-    "__type__": "cc.CompPrefabInfo",
-    "fileId": "95DH52h8tLbZpgu4/sLnG/"
+    "fileId": "5ffE7JkUdO7K48fH0WxrTS"
   },
   {
     "__type__": "cc.PrefabInfo",
@@ -235,8 +162,7 @@
     "asset": {
       "__id__": 0
     },
-    "fileId": "10A0xrE2pKdqy7aHzcEFCg",
-    "instance": null,
+    "fileId": "efNHTh5INPh7deVg6a3ZpC",
     "targetOverrides": null
   }
 ]

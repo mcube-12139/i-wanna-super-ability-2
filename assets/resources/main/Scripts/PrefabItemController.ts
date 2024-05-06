@@ -1,7 +1,6 @@
 import { _decorator, Component, Label, Node, resources, Sprite } from 'cc';
 import { PrefabData } from './PrefabData';
 import { EditSceneController } from './EditSceneController';
-import { EditorData } from './EditorData';
 const { ccclass, property } = _decorator;
 
 @ccclass('PrefabItemController')
@@ -26,7 +25,7 @@ export class PrefabItemController extends Component {
 
     setData(index: number, data: PrefabData) {
         this.index = index;
-        if (index === EditorData.nowPrefabIndex) {
+        if (index === EditSceneController.nowPrefabIndex) {
             this.selected = true;
             this.backSprite.enabled = true;
         }

@@ -1,7 +1,5 @@
-import { _decorator, Component, EventKeyboard, EventMouse, find, Input, input, KeyCode, Node, resources, Sprite, SpriteFrame, UITransform } from 'cc';
+import { _decorator, Component, resources, Sprite, UITransform } from 'cc';
 import { EditSceneController } from './EditSceneController';
-import { PrefabData } from './PrefabData';
-import { EditorData } from './EditorData';
 const { ccclass, property } = _decorator;
 
 @ccclass('ObjectShadowController')
@@ -23,7 +21,7 @@ export class ObjectShadowController extends Component {
     }
 
     updateSprite() {
-        const data = EditorData.nowPrefabData;
+        const data = EditSceneController.nowPrefabData;
         
         this.sprite.spriteFrame = resources.get(`main/Sprites/${data.sprite}/spriteFrame`);
         this.transform.setAnchorPoint(-data.x / data.width, -data.y / data.height);

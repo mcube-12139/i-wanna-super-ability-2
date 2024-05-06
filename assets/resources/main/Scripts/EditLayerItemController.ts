@@ -1,5 +1,4 @@
 import { _decorator, Component, EventMouse, Label, Node, Sprite, Toggle } from 'cc';
-import { EditorData } from './EditorData';
 import { EditSceneController } from './EditSceneController';
 const { ccclass, property } = _decorator;
 
@@ -60,7 +59,7 @@ export class EditLayerItemController extends Component {
         }
         this.selected = true;
         this.background.enabled = true;
-        EditorData.selectLayer(this.layerName);
+        EditSceneController.selectLayer(this.layerName);
     }
 
     onVisibleToggle(toggle: Toggle) {
@@ -68,7 +67,7 @@ export class EditLayerItemController extends Component {
     }
 
     onLockedToggle(toggle: Toggle) {
-        EditorData.getLayerData(this.layerName).locked = toggle.isChecked;
+        EditSceneController.getLayerData(this.layerName).locked = toggle.isChecked;
     }
 }
 

@@ -1,6 +1,5 @@
 import { _decorator, Component, EditBox, EventMouse, Label, Node, ScrollView, Sprite } from 'cc';
 import { RoomLayerListController } from './RoomLayerListController';
-import { EditorData } from './EditorData';
 import { EditSceneController } from './EditSceneController';
 const { ccclass, property } = _decorator;
 

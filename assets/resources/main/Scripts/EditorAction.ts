@@ -1,9 +1,9 @@
+import { ComponentTemplate } from "./ComponentTemplate";
 import { EditSceneController } from "./EditSceneController";
-import { EditorData } from "./EditorData";
 
-export class EditorAction {
-    undo() {}
-    redo() {}
+export interface EditorAction {
+    undo(): void;
+    redo(): void;
 }
 
 export class EditorActionObjectData {
@@ -11,53 +11,87 @@ export class EditorActionObjectData {
     y: number;
     prefab: string;
     id: string;
+    components: ComponentTemplate[];
 
-    constructor(x: number, y: number, prefab: string, id: string) {
+    constructor(x: number, y: number, prefab: string, id: string, components: ComponentTemplate[]) {
         this.x = x;
         this.y = y;
         this.prefab = prefab;
         this.id = id;
+        this.components = components;
     }
 }
 
-export class EditorActionCreateObject extends EditorAction {
+export class EditorActionCreateObject implements EditorAction {
     layer: string;
     created: EditorActionObjectData[];
 
     constructor(layer: string, created: EditorActionObjectData[]) {
-        super();
         this.layer = layer;
         this.created = created;
     }
 
     undo() {
-        EditorData.undoCreateObject(this);
         EditSceneController.instance.undoCreateObject(this);
     }
 
     redo() {
-        EditorData.redoCreateObject(this);
         EditSceneController.instance.redoCreateObject(this);
     }
 }
 
-export class EditorActionDeleteObject extends EditorAction {
+export class EditorActionDeleteObject implements EditorAction {
     layer: string;
     deleted: EditorActionObjectData[];
 
     constructor(layer: string, deleted: EditorActionObjectData[]) {
-        super();
         this.layer = layer;
         this.deleted = deleted;
     }
 
     undo() {
-        EditorData.undoDeleteObject(this);
         EditSceneController.instance.undoDeleteObject(this);
     }
 
     redo() {
-        EditorData.redoDeleteObject(this);
         EditSceneController.instance.redoDeleteObject(this);
+    }
+}
+
+export class EditorActionSelect implements EditorAction {
+    before: string[];
+    after: string[];
+
+    constructor(before: string[], after: string[]) {
+        this.before = before;
+        this.after = after;
+    }
+
+    undo(): void {
+        EditSceneController.instance.undoSelect(this);
+    }
+
+    redo(): void {
+        EditSceneController.instance.redoSelect(this);
+    }
+}
+
+export class EditorActionDrag implements EditorAction {
+    ids: string[];
+    movementX: number;
+    movementY: number;
+
+    constructor(ids: string[], before: number, after: number) {
+        this.ids = ids;
+        this.movementX = before;
+        this.movementY = after;
+    }
+
+    undo(): void {
+        EditSceneController.instance.undoDrag(this);
+    }
+
+    redo(): void {
+        EditSceneController.instance.redoDrag(this);
     }
 }

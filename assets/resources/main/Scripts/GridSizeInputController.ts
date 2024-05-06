@@ -1,6 +1,5 @@
 import { _decorator, CCInteger, Component, EditBox, Node } from 'cc';
 import { EditSceneController } from './EditSceneController';
-import { EditorData } from './EditorData';
 const { ccclass, property } = _decorator;
 
 @ccclass('GridSizeInputController')
@@ -11,9 +10,9 @@ export class GridSizeInputController extends Component {
     start() {
         const editbox = this.getComponent(EditBox);
         if (this.index === 0) {
-            editbox.string = EditorData.gridWidth.toString();
+            editbox.string = EditSceneController.gridWidth.toString();
         } else {
-            editbox.string = EditorData.gridHeight.toString();
+            editbox.string = EditSceneController.gridHeight.toString();
         }
 
         this.node.on("editing-did-ended", this.onEditEnd, this);
@@ -23,9 +22,9 @@ export class GridSizeInputController extends Component {
         const num = parseInt(editbox.textLabel.string);
         if (!isNaN(num) && num !== 0) {
             if (this.index === 0) {
-                EditSceneController.instance.setGridSize(num, EditorData.gridHeight);
+                EditSceneController.instance.setGridSize(num, EditSceneController.gridHeight);
             } else {
-                EditSceneController.instance.setGridSize(EditorData.gridWidth, num);
+                EditSceneController.instance.setGridSize(EditSceneController.gridWidth, num);
             }
         }
     }

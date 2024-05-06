@@ -1,5 +1,4 @@
 import { _decorator, Component, Label, math, Node, Sprite } from 'cc';
-import { EditorData } from './EditorData';
 import { EditSceneController } from './EditSceneController';
 const { ccclass, property } = _decorator;
 

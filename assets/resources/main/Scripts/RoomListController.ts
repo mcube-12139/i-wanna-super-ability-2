@@ -1,6 +1,6 @@
 import { _decorator, Component, instantiate, Prefab, Node } from 'cc';
 import { RoomListItemController, RoomListItemData } from './RoomListItemController';
-import { EditorData } from './EditorData';
+import { EditSceneController } from './EditSceneController';
 const { ccclass, property } = _decorator;
 
 @ccclass('RoomListController')
@@ -11,11 +11,11 @@ export class RoomListController extends Component {
     contentNode: Node;
 
     onLoad() {
-        for (const [i, data] of EditorData.roomMetadataList.entries()) {
+        for (const [i, data] of EditSceneController.roomMetadataList.entries()) {
             const item = instantiate(this.itemPrefab);
             this.contentNode.addChild(item);
             const itemData = new RoomListItemData(data.name, data.editTime);
-            item.getComponent(RoomListItemController).setData(itemData, EditorData.nowRoomMetadata !== null ? itemData.name === EditorData.nowRoomMetadata.name : false);
+            item.getComponent(RoomListItemController).setData(itemData, EditSceneController.nowRoomMetadata !== null ? itemData.name === EditSceneController.nowRoomMetadata.name : false);
         }
     }
 }

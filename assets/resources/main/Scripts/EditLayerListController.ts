@@ -1,6 +1,6 @@
 import { _decorator, Component, instantiate, Node, resources } from 'cc';
-import { EditorData } from './EditorData';
 import { EditLayerItemController } from './EditLayerItemController';
+import { EditSceneController } from './EditSceneController';
 const { ccclass, property } = _decorator;
 
 @ccclass('EditLayerListController')
@@ -9,12 +9,12 @@ export class EditLayerListController extends Component {
     contentNode: Node;
 
     start() {
-        for (const layerData of EditorData.layers) {
+        for (const layerData of EditSceneController.layers) {
             const item = instantiate(resources.get("main/Prefab/EditLayerItem"));
             this.contentNode.addChild(item);
 
             const controller = item.getComponent(EditLayerItemController);
-            const selected = layerData === EditorData.nowLayerData;
+            const selected = layerData === EditSceneController.nowLayerData;
             controller.setData(selected, layerData.name, layerData.visible, layerData.locked);
         }
     }

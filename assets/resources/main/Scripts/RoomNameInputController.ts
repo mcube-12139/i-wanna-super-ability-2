@@ -1,5 +1,5 @@
 import { _decorator, Component, EditBox, Label, Node } from 'cc';
-import { EditorData } from './EditorData';
+import { EditSceneController } from './EditSceneController';
 const { ccclass, property } = _decorator;
 
 @ccclass('RoomNameInputController')
@@ -9,17 +9,17 @@ export class RoomNameInputController extends Component {
 
     start() {
         const editBox = this.getComponent(EditBox);
-        editBox.string = EditorData.nowRoomMetadata.name;
+        editBox.string = EditSceneController.nowRoomMetadata.name;
 
         this.node.on("editing-did-ended", this.onEditEnd, this);
     }
 
     onEditEnd(editBox: EditBox) {
         const name = editBox.textLabel.string;
-        if (name !== EditorData.nowRoomMetadata.name) {
-            const result = EditorData.renameRoom(name);
+        if (name !== EditSceneController.nowRoomMetadata.name) {
+            const result = EditSceneController.renameRoom(name);
             if (!result.ok) {
-                editBox.string = EditorData.nowRoomMetadata.name;
+                editBox.string = EditSceneController.nowRoomMetadata.name;
                 this.errorLabel.string = result.error;
             }
         }
