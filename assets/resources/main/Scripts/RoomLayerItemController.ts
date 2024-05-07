@@ -1,6 +1,6 @@
 import { _decorator, Component, EditBox, EventMouse, Label, Node, ScrollView, Sprite } from 'cc';
 import { RoomLayerListController } from './RoomLayerListController';
-import { EditSceneController } from './EditSceneController';
+import { EditSceneController, LayerData } from './EditSceneController';
 const { ccclass, property } = _decorator;
 
 @ccclass('RoomLayerItemController')
@@ -12,8 +12,7 @@ export class RoomLayerItemController extends Component {
     @property(EditBox)
     nameInput: EditBox;
 
-    index: number;
-    layerName: string;
+    data: LayerData;
     listControl: RoomLayerListController;
 
     start() {
@@ -26,31 +25,30 @@ export class RoomLayerItemController extends Component {
         this.nameInput.node.on("editing-did-ended", this.onNameEditEnd, this);
     }
 
-    setData(index: number, name: string) {
-        this.index = index;
-        this.layerName = name;
+    setData(data: LayerData) {
+        this.data = data;
 
-        this.nameLabel.string = name;
+        this.nameLabel.string = data.name;
     }
 
     editName() {
         const view = this.node.parent.parent.parent.getComponent(ScrollView);
         this.nameInput.enabled = true;
-        this.nameInput.string = this.layerName;
+        this.nameInput.string = this.data.name;
         this.nameLabel.enabled = false;
         this.nameInput.focus();
     }
 
     doDelete() {
-        EditSceneController.instance.deleteLayer(this.layerName);
+        EditSceneController.deleteLayer(this.data);
     }
 
     doMoveUp() {
-        EditSceneController.instance.moveUpLayer(this.layerName);
+        EditSceneController.moveUpLayer(this.data);
     }
 
     doMoveDown() {
-        EditSceneController.instance.moveDownLayer(this.layerName);
+        EditSceneController.moveDownLayer(this.data);
     }
 
     onMouseEnter(e: EventMouse) {
@@ -64,15 +62,14 @@ export class RoomLayerItemController extends Component {
     }
 
     onMouseUp(e: EventMouse) {
-        this.listControl.selectItem(this.index);
+        this.listControl.selectItem(this);
     }
 
     onNameEditEnd(editBox: EditBox) {
         this.nameLabel.enabled = true;
         const newName = editBox.textLabel.string;
-        const result = EditSceneController.instance.renameLayer(this.layerName, newName);
+        const result = EditSceneController.renameLayer(this.data, newName);
         if (result.ok) {
-            this.layerName = newName;
             this.nameLabel.string = newName;
         }
         this.nameInput.string = "";

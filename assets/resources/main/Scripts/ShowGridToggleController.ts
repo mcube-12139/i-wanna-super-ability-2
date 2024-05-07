@@ -11,7 +11,7 @@ export class ShowGridToggleController extends Component {
     }
 
     onToggle(toggle: Toggle) {
-        EditSceneController.instance.setGridVisible(toggle.isChecked);
+        EditSceneController.setGridVisible(toggle.isChecked);
     }
 }
 

@@ -62,19 +62,25 @@
       },
       {
         "__id__": 184
+      },
+      {
+        "__id__": 266
+      },
+      {
+        "__id__": 280
       }
     ],
     "_active": true,
     "_components": [
       {
-        "__id__": 266
+        "__id__": 294
       },
       {
-        "__id__": 268
+        "__id__": 296
       }
     ],
     "_prefab": {
-      "__id__": 270
+      "__id__": 298
     },
     "_lpos": {
       "__type__": "cc.Vec3",
@@ -208,7 +214,7 @@
     "_string": "网格大小: ",
     "_horizontalAlign": 0,
     "_verticalAlign": 1,
-    "_actualFontSize": 32.9625,
+    "_actualFontSize": 34.6875,
     "_fontSize": 20,
     "_fontFamily": "站酷快乐体2016修订版",
     "_lineHeight": 32,
@@ -367,7 +373,7 @@
     "_string": "x",
     "_horizontalAlign": 0,
     "_verticalAlign": 1,
-    "_actualFontSize": 32.9625,
+    "_actualFontSize": 34.6875,
     "_fontSize": 20,
     "_fontFamily": "站酷快乐体2016修订版",
     "_lineHeight": 32,
@@ -710,7 +716,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 0,
-      "height": 40.32
+      "height": 40.32000000000001
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -748,7 +754,7 @@
     "_string": "",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 65.925,
+    "_actualFontSize": 69.375,
     "_fontSize": 40,
     "_fontFamily": "Arial",
     "_lineHeight": 32,
@@ -1050,7 +1056,7 @@
     "_string": "y",
     "_horizontalAlign": 0,
     "_verticalAlign": 1,
-    "_actualFontSize": 32.9625,
+    "_actualFontSize": 34.6875,
     "_fontSize": 20,
     "_fontFamily": "站酷快乐体2016修订版",
     "_lineHeight": 32,
@@ -1393,7 +1399,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 0,
-      "height": 40.32
+      "height": 40.32000000000001
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -1431,7 +1437,7 @@
     "_string": "",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 65.925,
+    "_actualFontSize": 69.375,
     "_fontSize": 40,
     "_fontFamily": "Arial",
     "_lineHeight": 32,
@@ -1793,7 +1799,7 @@
     "_string": "32",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 32.9625,
+    "_actualFontSize": 34.6875,
     "_fontSize": 20,
     "_fontFamily": "站酷快乐体2016修订版",
     "_lineHeight": 40,
@@ -2184,7 +2190,7 @@
     "_string": "16",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 32.9625,
+    "_actualFontSize": 34.6875,
     "_fontSize": 20,
     "_fontFamily": "站酷快乐体2016修订版",
     "_lineHeight": 40,
@@ -2575,7 +2581,7 @@
     "_string": "8",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 32.9625,
+    "_actualFontSize": 34.6875,
     "_fontSize": 20,
     "_fontFamily": "站酷快乐体2016修订版",
     "_lineHeight": 40,
@@ -2966,7 +2972,7 @@
     "_string": "4",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 32.9625,
+    "_actualFontSize": 34.6875,
     "_fontSize": 20,
     "_fontFamily": "站酷快乐体2016修订版",
     "_lineHeight": 40,
@@ -3660,7 +3666,7 @@
     "_string": "显示网格",
     "_horizontalAlign": 0,
     "_verticalAlign": 1,
-    "_actualFontSize": 32.9625,
+    "_actualFontSize": 34.6875,
     "_fontSize": 20,
     "_fontFamily": "站酷快乐体2016修订版",
     "_lineHeight": 32,
@@ -3819,7 +3825,7 @@
     "_string": "网格颜色: ",
     "_horizontalAlign": 0,
     "_verticalAlign": 1,
-    "_actualFontSize": 32.9625,
+    "_actualFontSize": 34.6875,
     "_fontSize": 20,
     "_fontFamily": "站酷快乐体2016修订版",
     "_lineHeight": 32,
@@ -4162,7 +4168,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 0,
-      "height": 40.32
+      "height": 40.32000000000001
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -4200,7 +4206,7 @@
     "_string": "",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 65.925,
+    "_actualFontSize": 69.375,
     "_fontSize": 40,
     "_fontFamily": "Arial",
     "_lineHeight": 32,
@@ -4501,7 +4507,7 @@
     "_string": "层:",
     "_horizontalAlign": 0,
     "_verticalAlign": 1,
-    "_actualFontSize": 32.9625,
+    "_actualFontSize": 34.6875,
     "_fontSize": 20,
     "_fontFamily": "站酷快乐体2016修订版",
     "_lineHeight": 32,
@@ -4913,7 +4919,7 @@
     "_string": "名称",
     "_horizontalAlign": 0,
     "_verticalAlign": 1,
-    "_actualFontSize": 32.9625,
+    "_actualFontSize": 34.6875,
     "_fontSize": 20,
     "_fontFamily": "站酷快乐体2016修订版",
     "_lineHeight": 40,
@@ -5072,7 +5078,7 @@
     "_string": "显示",
     "_horizontalAlign": 0,
     "_verticalAlign": 1,
-    "_actualFontSize": 32.9625,
+    "_actualFontSize": 34.6875,
     "_fontSize": 20,
     "_fontFamily": "站酷快乐体2016修订版",
     "_lineHeight": 40,
@@ -5231,7 +5237,7 @@
     "_string": "锁定",
     "_horizontalAlign": 0,
     "_verticalAlign": 1,
-    "_actualFontSize": 32.9625,
+    "_actualFontSize": 34.6875,
     "_fontSize": 20,
     "_fontFamily": "站酷快乐体2016修订版",
     "_lineHeight": 40,
@@ -6438,6 +6444,364 @@
     "nestedPrefabInstanceRoots": null
   },
   {
+    "__type__": "cc.Node",
+    "_objFlags": 0,
+    "_parent": {
+      "__id__": 1
+    },
+    "_prefab": {
+      "__id__": 267
+    },
+    "__editorExtras__": {}
+  },
+  {
+    "__type__": "cc.PrefabInfo",
+    "root": {
+      "__id__": 266
+    },
+    "asset": {
+      "__uuid__": "0d0cd263-3809-4095-98c4-b3ea32d03a84",
+      "__expectedType__": "cc.Prefab"
+    },
+    "fileId": "abFndEBVVJcJe9Qx8LdrAx",
+    "instance": {
+      "__id__": 268
+    },
+    "targetOverrides": null
+  },
+  {
+    "__type__": "cc.PrefabInstance",
+    "fileId": "52RaVdvX9Laa8EJpEcK3A9",
+    "prefabRootNode": {
+      "__id__": 1
+    },
+    "mountedChildren": [],
+    "mountedComponents": [
+      {
+        "__id__": 269
+      }
+    ],
+    "propertyOverrides": [
+      {
+        "__id__": 273
+      },
+      {
+        "__id__": 275
+      },
+      {
+        "__id__": 276
+      },
+      {
+        "__id__": 277
+      },
+      {
+        "__id__": 278
+      }
+    ],
+    "removedComponents": []
+  },
+  {
+    "__type__": "cc.MountedComponentsInfo",
+    "targetInfo": {
+      "__id__": 270
+    },
+    "components": [
+      {
+        "__id__": 271
+      }
+    ]
+  },
+  {
+    "__type__": "cc.TargetInfo",
+    "localID": [
+      "abFndEBVVJcJe9Qx8LdrAx"
+    ]
+  },
+  {
+    "__type__": "eddf3dUxzZE94V/dxlB4/wr",
+    "_name": "",
+    "_objFlags": 0,
+    "__editorExtras__": {
+      "mountedRoot": {
+        "__id__": 266
+      }
+    },
+    "node": {
+      "__id__": 266
+    },
+    "_enabled": true,
+    "__prefab": {
+      "__id__": 272
+    },
+    "_id": ""
+  },
+  {
+    "__type__": "cc.CompPrefabInfo",
+    "fileId": "8018qmBQ1JRpFML6zOwX0I"
+  },
+  {
+    "__type__": "CCPropertyOverrideInfo",
+    "targetInfo": {
+      "__id__": 274
+    },
+    "propertyPath": [
+      "_name"
+    ],
+    "value": "ThroughLayerToggle"
+  },
+  {
+    "__type__": "cc.TargetInfo",
+    "localID": [
+      "abFndEBVVJcJe9Qx8LdrAx"
+    ]
+  },
+  {
+    "__type__": "CCPropertyOverrideInfo",
+    "targetInfo": {
+      "__id__": 274
+    },
+    "propertyPath": [
+      "_lpos"
+    ],
+    "value": {
+      "__type__": "cc.Vec3",
+      "x": 16,
+      "y": -412,
+      "z": 0
+    }
+  },
+  {
+    "__type__": "CCPropertyOverrideInfo",
+    "targetInfo": {
+      "__id__": 274
+    },
+    "propertyPath": [
+      "_lrot"
+    ],
+    "value": {
+      "__type__": "cc.Quat",
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "w": 1
+    }
+  },
+  {
+    "__type__": "CCPropertyOverrideInfo",
+    "targetInfo": {
+      "__id__": 274
+    },
+    "propertyPath": [
+      "_euler"
+    ],
+    "value": {
+      "__type__": "cc.Vec3",
+      "x": 0,
+      "y": 0,
+      "z": 0
+    }
+  },
+  {
+    "__type__": "CCPropertyOverrideInfo",
+    "targetInfo": {
+      "__id__": 279
+    },
+    "propertyPath": [
+      "_contentSize"
+    ],
+    "value": {
+      "__type__": "cc.Size",
+      "width": 24,
+      "height": 24
+    }
+  },
+  {
+    "__type__": "cc.TargetInfo",
+    "localID": [
+      "4dAiZiPiRCOK0MhhY163R2"
+    ]
+  },
+  {
+    "__type__": "cc.Node",
+    "_objFlags": 0,
+    "_parent": {
+      "__id__": 1
+    },
+    "_prefab": {
+      "__id__": 281
+    },
+    "__editorExtras__": {}
+  },
+  {
+    "__type__": "cc.PrefabInfo",
+    "root": {
+      "__id__": 280
+    },
+    "asset": {
+      "__uuid__": "9163dc2c-2294-454c-b631-d68e188cdc32",
+      "__expectedType__": "cc.Prefab"
+    },
+    "fileId": "a7c1nx76lKfrXDZfGnGeU9",
+    "instance": {
+      "__id__": 282
+    },
+    "targetOverrides": null
+  },
+  {
+    "__type__": "cc.PrefabInstance",
+    "fileId": "a9DcbopDBPH7K2fGbtBQWX",
+    "prefabRootNode": {
+      "__id__": 1
+    },
+    "mountedChildren": [],
+    "mountedComponents": [],
+    "propertyOverrides": [
+      {
+        "__id__": 283
+      },
+      {
+        "__id__": 285
+      },
+      {
+        "__id__": 286
+      },
+      {
+        "__id__": 287
+      },
+      {
+        "__id__": 288
+      },
+      {
+        "__id__": 290
+      },
+      {
+        "__id__": 291
+      },
+      {
+        "__id__": 293
+      }
+    ],
+    "removedComponents": []
+  },
+  {
+    "__type__": "CCPropertyOverrideInfo",
+    "targetInfo": {
+      "__id__": 284
+    },
+    "propertyPath": [
+      "_name"
+    ],
+    "value": "ThroughLayer"
+  },
+  {
+    "__type__": "cc.TargetInfo",
+    "localID": [
+      "a7c1nx76lKfrXDZfGnGeU9"
+    ]
+  },
+  {
+    "__type__": "CCPropertyOverrideInfo",
+    "targetInfo": {
+      "__id__": 284
+    },
+    "propertyPath": [
+      "_lpos"
+    ],
+    "value": {
+      "__type__": "cc.Vec3",
+      "x": 44,
+      "y": -408,
+      "z": 0
+    }
+  },
+  {
+    "__type__": "CCPropertyOverrideInfo",
+    "targetInfo": {
+      "__id__": 284
+    },
+    "propertyPath": [
+      "_lrot"
+    ],
+    "value": {
+      "__type__": "cc.Quat",
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "w": 1
+    }
+  },
+  {
+    "__type__": "CCPropertyOverrideInfo",
+    "targetInfo": {
+      "__id__": 284
+    },
+    "propertyPath": [
+      "_euler"
+    ],
+    "value": {
+      "__type__": "cc.Vec3",
+      "x": 0,
+      "y": 0,
+      "z": 0
+    }
+  },
+  {
+    "__type__": "CCPropertyOverrideInfo",
+    "targetInfo": {
+      "__id__": 289
+    },
+    "propertyPath": [
+      "_string"
+    ],
+    "value": "穿透"
+  },
+  {
+    "__type__": "cc.TargetInfo",
+    "localID": [
+      "24luknEdBK/bn2RJEpVKQ7"
+    ]
+  },
+  {
+    "__type__": "CCPropertyOverrideInfo",
+    "targetInfo": {
+      "__id__": 289
+    },
+    "propertyPath": [
+      "_actualFontSize"
+    ],
+    "value": 34.6875
+  },
+  {
+    "__type__": "CCPropertyOverrideInfo",
+    "targetInfo": {
+      "__id__": 292
+    },
+    "propertyPath": [
+      "_contentSize"
+    ],
+    "value": {
+      "__type__": "cc.Size",
+      "width": 39.9913429054054,
+      "height": 31.5
+    }
+  },
+  {
+    "__type__": "cc.TargetInfo",
+    "localID": [
+      "b7TCdR/rxOF729Dn6kLdMT"
+    ]
+  },
+  {
+    "__type__": "CCPropertyOverrideInfo",
+    "targetInfo": {
+      "__id__": 289
+    },
+    "propertyPath": [
+      "_fontSize"
+    ],
+    "value": 20
+  },
+  {
     "__type__": "cc.UITransform",
     "_name": "",
     "_objFlags": 0,
@@ -6447,7 +6811,7 @@
     },
     "_enabled": true,
     "__prefab": {
-      "__id__": 267
+      "__id__": 295
     },
     "_contentSize": {
       "__type__": "cc.Size",
@@ -6475,7 +6839,7 @@
     },
     "_enabled": true,
     "__prefab": {
-      "__id__": 269
+      "__id__": 297
     },
     "_customMaterial": null,
     "_srcBlendFactor": 2,
@@ -6520,6 +6884,14 @@
     },
     "fileId": "1dv6kWJDFNeLdX9RiyA+1X",
     "instance": null,
-    "targetOverrides": null
+    "targetOverrides": null,
+    "nestedPrefabInstanceRoots": [
+      {
+        "__id__": 280
+      },
+      {
+        "__id__": 266
+      }
+    ]
   }
 ]

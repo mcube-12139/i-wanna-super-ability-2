@@ -36,7 +36,7 @@ export class InstXInputController extends Component {
     onEditEnd(input: EditBox) {
         const num = parseFloat(input.string);
         if (!isNaN(num)) {
-            EditSceneController.instance.setX(num);
+            EditSceneController.setX(num);
         } else {
             input.string = this.initialText;
         }

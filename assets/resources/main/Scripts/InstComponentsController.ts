@@ -1,22 +1,20 @@
 import { _decorator, Component, instantiate, Label, Node, resources } from 'cc';
 import { EditSceneController } from './EditSceneController';
-import { ComponentData } from './ComponentData';
+import { ComponentTemplate } from './ComponentTemplate';
 const { ccclass, property } = _decorator;
 
 @ccclass('InstComponentsController')
 export class InstComponentsController extends Component {
     start() {
-        const map = new Map<string, ComponentData[]>();
+        const map = new Map<string, ComponentTemplate[]>();
         for (const object of EditSceneController.selectedObjects) {
             for (const component of object.components) {
-                let arr: ComponentData[];
-                if (!map.has(component.name)) {
-                    arr = [component.data];
+                const metaName = component.meta.name;
+                if (!map.has(metaName)) {
+                    map.set(metaName, [component]);
                 } else {
-                    arr = map.get(component.name);
-                    arr.push(component.data);
+                    map.get(metaName).push(component);
                 }
-                map.set(component.name, arr);
             }
         }
 

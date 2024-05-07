@@ -22,9 +22,9 @@ export class GridSizeInputController extends Component {
         const num = parseInt(editbox.textLabel.string);
         if (!isNaN(num) && num !== 0) {
             if (this.index === 0) {
-                EditSceneController.instance.setGridSize(num, EditSceneController.gridHeight);
+                EditSceneController.setGridSize(num, EditSceneController.gridHeight);
             } else {
-                EditSceneController.instance.setGridSize(EditSceneController.gridWidth, num);
+                EditSceneController.setGridSize(EditSceneController.gridWidth, num);
             }
         }
     }

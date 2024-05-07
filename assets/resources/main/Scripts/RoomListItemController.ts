@@ -42,7 +42,7 @@ export class RoomListItemController extends Component {
     onMouseUp(_) {
         if (!this.selected) {
             EditSceneController.instance.closeWindow();
-            EditSceneController.instance.loadRoom(this.roomName);
+            EditSceneController.loadRoom(this.roomName);
         }
     }
 

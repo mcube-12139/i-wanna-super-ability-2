@@ -15,7 +15,7 @@ export class EditLayerListController extends Component {
 
             const controller = item.getComponent(EditLayerItemController);
             const selected = layerData === EditSceneController.nowLayerData;
-            controller.setData(selected, layerData.name, layerData.visible, layerData.locked);
+            controller.setData(layerData);
         }
     }
 }

@@ -1,6 +1,5 @@
 import { SpriteFrame, resources } from "cc";
-import { MovementData, PlatformControllerData } from "./ComponentData";
-import { ComponentTemplate } from "./ComponentTemplate";
+import { ComponentTemplate, MovementTemplate, PlatformControllerTemplate } from "./ComponentTemplate";
 
 export class PrefabData {
     name: string;
@@ -36,8 +35,8 @@ export class PrefabData {
             new PrefabData("Block", 0, 0, 32, 32, "block", "BlockLayer", []),
             new PrefabData("MiniBlock", 0, 0, 16, 16, "mini block", "BlockLayer", []),
             new PrefabData("Platform", 0, 0, 32, 16, "platform", "BlockLayer", [
-                new ComponentTemplate("PlatformController", new PlatformControllerData(true)),
-                new ComponentTemplate("Movement", new MovementData(0, 0))
+                new PlatformControllerTemplate(true),
+                new MovementTemplate(0, 0)
             ]),
             new PrefabData("Fruit", -10, -12, 21, 24, "fruit 0", "FruitLayer", []),
             new PrefabData("PlayerStart", 0, 0, 32, 32, "player start", "PlayerLayer", []),

@@ -14,7 +14,7 @@ export class GridColorInputController extends Component {
     onEditEnd(input: EditBox) {
         const color = input.string;
         if (/^#[0-9a-fA-F]+$/.test(color)) {
-            EditSceneController.instance.setGridColor(color);
+            EditSceneController.setGridColor(color);
         } else {
             input.string = EditSceneController.gridColor;
         }

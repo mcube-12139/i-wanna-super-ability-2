@@ -1,6 +1,5 @@
-import { _decorator, Camera, Component, director, EventKeyboard, Input, input, instantiate, KeyCode, math, Node } from 'cc';
+import { _decorator, Camera, Component, director, EventKeyboard, Input, input, KeyCode, math } from 'cc';
 import { SweetGlobal } from './SweetGlobal';
-import { ComponentTemplate } from './ComponentTemplate';
 import { EditSceneController } from './EditSceneController';
 const { ccclass, property } = _decorator;
 
@@ -15,9 +14,9 @@ export class PreviewSceneController extends Component {
                 const node = SweetGlobal.createOnLayerByPrefab(object.prefab.name, layer.name);
                 node.setPosition(object.x, object.y);
                 for (const template of object.components) {
-                    const componentType = ComponentTemplate.getType(template.name);
+                    const componentType = template.meta.componentType;
                     const component = node.getComponent(componentType);
-                    template.data.apply(component);
+                    template.apply(component);
                 }
             }
         }

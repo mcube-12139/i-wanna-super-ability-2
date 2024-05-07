@@ -14,7 +14,7 @@ export class RoomBackColorInputController extends Component {
     onEditEnd(input: EditBox) {
         const color = input.string;
         if (/^#[0-9a-fA-F]+$/.test(color)) {
-            EditSceneController.instance.setBackColor(color);
+            EditSceneController.setBackColor(color);
         } else {
             input.string = EditSceneController.nowRoomBackColor;
         }

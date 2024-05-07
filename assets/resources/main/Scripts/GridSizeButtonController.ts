@@ -18,7 +18,7 @@ export class GridSizeButtonController extends Component {
     onMouseDown(e: EventMouse) {
         this.sizeXInput.string = this.size.toString();
         this.sizeYInput.string = this.size.toString();
-        EditSceneController.instance.setGridSize(this.size, this.size);
+        EditSceneController.setGridSize(this.size, this.size);
     }
 }
 

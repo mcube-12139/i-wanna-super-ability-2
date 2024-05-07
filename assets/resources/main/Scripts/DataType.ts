@@ -1,12 +1,10 @@
-import { Component, EditBox, Label, Node, Sprite, Toggle, UITransform, instantiate, math, resources } from "cc";
-import { PlatformController } from "./PlatformController";
-import { Movement } from "./Movement";
+import { EditBox, Label, Node, Sprite, Toggle, instantiate, math, resources } from "cc";
 
-export interface ComponentDataType {
+export interface DataType {
     createEditInterface(): Node;
 }
 
-export class ComponentDataString implements ComponentDataType {
+export class StringData implements DataType {
     name: string;
     getter: () => string[];
     setter: (value: string) => void;
@@ -48,7 +46,7 @@ export class ComponentDataString implements ComponentDataType {
     }
 }
 
-export class ComponentDataBoolean implements ComponentDataType {
+export class BooleanData implements DataType {
     name: string;
     getter: () => boolean[];
     setter: (value: boolean) => void;
@@ -103,7 +101,7 @@ export class ComponentDataBoolean implements ComponentDataType {
     }
 }
 
-export class ComponentDataNumber implements ComponentDataType {
+export class NumberData implements DataType {
     name: string;
     getter: () => number[];
     setter: (value: number) => void;
@@ -157,59 +155,5 @@ export class ComponentDataNumber implements ComponentDataType {
         node.addChild(inputNode);
 
         return node;
-    }
-}
-
-export interface ComponentData {
-    clone(): ComponentData;
-    apply(component: Component): void;
-    getDesc(datas: ComponentData[]): ComponentDataType[];
-}
-
-export class PlatformControllerData implements ComponentData {
-    bounce: boolean;
-
-    constructor(bounce: boolean) {
-        this.bounce = bounce;
-    }
-
-    clone() {
-        return new PlatformControllerData(this.bounce);
-    }
-
-    apply(component: PlatformController) {
-        component.bounce = this.bounce;
-    }
-
-    getDesc(datas: PlatformControllerData[]): ComponentDataType[] {
-        return [
-            new ComponentDataBoolean("bounce", () => datas.map(v => v.bounce), value => datas.forEach(v => v.bounce = value))
-        ]
-    }
-}
-
-export class MovementData implements ComponentData {
-    speedX: number;
-    speedY: number;
-
-    constructor(speedX: number, speedY: number) {
-        this.speedX = speedX;
-        this.speedY = speedY;
-    }
-
-    clone() {
-        return new MovementData(this.speedX, this.speedY);
-    }
-
-    apply(component: Movement) {
-        component.speedX = this.speedX;
-        component.speedY = this.speedY;
-    }
-
-    getDesc(datas: MovementData[]): ComponentDataType[] {
-        return [
-            new ComponentDataNumber("speedX", () => datas.map(v => v.speedX), value => datas.forEach(v => v.speedX = value)),
-            new ComponentDataNumber("speedY", () => datas.map(v => v.speedY), value => datas.forEach(v => v.speedY = value))
-        ]
     }
 }

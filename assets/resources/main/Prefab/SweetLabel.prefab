@@ -112,8 +112,8 @@
     "_string": "",
     "_horizontalAlign": 0,
     "_verticalAlign": 1,
-    "_actualFontSize": 39.555,
-    "_fontSize": 24,
+    "_actualFontSize": 34.6875,
+    "_fontSize": 20,
     "_fontFamily": "站酷快乐体2016修订版",
     "_lineHeight": 25,
     "_overflow": 0,
@@ -164,6 +164,7 @@
       "__id__": 0
     },
     "fileId": "a7c1nx76lKfrXDZfGnGeU9",
+    "instance": null,
     "targetOverrides": null
   }
 ]

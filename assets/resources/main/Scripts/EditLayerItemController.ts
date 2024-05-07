@@ -1,5 +1,5 @@
 import { _decorator, Component, EventMouse, Label, Node, Sprite, Toggle } from 'cc';
-import { EditSceneController } from './EditSceneController';
+import { EditSceneController, LayerData } from './EditSceneController';
 const { ccclass, property } = _decorator;
 
 @ccclass('EditLayerItemController')
@@ -14,7 +14,7 @@ export class EditLayerItemController extends Component {
     locked: Toggle;
 
     selected: boolean;
-    layerName: string;
+    data: LayerData;
 
     start() {
         this.node.on(Node.EventType.MOUSE_ENTER, this.onMouseEnter, this);
@@ -25,15 +25,15 @@ export class EditLayerItemController extends Component {
         this.locked.node.on("toggle", this.onLockedToggle, this);
     }
 
-    setData(selected: boolean, name: string, visible: boolean, locked: boolean) {
-        this.selected = selected;
-        if (selected) {
+    setData(data: LayerData) {
+        this.selected = EditSceneController.nowLayerData === data;
+        if (this.selected) {
             this.background.enabled = true;
         }
-        this.layerName = name;
-        this.nameLabel.string = name;
-        this.visible.isChecked = visible;
-        this.locked.isChecked = locked;
+        this.data = data;
+        this.nameLabel.string = data.name;
+        this.visible.isChecked = data.visible;
+        this.locked.isChecked = data.locked;
     }
 
     onMouseEnter(e: EventMouse) {
@@ -59,15 +59,15 @@ export class EditLayerItemController extends Component {
         }
         this.selected = true;
         this.background.enabled = true;
-        EditSceneController.selectLayer(this.layerName);
+        EditSceneController.selectLayer(this.data);
     }
 
     onVisibleToggle(toggle: Toggle) {
-        EditSceneController.instance.setLayerVisible(this.layerName, toggle.isChecked);
+        this.data.setVisible(toggle.isChecked);
     }
 
     onLockedToggle(toggle: Toggle) {
-        EditSceneController.getLayerData(this.layerName).locked = toggle.isChecked;
+        this.data.locked = toggle.isChecked;
     }
 }
 

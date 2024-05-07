@@ -13,7 +13,7 @@ export class PrefabItemController extends Component {
     label: Label;
 
     selected: boolean;
-    index: number;
+    data: PrefabData;
 
     onLoad() {
         this.selected = false;
@@ -23,9 +23,9 @@ export class PrefabItemController extends Component {
         this.node.on(Node.EventType.MOUSE_UP, this.onMouseUp, this);
     }
 
-    setData(index: number, data: PrefabData) {
-        this.index = index;
-        if (index === EditSceneController.nowPrefabIndex) {
+    setData(data: PrefabData) {
+        this.data = data;
+        if (data === EditSceneController.nowPrefabData) {
             this.selected = true;
             this.backSprite.enabled = true;
         }
@@ -44,7 +44,7 @@ export class PrefabItemController extends Component {
     }
 
     onMouseUp(_) {
-        EditSceneController.instance.selectPrefab(this.index);
+        EditSceneController.selectPrefab(this.data);
         EditSceneController.instance.closeWindow();
     }
 }

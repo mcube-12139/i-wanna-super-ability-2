@@ -1,4 +1,4 @@
-import { EditSceneController, NodeData } from "./EditSceneController";
+import { EditSceneController, LayerData, NodeData } from "./EditSceneController";
 
 export interface EditorAction {
     undo(): void;
@@ -6,38 +6,46 @@ export interface EditorAction {
 }
 
 export class EditorActionCreate implements EditorAction {
-    layer: string;
+    layer: LayerData;
     created: NodeData[];
 
-    constructor(layer: string, created: NodeData[]) {
+    constructor(layer: LayerData, created: NodeData[]) {
         this.layer = layer;
         this.created = created;
     }
 
     undo() {
-        EditSceneController.instance.undoCreate(this);
+        EditSceneController.undoCreate(this);
     }
 
     redo() {
-        EditSceneController.instance.redoCreate(this);
+        EditSceneController.redoCreate(this);
+    }
+}
+
+export class EditorActionDeletedObject {
+    layer: LayerData;
+    object: NodeData;
+
+    constructor(layer: LayerData, object: NodeData) {
+        this.layer = layer;
+        this.object = object;
     }
 }
 
 export class EditorActionDelete implements EditorAction {
-    layer: string;
-    deleted: NodeData[];
+    deleted: EditorActionDeletedObject[];
 
-    constructor(layer: string, deleted: NodeData[]) {
-        this.layer = layer;
+    constructor(deleted: EditorActionDeletedObject[]) {
         this.deleted = deleted;
     }
 
     undo() {
-        EditSceneController.instance.undoDelete(this);
+        EditSceneController.undoDelete(this);
     }
 
     redo() {
-        EditSceneController.instance.redoDelete(this);
+        EditSceneController.redoDelete(this);
     }
 }
 
@@ -51,11 +59,11 @@ export class EditorActionSelect implements EditorAction {
     }
 
     undo(): void {
-        EditSceneController.instance.undoSelect(this);
+        EditSceneController.undoSelect(this);
     }
 
     redo(): void {
-        EditSceneController.instance.redoSelect(this);
+        EditSceneController.redoSelect(this);
     }
 }
 
@@ -71,10 +79,10 @@ export class EditorActionDrag implements EditorAction {
     }
 
     undo(): void {
-        EditSceneController.instance.undoDrag(this);
+        EditSceneController.undoDrag(this);
     }
 
     redo(): void {
-        EditSceneController.instance.redoDrag(this);
+        EditSceneController.redoDrag(this);
     }
 }

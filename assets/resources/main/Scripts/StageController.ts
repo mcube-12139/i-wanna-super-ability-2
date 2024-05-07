@@ -48,7 +48,7 @@ export class StageController extends Component {
                 } else {
                     // 点到物体了，选中
                     this.action = StageAction.DRAG;
-                    EditSceneController.instance.selectObjects([object]);
+                    EditSceneController.selectObjects([object]);
                     EditSceneController.startDrag(this.mouseX, this.mouseY);
                 }
             } else if (button === EventMouse.BUTTON_RIGHT) {
@@ -58,9 +58,9 @@ export class StageController extends Component {
 
                 const object = EditSceneController.getObjectAt(this.noSnapMouseX, this.noSnapMouseY);
                 if (object === null) {
-                    EditSceneController.instance.selectObjects([]);
+                    EditSceneController.selectObjects([]);
                 } else {
-                    EditSceneController.instance.deleteObject(object);
+                    EditSceneController.deleteObject(object);
                 }
             }
         }
@@ -75,12 +75,14 @@ export class StageController extends Component {
                     this.createObject();
                 }
             } else if (this.action === StageAction.DRAG) {
-                EditSceneController.instance.dragTo(this.mouseX, this.mouseY);
+                if (updated) {
+                    EditSceneController.dragTo(this.mouseX, this.mouseY);
+                }
             }else if (this.action === StageAction.DELETE) {
                 if (updated && !this.altHeld) {
                     const object = EditSceneController.getObjectAt(this.noSnapMouseX, this.noSnapMouseY);
                     if (object !== null) {
-                        EditSceneController.instance.deleteObject(object);
+                        EditSceneController.deleteObject(object);
                     }
                 }
             }
@@ -180,6 +182,6 @@ export class StageController extends Component {
     }
 
     createObject() {
-        EditSceneController.instance.createObject(this.mouseX, this.mouseY);
+        EditSceneController.createObject(this.mouseX, this.mouseY);
     }
 }
