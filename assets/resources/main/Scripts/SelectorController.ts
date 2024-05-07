@@ -16,7 +16,7 @@ export class SelectorController extends Component {
 
     redraw() {
         this.graphics.clear();
-        this.graphics.rect(this.node.position.x, this.node.position.y, this.width, this.height);
+        this.graphics.rect(0, 0, this.width, this.height);
         this.graphics.stroke();
     }
 }

@@ -12,10 +12,10 @@ export class PreviewSceneController extends Component {
         // 创建节点
         for (const layer of EditSceneController.layers) {
             for (const object of layer.objects) {
-                const node = SweetGlobal.createOnLayerByPrefab(object.prefabName, layer.name);
+                const node = SweetGlobal.createOnLayerByPrefab(object.prefab.name, layer.name);
                 node.setPosition(object.x, object.y);
                 for (const template of object.components) {
-                    const componentType = ComponentTemplate.getType(template.type);
+                    const componentType = ComponentTemplate.getType(template.name);
                     const component = node.getComponent(componentType);
                     template.data.apply(component);
                 }

@@ -14,7 +14,7 @@ export const enum MainMenuOptionId {
 @ccclass('MainMenuOptionController')
 export class MainMenuOptionController extends Component {
     start() {
-        const opened = this.node.children[EditSceneController.mainMenuOptionIndex as number];
+        const opened = this.node.children[EditSceneController.mainMenuOptionId as number];
         const controller = opened.getComponent(MenuOptionController);
         controller.select();
     }

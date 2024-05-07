@@ -1,7 +1,7 @@
 [
   {
     "__type__": "cc.Prefab",
-    "_name": "Selector",
+    "_name": "SweetLabel",
     "_objFlags": 0,
     "__editorExtras__": {},
     "_native": "",
@@ -13,7 +13,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "Selector",
+    "_name": "SweetLabel",
     "_objFlags": 0,
     "__editorExtras__": {},
     "_parent": null,
@@ -25,13 +25,10 @@
       },
       {
         "__id__": 4
-      },
-      {
-        "__id__": 6
       }
     ],
     "_prefab": {
-      "__id__": 8
+      "__id__": 6
     },
     "_lpos": {
       "__type__": "cc.Vec3",
@@ -76,22 +73,22 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 100,
-      "height": 100
+      "width": 0,
+      "height": 31.499999999999996
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
       "x": 0,
-      "y": 0
+      "y": 1
     },
     "_id": ""
   },
   {
     "__type__": "cc.CompPrefabInfo",
-    "fileId": "3b+jqiU/JFuqaKPipBKzgJ"
+    "fileId": "b7TCdR/rxOF729Dn6kLdMT"
   },
   {
-    "__type__": "cc.Graphics",
+    "__type__": "cc.Label",
     "_name": "",
     "_objFlags": 0,
     "__editorExtras__": {},
@@ -112,47 +109,51 @@
       "b": 255,
       "a": 255
     },
-    "_lineWidth": 2,
-    "_strokeColor": {
+    "_string": "",
+    "_horizontalAlign": 0,
+    "_verticalAlign": 1,
+    "_actualFontSize": 39.555,
+    "_fontSize": 24,
+    "_fontFamily": "站酷快乐体2016修订版",
+    "_lineHeight": 25,
+    "_overflow": 0,
+    "_enableWrapText": true,
+    "_font": null,
+    "_isSystemFontUsed": true,
+    "_spacingX": 0,
+    "_isItalic": false,
+    "_isBold": false,
+    "_isUnderline": false,
+    "_underlineHeight": 2,
+    "_cacheMode": 0,
+    "_enableOutline": false,
+    "_outlineColor": {
       "__type__": "cc.Color",
       "r": 0,
-      "g": 127,
-      "b": 255,
+      "g": 0,
+      "b": 0,
       "a": 255
     },
-    "_lineJoin": 2,
-    "_lineCap": 0,
-    "_fillColor": {
+    "_outlineWidth": 2,
+    "_enableShadow": false,
+    "_shadowColor": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 0,
+      "g": 0,
+      "b": 0,
       "a": 255
     },
-    "_miterLimit": 10,
+    "_shadowOffset": {
+      "__type__": "cc.Vec2",
+      "x": 2,
+      "y": 2
+    },
+    "_shadowBlur": 2,
     "_id": ""
   },
   {
     "__type__": "cc.CompPrefabInfo",
-    "fileId": "e55/4vPYVGpKVi+W9ZX1KI"
-  },
-  {
-    "__type__": "d69e3QKT0RLSa340tK8KrIp",
-    "_name": "",
-    "_objFlags": 0,
-    "__editorExtras__": {},
-    "node": {
-      "__id__": 1
-    },
-    "_enabled": true,
-    "__prefab": {
-      "__id__": 7
-    },
-    "_id": ""
-  },
-  {
-    "__type__": "cc.CompPrefabInfo",
-    "fileId": "5ffE7JkUdO7K48fH0WxrTS"
+    "fileId": "24luknEdBK/bn2RJEpVKQ7"
   },
   {
     "__type__": "cc.PrefabInfo",
@@ -162,8 +163,7 @@
     "asset": {
       "__id__": 0
     },
-    "fileId": "efNHTh5INPh7deVg6a3ZpC",
-    "instance": null,
+    "fileId": "a7c1nx76lKfrXDZfGnGeU9",
     "targetOverrides": null
   }
 ]

@@ -29,7 +29,7 @@ export class PrefabItemController extends Component {
             this.selected = true;
             this.backSprite.enabled = true;
         }
-        this.sprite.spriteFrame = resources.get(`main/Sprites/${data.sprite}/spriteFrame`);
+        this.sprite.spriteFrame = data.sprite;
         this.label.string = data.name;
     }
 

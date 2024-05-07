@@ -21,7 +21,7 @@ export class ButtonController extends Component {
         [ButtonActionId.START_GAME, controller => {
             SweetGlobal.autosave = true;
             EditSceneController.initData();
-            director.loadScene("game");
+            director.loadScene("edit");
         }],
         [ButtonActionId.LOAD_GAME, controller => {
             SweetGlobal.loadFile();

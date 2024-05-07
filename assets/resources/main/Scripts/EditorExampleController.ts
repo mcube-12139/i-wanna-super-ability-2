@@ -1,17 +1,16 @@
-import { _decorator, Component, Node, resources, Sprite, SpriteFrame } from 'cc';
-const { ccclass, property } = _decorator;
+import { _decorator, Component, Sprite, SpriteFrame } from 'cc';
+const { ccclass } = _decorator;
 
 @ccclass('EditorExampleController')
 export class EditorExampleController extends Component {
-    exampleId: string;
     sprite: Sprite;
 
     onLoad() {
-        this.sprite = this.node.getComponent(Sprite);
+        this.sprite = this.getComponent(Sprite);
     }
 
-    setSprite(name: string) {
-        this.sprite.spriteFrame = resources.get(`main/Sprites/${name}/spriteFrame`);
+    setSprite(sprite: SpriteFrame) {
+        this.sprite.spriteFrame = sprite;
     }
 }
 

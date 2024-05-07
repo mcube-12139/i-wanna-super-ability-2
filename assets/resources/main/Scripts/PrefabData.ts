@@ -1,3 +1,4 @@
+import { SpriteFrame, resources } from "cc";
 import { MovementData, PlatformControllerData } from "./ComponentData";
 import { ComponentTemplate } from "./ComponentTemplate";
 
@@ -7,17 +8,17 @@ export class PrefabData {
     y: number;
     width: number;
     height: number;
-    sprite: string;
+    sprite: SpriteFrame;
     defaultLayer: string;
     components: ComponentTemplate[];
 
-    constructor(name: string, x: number, y: number, width: number, height: number, sprite: string, defaultLayer: string, components: ComponentTemplate[]) {
+    constructor(name: string, x: number, y: number, width: number, height: number, spriteName: string, defaultLayer: string, components: ComponentTemplate[]) {
         this.name = name;
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
-        this.sprite = sprite;
+        this.sprite = resources.get(`main/Sprites/${spriteName}/spriteFrame`);
         this.defaultLayer = defaultLayer;
         this.components = components;
     }
@@ -35,7 +36,7 @@ export class PrefabData {
             new PrefabData("Block", 0, 0, 32, 32, "block", "BlockLayer", []),
             new PrefabData("MiniBlock", 0, 0, 16, 16, "mini block", "BlockLayer", []),
             new PrefabData("Platform", 0, 0, 32, 16, "platform", "BlockLayer", [
-                new ComponentTemplate("PlatformController", new PlatformControllerData(false)),
+                new ComponentTemplate("PlatformController", new PlatformControllerData(true)),
                 new ComponentTemplate("Movement", new MovementData(0, 0))
             ]),
             new PrefabData("Fruit", -10, -12, 21, 24, "fruit 0", "FruitLayer", []),

@@ -23,7 +23,7 @@ export class ObjectShadowController extends Component {
     updateSprite() {
         const data = EditSceneController.nowPrefabData;
         
-        this.sprite.spriteFrame = resources.get(`main/Sprites/${data.sprite}/spriteFrame`);
+        this.sprite.spriteFrame = data.sprite;
         this.transform.setAnchorPoint(-data.x / data.width, -data.y / data.height);
         this.transform.setContentSize(data.width, data.height);
     }

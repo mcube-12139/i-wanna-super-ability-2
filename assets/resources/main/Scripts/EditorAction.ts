@@ -1,68 +1,51 @@
-import { ComponentTemplate } from "./ComponentTemplate";
-import { EditSceneController } from "./EditSceneController";
+import { EditSceneController, NodeData } from "./EditSceneController";
 
 export interface EditorAction {
     undo(): void;
     redo(): void;
 }
 
-export class EditorActionObjectData {
-    x: number;
-    y: number;
-    prefab: string;
-    id: string;
-    components: ComponentTemplate[];
-
-    constructor(x: number, y: number, prefab: string, id: string, components: ComponentTemplate[]) {
-        this.x = x;
-        this.y = y;
-        this.prefab = prefab;
-        this.id = id;
-        this.components = components;
-    }
-}
-
-export class EditorActionCreateObject implements EditorAction {
+export class EditorActionCreate implements EditorAction {
     layer: string;
-    created: EditorActionObjectData[];
+    created: NodeData[];
 
-    constructor(layer: string, created: EditorActionObjectData[]) {
+    constructor(layer: string, created: NodeData[]) {
         this.layer = layer;
         this.created = created;
     }
 
     undo() {
-        EditSceneController.instance.undoCreateObject(this);
+        EditSceneController.instance.undoCreate(this);
     }
 
     redo() {
-        EditSceneController.instance.redoCreateObject(this);
+        EditSceneController.instance.redoCreate(this);
     }
 }
 
-export class EditorActionDeleteObject implements EditorAction {
+export class EditorActionDelete implements EditorAction {
     layer: string;
-    deleted: EditorActionObjectData[];
+    deleted: NodeData[];
 
-    constructor(layer: string, deleted: EditorActionObjectData[]) {
+    constructor(layer: string, deleted: NodeData[]) {
         this.layer = layer;
         this.deleted = deleted;
     }
 
     undo() {
-        EditSceneController.instance.undoDeleteObject(this);
+        EditSceneController.instance.undoDelete(this);
     }
 
     redo() {
-        EditSceneController.instance.redoDeleteObject(this);
+        EditSceneController.instance.redoDelete(this);
     }
 }
 
 export class EditorActionSelect implements EditorAction {
-    before: string[];
-    after: string[];
+    before: NodeData[];
+    after: NodeData[];
 
-    constructor(before: string[], after: string[]) {
+    constructor(before: NodeData[], after: NodeData[]) {
         this.before = before;
         this.after = after;
     }
@@ -77,12 +60,12 @@ export class EditorActionSelect implements EditorAction {
 }
 
 export class EditorActionDrag implements EditorAction {
-    ids: string[];
+    objects: NodeData[];
     movementX: number;
     movementY: number;
 
-    constructor(ids: string[], before: number, after: number) {
-        this.ids = ids;
+    constructor(objects: NodeData[], before: number, after: number) {
+        this.objects = objects;
         this.movementX = before;
         this.movementY = after;
     }
