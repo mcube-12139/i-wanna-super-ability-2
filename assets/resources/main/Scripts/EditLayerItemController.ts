@@ -1,5 +1,6 @@
 import { _decorator, Component, EventMouse, Label, Node, Sprite, Toggle } from 'cc';
-import { EditSceneController, LayerData } from './EditSceneController';
+import { EditSceneController } from './EditSceneController';
+import { LayerData } from './LayerData';
 const { ccclass, property } = _decorator;
 
 @ccclass('EditLayerItemController')

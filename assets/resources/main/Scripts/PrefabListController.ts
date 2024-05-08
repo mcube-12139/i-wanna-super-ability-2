@@ -10,7 +10,7 @@ export class PrefabListController extends Component {
             const prefabNode = instantiate(resources.get("main/Prefab/ObjectItem"));
             this.node.addChild(prefabNode);
             const controller = prefabNode.getComponent(PrefabItemController);
-            controller.setData(i, data);
+            controller.setData(data);
         }
     }
 }

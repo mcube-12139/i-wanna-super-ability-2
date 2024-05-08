@@ -1,6 +1,7 @@
 import { _decorator, Component, instantiate, Node, resources } from 'cc';
 import { RoomLayerItemController } from './RoomLayerItemController';
-import { EditSceneController, LayerData } from './EditSceneController';
+import { EditSceneController } from './EditSceneController';
+import { LayerData } from './LayerData';
 const { ccclass, property } = _decorator;
 
 @ccclass('RoomLayerListController')

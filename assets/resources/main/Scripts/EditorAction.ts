@@ -1,4 +1,6 @@
-import { EditSceneController, LayerData, NodeData } from "./EditSceneController";
+import { EditSceneController } from "./EditSceneController";
+import { LayerData } from "./LayerData";
+import { NodeData } from "./NodeData";
 
 export interface EditorAction {
     undo(): void;

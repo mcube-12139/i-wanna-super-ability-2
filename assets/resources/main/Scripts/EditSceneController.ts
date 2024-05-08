@@ -1,4 +1,4 @@
-import { _decorator, Camera, Component, instantiate, math, Node, resources, sys, UITransform } from 'cc';
+import { _decorator, Camera, Component, instantiate, math, Node, Prefab, resources, sys, UITransform } from 'cc';
 import { SweetGlobal } from './SweetGlobal';
 import { GridController } from './GridController';
 import { ObjectShadowController } from './ObjectShadowController';
@@ -10,141 +10,22 @@ import { SelectorController } from './SelectorController';
 import { ComponentTemplate } from './ComponentTemplate';
 import { LoopArray, LoopArrayPointer } from './LoopArray';
 import { SweetDate } from './SweetDate';
+import { RegionSelectorController } from './RegionSelectorController';
+import { NodeData } from './NodeData';
+import { LayerData, LayerFile } from './LayerData';
+import { RoomFile, RoomMetadata } from './RoomFile';
 const { ccclass, property } = _decorator;
-
-export class NodeData {
-    prefab: PrefabData;
-    x: number;
-    y: number;
-    components: ComponentTemplate[];
-    node: Node;
-
-    constructor(prefab: PrefabData, x: number, y: number, components: ComponentTemplate[], node: Node) {
-        this.prefab = prefab;
-        this.x = x;
-        this.y = y;
-        this.components = components;
-        this.node = node;
-    }
-}
-
-export class LayerData {
-    name: string;
-    node: Node;
-    visible: boolean;
-    locked: boolean;
-    objects: NodeData[];
-
-    constructor(name: string, node: Node, visible: boolean, locked: boolean, objects: NodeData[]) {
-        this.name = name;
-        this.node = node;
-        this.visible = visible;
-        this.locked = locked;
-        this.objects = objects;
-    }
-
-    static newEmpty(name: string, node: Node) {
-        return new LayerData(name, node, true, false, []);
-    }
-
-    addObject(object: NodeData) {
-        this.objects.push(object);
-    }
-
-    tryDeleteObject(object: NodeData) {
-        const index = this.objects.indexOf(object);
-        if (index !== -1) {
-            object.node.destroy();
-            this.objects.splice(index, 1);
-            return true;
-        }
-
-        return false;
-    }
-
-    deleteObjects(objects: NodeData[]) {
-        const set = new Set<NodeData>(objects);
-
-        let offset = 0;
-        for (let i = 0, count = this.objects.length; i !== count; ++i) {
-            const object = this.objects[i];
-
-            if (!set.has(object)) {
-                // 非待删除，前移
-                if (offset !== 0) {
-                    this.objects[i - offset] = object;
-                }
-            } else {
-                // 是待删除，删掉，前移距离 +1
-                object.node.destroy();
-                ++offset;
-            }
-        }
-        this.objects.length -= objects.length;
-    }
-
-    setVisible(visible: boolean) {
-        this.visible = visible;
-        this.node.active = visible;
-    }
-}
-
-class NodeFile {
-    prefabName: string;
-    x: number;
-    y: number;
-    components: any[];
-
-    constructor(prefabName: string, x: number, y: number, components: any[]) {
-        this.prefabName = prefabName;
-        this.x = x;
-        this.y = y;
-        this.components = components;
-    }
-}
-
-class LayerFile {
-    name: string;
-    objects: NodeFile[];
-
-    constructor(name: string, objects: NodeFile[]) {
-        this.name = name;
-        this.objects = objects;
-    }
-
-    static newEmpty(name: string) {
-        return new LayerFile(name, []);
-    }
-}
-
-class RoomMetadata {
-    name: string;
-    editTime: string;
-
-    constructor(name: string, editTime: string) {
-        this.name = name;
-        this.editTime = editTime;
-    }
-}
-
-class RoomFile {
-    width: number;
-    height: number;
-    backColor: string;
-    layers: LayerFile[];
-    nextObjectId: number;
-
-    constructor(width: number, height: number, backColor: string, layers: LayerFile[], nextObjectId: number) {
-        this.width = width;
-        this.height = height;
-        this.backColor = backColor;
-        this.layers = layers;
-        this.nextObjectId = nextObjectId;
-    }
-}
 
 @ccclass('EditSceneController')
 export class EditSceneController extends Component {
+    @property(Prefab)
+    regionSelectorPrefab: Prefab;
+    @property(Prefab)
+    selectorPrefab: Prefab;
+    @property(Prefab)
+    editorExamplePrefab: Prefab;
+    @property(Node)
+    regionSelectorContainer: Node;
     @property(Camera)
     camera: Camera;
     @property(Node)
@@ -152,7 +33,7 @@ export class EditSceneController extends Component {
     @property(Node)
     gridNode: Node;
     @property(Node)
-    stage: Node;
+    selectorContainer: Node;
     @property(Node)
     objectShadow: Node;
 
@@ -160,6 +41,12 @@ export class EditSceneController extends Component {
     objectShadowController: ObjectShadowController;
 
     selectorMap = new Map<NodeData, Node>();
+
+    selectRegionX: number;
+    selectRegionY: number;
+    selectRegionEndX: number;
+    selectRegionEndY: number;
+    regionSelector: RegionSelectorController;
 
     nowWindow: Node | null = null;
 
@@ -194,8 +81,8 @@ export class EditSceneController extends Component {
     static deletedObjects: EditorActionDeletedObject[];
     static dragStartX: number;
     static dragStartY: number;
-    static dragDiffX: number;
-    static dragDiffY: number;
+    static dragEndX: number;
+    static dragEndY: number;
 
     static instance: EditSceneController;
 
@@ -361,7 +248,7 @@ export class EditSceneController extends Component {
         this.actionIndex.assign(this.actions.next);
     }
 
-    static startCreateObject() {
+    static startCreate() {
         this.createdObjects = [];
     }
 
@@ -381,7 +268,7 @@ export class EditSceneController extends Component {
         }
     }
 
-    static endCreateObject() {
+    static endCreate() {
         if (this.createdObjects.length !== 0) {
             this.addAction(new EditorActionCreate(this.nowLayerData, this.createdObjects));
         }
@@ -429,33 +316,45 @@ export class EditSceneController extends Component {
         return null;
     }
 
-    static startDeleteObject() {
+    static startDelete() {
         this.deletedObjects = [];
     }
 
     static deleteObject(object: NodeData) {
         if (this.instance.selectorMap.has(object)) {
-            this.instance.selectorMap.get(object).destroy();
-            this.instance.selectorMap.delete(object);
+            this.instance.destroySelectors();
         }
         
         // 从被选中物体中删除
         const selectIndex = this.selectedObjects.indexOf(object);
-        if (selectIndex !== -1) {
+        if (this.selectedObjects.includes(object)) {
+            // 该物体被选中，删除所有被选中物体
+            for (const selected of this.selectedObjects) {
+                let layer: LayerData;
+                for (const l of this.layers) {
+                    if (l.tryDeleteObject(selected)) {
+                        layer = l;
+                        break;
+                    }
+                }
+                this.deletedObjects.push(new EditorActionDeletedObject(layer, selected));
+            }
+            this.selectedObjects.length = 0;
+        } else {
+            // 该物体没被选中，删除它自己
+            let layer: LayerData;
+            for (const l of this.layers) {
+                if (l.tryDeleteObject(object)) {
+                    layer = l;
+                    break;
+                }
+            }
+            this.deletedObjects.push(new EditorActionDeletedObject(layer, object));
             this.selectedObjects.splice(selectIndex, 1);
         }
-        // 从层物体表中删除
-        let layer: LayerData;
-        for (const l of this.layers) {
-            if (l.tryDeleteObject(object)) {
-                layer = l;
-                break;
-            }
-        }
-        this.deletedObjects.push(new EditorActionDeletedObject(layer, object));
     }
 
-    static endDeleteObject() {
+    static endDelete() {
         if (this.deletedObjects.length !== 0) {
             this.addAction(new EditorActionDelete(this.deletedObjects));
         }
@@ -487,28 +386,32 @@ export class EditSceneController extends Component {
     }
 
     static startDrag(x: number, y: number) {
-        this.dragStartX = this.selectedObjects[0].x;
-        this.dragStartY = this.selectedObjects[0].y;
-        this.dragDiffX = x - this.dragStartX;
-        this.dragDiffY = y - this.dragStartY;
+        this.dragStartX = x;
+        this.dragStartY = y;
+        this.dragEndX = x;
+        this.dragEndY = y;
     }
 
     static dragTo(x: number, y: number) {
+        const movementX = x - this.dragEndX;
+        const movementY = y - this.dragEndY;
         for (const object of this.selectedObjects) {
             const node = object.node;
-            node.setPosition(x - this.dragDiffX, y - this.dragDiffY);
+            node.setPosition(node.position.x + movementX, node.position.y + movementY);
             this.instance.updateSelector(object);
             
-            object.x = x - this.dragDiffX;
-            object.y = y - this.dragDiffY;
+            object.x += movementX;
+            object.y += movementY;
         }
+        this.dragEndX = x;
+        this.dragEndY = y;
     }
 
     static endDrag() {
-        const movementX = this.selectedObjects[0].x - this.dragStartX;
-        const movementY = this.selectedObjects[0].y - this.dragStartY;
+        const movementX = this.dragEndX - this.dragStartX;
+        const movementY = this.dragEndY - this.dragStartY;
         if (movementX !== 0 || movementY !== 0) {
-            this.addAction(new EditorActionDrag(this.selectedObjects, movementX, movementY));
+            this.addAction(new EditorActionDrag([...this.selectedObjects], movementX, movementY));
         }
     }
 
@@ -530,6 +433,24 @@ export class EditSceneController extends Component {
                 
             object.y = y;
         }
+    }
+
+    static getObjectsInRegion(left: number, top: number, right: number, bottom: number): NodeData[] {
+        const result: NodeData[] = [];
+
+        for (const object of this.accessibleObjects()) {
+            const prefabData = object.prefab;
+            const sourceX = object.x + prefabData.x;
+            const sourceY = object.y + prefabData.y;
+            const sourceRight = sourceX + prefabData.width;
+            const sourceBottom = sourceY + prefabData.height;
+            if (right > sourceX && left < sourceRight && bottom > sourceY && top < sourceBottom) {
+                // 与待创建区域重叠
+                result.push(object);
+            }
+        }
+
+        return result;
     }
 
     static getUndoAction() {
@@ -579,7 +500,7 @@ export class EditSceneController extends Component {
     }
 
     static undoDrag(action: EditorActionDrag) {
-        for (const object of this.selectedObjects) {
+        for (const object of action.objects) {
             const node = object.node;
             node.setPosition(node.position.x - action.movementX, node.position.y - action.movementY);
             this.instance.updateSelector(object);
@@ -617,8 +538,8 @@ export class EditSceneController extends Component {
     }
 
     static redoDrag(action: EditorActionDrag) {
-        for (const object of this.selectedObjects) {
-            const node = object.node
+        for (const object of action.objects) {
+            const node = object.node;
             node.setPosition(node.position.x + action.movementX, node.position.y + action.movementY);
             this.instance.updateSelector(object);
 
@@ -662,7 +583,7 @@ export class EditSceneController extends Component {
             this.layerMap.set(layerFile.name, layerData);
             
             for (const nodeFile of layerFile.objects) {
-                const components = nodeFile.components.map(v => ComponentTemplate.create(v));
+                const components = nodeFile.components.map(v => ComponentTemplate.fromFile(v));
                 // 暂时赋值 null，等后面 rebuildRoom 时再改成相应节点
                 layerData.addObject(new NodeData(this.prefabDataMap.get(nodeFile.prefabName), nodeFile.x, nodeFile.y, components, null));
             }
@@ -700,7 +621,7 @@ export class EditSceneController extends Component {
             LayerFile.newEmpty("BlockLayer"),
             LayerFile.newEmpty("FruitLayer"),
             LayerFile.newEmpty("PlayerLayer")
-        ], 0);
+        ]);
 
         sys.localStorage.setItem("editorRoomMetadatas", JSON.stringify(this.roomMetadataList));
         sys.localStorage.setItem(`editorRoom${name}`, JSON.stringify(room));
@@ -716,13 +637,7 @@ export class EditSceneController extends Component {
         this.nowRoomMetadata.editTime = SweetDate.now();
         sys.localStorage.setItem("editorRoomMetadatas", JSON.stringify(this.roomMetadataList));
 
-        const roomFile = new RoomFile(this.nowRoomWidth, this.nowRoomHeight, this.nowRoomBackColor, this.layers.map(
-            layer => new LayerFile(layer.name, layer.objects.map(
-                object => new NodeFile(object.prefab.name, object.x, object.y, object.components.map(
-                    component => component.toFile()
-                ))
-            ))
-        ), 0);
+        const roomFile = new RoomFile(this.nowRoomWidth, this.nowRoomHeight, this.nowRoomBackColor, LayerData.toFiles(this.layers));
         sys.localStorage.setItem(`editorRoom${this.nowRoomMetadata.name}`, JSON.stringify(roomFile));
     }
 
@@ -763,7 +678,7 @@ export class EditSceneController extends Component {
     }
 
     static addNode(layer: LayerData, prefabData: PrefabData, x: number, y: number): Node {
-        const node = instantiate(resources.get("main/Prefab/EditorExample"));
+        const node = instantiate(this.instance.editorExamplePrefab);
         layer.node.addChild(node);
         const control = node.getComponent(EditorExampleController);
         control.setSprite(prefabData.sprite);
@@ -834,23 +749,84 @@ export class EditSceneController extends Component {
         }
     }
 
-    /**
-     * 设置被选中物体。代码调用，不记录操作。
-     */
-    setSelectedObjects(objects: NodeData[]) {
-        // 摧毁原有的选择框
+    destroySelectors() {
         for (const selector of this.selectorMap.values()) {
             selector.destroy();
         }
         this.selectorMap.clear();
+    }
+
+    /**
+     * 设置被选中物体。代码调用，不记录操作。
+     */
+    setSelectedObjects(objects: NodeData[]) {
+        const objectSet = new Set(objects);
+
+        // 摧毁多余的选择框
+        for (const [object, selector] of this.selectorMap.entries()) {
+            if (!objectSet.has(object)) {
+                selector.destroy();
+                this.selectorMap.delete(object);
+            }
+        }
 
         for (const object of objects) {
-            const selector = instantiate(resources.get("main/Prefab/Selector"));
-            this.stage.addChild(selector);
-            this.selectorMap.set(object, selector);
+            if (!this.selectorMap.has(object)) {
+                const selector = instantiate(this.selectorPrefab);
+                this.selectorContainer.addChild(selector);
+                this.selectorMap.set(object, selector);
+            }
 
             this.updateSelector(object);
         }
+    }
+
+    calcRegion(x1: number, y1: number, x2: number, y2: number) {
+        let left: number;
+        let right: number;
+        let top: number;
+        let bottom: number;
+
+        if (x2 > x1) {
+            left = x1;
+            right = x2;
+        } else {
+            left = x2;
+            right = x1;
+        }
+        if (y2 > this.selectRegionY) {
+            top = y1;
+            bottom = y2;
+        } else {
+            top = y2;
+            bottom = y1;
+        }
+
+        return { left, top, right, bottom };
+    }
+
+    startSelectRegion(x: number, y: number) {
+        const regionSelectorNode = instantiate(this.regionSelectorPrefab);
+        this.regionSelector = regionSelectorNode.getComponent(RegionSelectorController);
+        this.regionSelectorContainer.addChild(regionSelectorNode);
+
+        this.selectRegionX = x;
+        this.selectRegionY = y;
+    }
+
+    updateSelectRegion(x: number, y: number) {
+        const { left, top, right, bottom } = this.calcRegion(this.selectRegionX, this.selectRegionY, x, y);
+        const objects = EditSceneController.getObjectsInRegion(left, top, right, bottom);
+        this.setSelectedObjects(objects);
+        this.regionSelector.setRegion(left, top, right, bottom);
+    }
+
+    endSelectRegion(x: number, y: number) {
+        const { left, top, right, bottom } = this.calcRegion(this.selectRegionX, this.selectRegionY, x, y);
+        const objects = EditSceneController.getObjectsInRegion(left, top, right, bottom);
+        this.regionSelector.node.destroy();
+
+        EditSceneController.selectObjects(objects);
     }
 
     rebuildRoom() {
@@ -877,5 +853,4 @@ export class EditSceneController extends Component {
         }
     }
 }
-
 

@@ -6,12 +6,12 @@ import { PlatformController } from "./PlatformController";
 export class ComponentTemplateMeta {
     name: string;
     componentType: typeof Component;
-    create: (data: any) => ComponentTemplate;
+    fromFile: (data: any) => ComponentTemplate;
 
-    constructor(name: string, componentType: typeof Component, create: (data: any) => ComponentTemplate) {
+    constructor(name: string, componentType: typeof Component, fromFile: (data: any) => ComponentTemplate) {
         this.name = name;
         this.componentType = componentType;
-        this.create = create;
+        this.fromFile = fromFile;
     }
 }
 
@@ -22,13 +22,17 @@ export abstract class ComponentTemplate {
 
     static initMetaMap() {
         this.metaMap = new Map<string, ComponentTemplateMeta>([
-            ["PlatformController", PlatformControllerTemplate.meta],
-            ["Movement", MovementTemplate.meta]
+            [PlatformControllerTemplate.meta.name, PlatformControllerTemplate.meta],
+            [MovementTemplate.meta.name, MovementTemplate.meta]
         ]);
     }
 
-    static create(data: any) {
-        return this.metaMap.get(data.type).create(data);
+    static fromFile(data: any) {
+        return this.metaMap.get(data.type).fromFile(data);
+    }
+
+    static toFiles(datas: ComponentTemplate[]) {
+        return datas.map(v => v.toFile());
     }
 
     constructor(meta: ComponentTemplateMeta) {

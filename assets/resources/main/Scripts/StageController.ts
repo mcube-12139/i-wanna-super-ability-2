@@ -7,7 +7,8 @@ const enum StageAction {
     NONE,
     CREATE,
     DELETE,
-    DRAG
+    DRAG,
+    SELECT_REGION
 }
 
 @ccclass('StageController')
@@ -20,7 +21,7 @@ export class StageController extends Component {
     mouseX = 0;
     mouseY = 0;
     ctrlHeld = false;
-    // 按住 Alt 时鼠标无视网格
+    shiftHeld = false;
     altHeld = false;
     action: number;
 
@@ -38,23 +39,31 @@ export class StageController extends Component {
             const uiLocation = event.getUILocation();
             this.setMousePosition(uiLocation.x, uiLocation.y);
             if (button === EventMouse.BUTTON_LEFT) {
-                // 左键，创建或选中
-                const object = EditSceneController.getObjectAt(uiLocation.x, uiLocation.y);
-                if (object === null) {
-                    // 没点到物体，创建
-                    this.action = StageAction.CREATE;
-                    EditSceneController.startCreateObject();
-                    this.createObject();
+                if (!this.shiftHeld) {
+                    // 左键
+                    const object = EditSceneController.getObjectAt(uiLocation.x, uiLocation.y);
+                    if (object === null) {
+                        // 没点到物体，创建
+                        this.action = StageAction.CREATE;
+                        EditSceneController.startCreate();
+                        this.createObject();
+                    } else {
+                        // 点到物体了，选中并拖动
+                        this.action = StageAction.DRAG;
+                        if (!EditSceneController.selectedObjects.includes(object)) {
+                            EditSceneController.selectObjects([object]);
+                        }
+                        EditSceneController.startDrag(this.mouseX, this.mouseY);
+                    }
                 } else {
-                    // 点到物体了，选中
-                    this.action = StageAction.DRAG;
-                    EditSceneController.selectObjects([object]);
-                    EditSceneController.startDrag(this.mouseX, this.mouseY);
+                    // Shift + 左键，框选
+                    this.action = StageAction.SELECT_REGION;
+                    EditSceneController.instance.startSelectRegion(this.noSnapMouseX, this.noSnapMouseY);
                 }
             } else if (button === EventMouse.BUTTON_RIGHT) {
-                // 右键取消选择，并开始删除
+                // 右键，取消选择，并开始删除
                 this.action = StageAction.DELETE;
-                EditSceneController.startDeleteObject();
+                EditSceneController.startDelete();
 
                 const object = EditSceneController.getObjectAt(this.noSnapMouseX, this.noSnapMouseY);
                 if (object === null) {
@@ -78,13 +87,15 @@ export class StageController extends Component {
                 if (updated) {
                     EditSceneController.dragTo(this.mouseX, this.mouseY);
                 }
-            }else if (this.action === StageAction.DELETE) {
+            } else if (this.action === StageAction.DELETE) {
                 if (updated && !this.altHeld) {
                     const object = EditSceneController.getObjectAt(this.noSnapMouseX, this.noSnapMouseY);
                     if (object !== null) {
                         EditSceneController.deleteObject(object);
                     }
                 }
+            } else if (this.action === StageAction.SELECT_REGION) {
+                EditSceneController.instance.updateSelectRegion(this.noSnapMouseX, this.noSnapMouseY);
             }
         }
     }
@@ -95,16 +106,19 @@ export class StageController extends Component {
             if (button === EventMouse.BUTTON_LEFT) {
                 if (this.action === StageAction.CREATE) {
                     this.action = StageAction.NONE;
-                    EditSceneController.endCreateObject();
+                    EditSceneController.endCreate();
                 } else if (this.action === StageAction.DRAG) {
                     this.action = StageAction.NONE;
                     EditSceneController.endDrag();
+                } else if (this.action === StageAction.SELECT_REGION) {
+                    this.action = StageAction.NONE;
+                    EditSceneController.instance.endSelectRegion(this.noSnapMouseX, this.noSnapMouseY);
                 }
             } else if (button === EventMouse.BUTTON_RIGHT) {
                 if (this.action === StageAction.DELETE) {
                     this.action = StageAction.NONE;
                 }
-                EditSceneController.endDeleteObject();
+                EditSceneController.endDelete();
             }
         }
     }
@@ -113,6 +127,8 @@ export class StageController extends Component {
         if (EditSceneController.instance.nowWindow === null) {
             if (event.keyCode === KeyCode.ALT_LEFT) {
                 this.altHeld = true;
+            } else if (event.keyCode === KeyCode.SHIFT_LEFT) {
+                this.shiftHeld = true;
             } else if (event.keyCode === KeyCode.CTRL_LEFT) {
                 this.ctrlHeld = true;
             } else if (event.keyCode === KeyCode.F1) {
@@ -152,6 +168,8 @@ export class StageController extends Component {
                 this.altHeld = false;
             } else if (event.keyCode === KeyCode.CTRL_LEFT) {
                 this.ctrlHeld = false;
+            } else if (event.keyCode === KeyCode.SHIFT_LEFT) {
+                this.shiftHeld = false;
             }
         }
     }
