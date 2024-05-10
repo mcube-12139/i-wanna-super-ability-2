@@ -14,6 +14,8 @@ import { RegionSelectorController } from './RegionSelectorController';
 import { NodeData } from './NodeData';
 import { LayerData, LayerFile } from './LayerData';
 import { RoomFile, RoomMetadata } from './RoomFile';
+import { ComponentInstance } from './ComponentInstance';
+import { NodeComponents } from './NodeComponents';
 const { ccclass, property } = _decorator;
 
 @ccclass('EditSceneController')
@@ -120,7 +122,7 @@ export class EditSceneController extends Component {
             this.prefabDataMap.set(data.name, data);
         }
 
-        ComponentTemplate.initMetaMap();
+        ComponentInstance.initMetaMap();
     }
 
     static selectLayer(data: LayerData) {
@@ -258,7 +260,7 @@ export class EditSceneController extends Component {
             if (!nodeExist) {
                 const node = this.addNode(this.nowLayerData, EditSceneController.nowPrefabData, x, y);
 
-                const components = this.nowPrefabData.components.map(v => v.clone());
+                const components = NodeComponents.fromTemplates(this.nowPrefabData.components);
                 const nodeData = new NodeData(this.nowPrefabData, x, y, components, node);
                 this.nowLayerData.addObject(nodeData);
         
@@ -583,9 +585,11 @@ export class EditSceneController extends Component {
             this.layerMap.set(layerFile.name, layerData);
             
             for (const nodeFile of layerFile.objects) {
-                const components = nodeFile.components.map(v => ComponentTemplate.fromFile(v));
+                const prefabData = this.prefabDataMap.get(nodeFile.prefabName);
+                
+                const components = NodeComponents.fromFile(nodeFile.components, prefabData.components);
                 // 暂时赋值 null，等后面 rebuildRoom 时再改成相应节点
-                layerData.addObject(new NodeData(this.prefabDataMap.get(nodeFile.prefabName), nodeFile.x, nodeFile.y, components, null));
+                layerData.addObject(new NodeData(prefabData, nodeFile.x, nodeFile.y, components, null));
             }
         }
 

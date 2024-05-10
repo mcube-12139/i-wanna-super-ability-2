@@ -1,15 +1,15 @@
 import { Node } from "cc";
-import { ComponentTemplate } from "./ComponentTemplate";
 import { PrefabData } from "./PrefabData";
+import { NodeComponents } from "./NodeComponents";
 
 export class NodeData {
     prefab: PrefabData;
     x: number;
     y: number;
-    components: ComponentTemplate[];
+    components: NodeComponents;
     node: Node;
 
-    constructor(prefab: PrefabData, x: number, y: number, components: ComponentTemplate[], node: Node) {
+    constructor(prefab: PrefabData, x: number, y: number, components: NodeComponents, node: Node) {
         this.prefab = prefab;
         this.x = x;
         this.y = y;
@@ -22,7 +22,7 @@ export class NodeData {
     }
 
     toFile() {
-        return new NodeFile(this.prefab.name, this.x, this.y, ComponentTemplate.toFiles(this.components));
+        return new NodeFile(this.prefab.name, this.x, this.y, this.components.toFile());
     }
 }
 
@@ -30,9 +30,9 @@ export class NodeFile {
     prefabName: string;
     x: number;
     y: number;
-    components: any[];
+    components: any;
 
-    constructor(prefabName: string, x: number, y: number, components: any[]) {
+    constructor(prefabName: string, x: number, y: number, components: any) {
         this.prefabName = prefabName;
         this.x = x;
         this.y = y;

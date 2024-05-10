@@ -1,15 +1,16 @@
 import { EditBox, Label, Node, Sprite, Toggle, instantiate, math, resources } from "cc";
 
-export interface DataType {
-    createEditInterface(): Node;
+export abstract class DataType {
+    abstract createEditInterface(): Node;
 }
 
-export class StringData implements DataType {
+export class StringData extends DataType {
     name: string;
     getter: () => string[];
     setter: (value: string) => void;
 
     constructor(name: string, getter: () => string[], setter: (value: string) => void) {
+        super();
         this.name = name;
         this.getter = getter;
         this.setter = setter;
@@ -46,12 +47,13 @@ export class StringData implements DataType {
     }
 }
 
-export class BooleanData implements DataType {
+export class BooleanData extends DataType {
     name: string;
     getter: () => boolean[];
     setter: (value: boolean) => void;
 
     constructor(name: string, getter: () => boolean[], setter: (value: boolean) => void) {
+        super();
         this.name = name;
         this.getter = getter;
         this.setter = setter;
@@ -101,13 +103,15 @@ export class BooleanData implements DataType {
     }
 }
 
-export class NumberData implements DataType {
+export class NumberData extends DataType {
     name: string;
     getter: () => number[];
     setter: (value: number) => void;
+
     initialText: string;
 
     constructor(name: string, getter: () => number[], setter: (value: number) => void) {
+        super();
         this.name = name;
         this.getter = getter;
         this.setter = setter;

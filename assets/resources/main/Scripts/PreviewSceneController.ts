@@ -13,11 +13,7 @@ export class PreviewSceneController extends Component {
             for (const object of layer.objects) {
                 const node = SweetGlobal.createOnLayerByPrefab(object.prefab.name, layer.name);
                 node.setPosition(object.x, object.y);
-                for (const template of object.components) {
-                    const componentType = template.meta.componentType;
-                    const component = node.getComponent(componentType);
-                    template.apply(component);
-                }
+                object.components.addToNode(node);
             }
         }
         
