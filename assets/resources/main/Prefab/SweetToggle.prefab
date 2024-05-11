@@ -247,13 +247,13 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 0,
+      "g": 0,
+      "b": 0,
       "a": 255
     },
     "_spriteFrame": {
-      "__uuid__": "0e70a316-a78b-4992-b5e9-56cd929ceda9@f9941",
+      "__uuid__": "4a049723-f20c-405f-851d-9f1338b0e998@f9941",
       "__expectedType__": "cc.SpriteFrame"
     },
     "_type": 0,
@@ -273,7 +273,7 @@
   },
   {
     "__type__": "cc.CompPrefabInfo",
-    "fileId": "19epAZzPRBFJjnUrmSaMkk"
+    "fileId": "9bZ7+5hf9OsYESX2XamvXt"
   },
   {
     "__type__": "cc.Toggle",

@@ -293,7 +293,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 0,
-      "height": 40.32
+      "height": 40.31999999999999
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -331,7 +331,7 @@
     "_string": "",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 65.925,
+    "_actualFontSize": 66.75,
     "_fontSize": 40,
     "_fontFamily": "Arial",
     "_lineHeight": 32,
@@ -432,13 +432,13 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 0,
+      "g": 0,
+      "b": 0,
       "a": 255
     },
     "_spriteFrame": {
-      "__uuid__": "0e70a316-a78b-4992-b5e9-56cd929ceda9@f9941",
+      "__uuid__": "4a049723-f20c-405f-851d-9f1338b0e998@f9941",
       "__expectedType__": "cc.SpriteFrame"
     },
     "_type": 1,
@@ -486,7 +486,7 @@
     "_string": "",
     "_tabIndex": 0,
     "_backgroundImage": {
-      "__uuid__": "0e70a316-a78b-4992-b5e9-56cd929ceda9@f9941",
+      "__uuid__": "4a049723-f20c-405f-851d-9f1338b0e998@f9941",
       "__expectedType__": "cc.SpriteFrame"
     },
     "_inputFlag": 5,

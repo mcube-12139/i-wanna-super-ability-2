@@ -1,4 +1,4 @@
-import { Node } from "cc";
+import { Label, Node, instantiate, math, resources } from "cc";
 import { ComponentTemplate, MovementTemplate, PlatformControllerTemplate } from "./ComponentTemplate";
 import { DataField } from "./DataField";
 import { BooleanData, DataType, NumberData } from "./DataType";
@@ -64,24 +64,42 @@ export abstract class ComponentInstance {
         return datas.map(v => v.toFile());
     }
 
-    abstract getDesc(instances: ComponentInstance[], componentLists: NodeComponents[]): DataType[];
+    abstract getDataDesc(instances: ComponentInstance[]): DataType[];
     abstract toFileModified(): object;
 
-    static fieldGetter<T>(instances: ComponentInstance[], getter: (instance: ComponentInstance) => T) {
-        return () => instances.map(v => getter(v));
+    static isInstancesModified(instances: ComponentInstance[]) {
+        return instances.findIndex(v => v.modified) !== -1;
     }
 
-    static fieldSetter<T>(instances: ComponentInstance[], componentLists: NodeComponents[], setter: (instance: ComponentInstance, value: T) => void) {
-        return (value: T) => {
-            instances.forEach(inst => {
-                inst.modified = true;
-                setter(inst, value);
-            });
-            componentLists.forEach(v => v.modified = true);
-        }
+    static isFieldModified<T>(instances: ComponentInstance[], fieldGetter: (field: ComponentInstance) => DataField<T>): boolean {
+        return instances.findIndex(v => fieldGetter(v).modified) !== -1;
     }
 
     abstract addToNode(node: Node): void;
+
+    static createInterface(instances: ComponentInstance[], componentLists: NodeComponents[]): Node {
+        const container = instantiate(resources.get("main/Prefab/SweetLayoutVer"));
+
+        const labelNode = instantiate(resources.get("main/Prefab/SweetLabel"));
+        container.addChild(labelNode);
+        const label = labelNode.getComponent(Label);
+        if (!this.isInstancesModified(instances)) {
+            label.color = new math.Color("#A3FF6F");
+        }
+        label.string = instances[0].meta.type;
+
+        const descs = instances[0].getDataDesc(instances);
+        for (const desc of descs) {
+            const editNode = desc.createEditInterface(() => {
+                label.color = math.Color.WHITE;
+                instances.forEach(inst => inst.modified = true);
+                componentLists.forEach(v => v.modified = true);
+            });
+            container.addChild(editNode);
+        }
+
+        return container;
+    }
 
     toFile(): object {
         if (!this.modified) {
@@ -115,9 +133,14 @@ export class PlatformControllerInstance extends ComponentInstance {
         return new PlatformControllerInstance(false, template, new DataField(false, bounce));
     }
 
-    getDesc(instances: PlatformControllerInstance[], componentLists: NodeComponents[]): DataType[] {
+    getDataDesc(instances: PlatformControllerInstance[]): DataType[] {
         return [
-            new BooleanData("bounce", ComponentInstance.fieldGetter(instances, (inst: PlatformControllerInstance) => inst.bounce.get(inst.template.bounce)), ComponentInstance.fieldSetter(instances, componentLists, (inst: PlatformControllerInstance, value) => inst.bounce.set(value)))
+            new BooleanData(
+                "bounce", 
+                () => instances.map(inst => inst.bounce.get(inst.template.bounce)),
+                (value: boolean) => instances.forEach(inst => inst.bounce.set(value)),
+                ComponentInstance.isFieldModified(instances, (inst: PlatformControllerInstance) => inst.bounce)
+            )
         ];
     }
 
@@ -153,10 +176,20 @@ export class MovementInstance extends ComponentInstance {
         return new MovementInstance(false, template, new DataField(false, speedX), new DataField(false, speedY));
     }
 
-    getDesc(instances: MovementInstance[], componentLists: NodeComponents[]): DataType[] {
+    getDataDesc(instances: MovementInstance[]): DataType[] {
         return [
-            new NumberData("speedX", ComponentInstance.fieldGetter(instances, (inst: MovementInstance) => inst.speedX.get(inst.template.speedX)), ComponentInstance.fieldSetter(instances, componentLists, (inst: MovementInstance, value) => inst.speedX.set(value))),
-            new NumberData("speedY", ComponentInstance.fieldGetter(instances, (inst: MovementInstance) => inst.speedY.get(inst.template.speedY)), ComponentInstance.fieldSetter(instances, componentLists, (inst: MovementInstance, value) => inst.speedY.set(value)))
+            new NumberData(
+                "speedX",
+                () => instances.map(inst => inst.speedX.get(inst.template.speedX)),
+                (value: number) => instances.forEach(inst => inst.speedX.set(value)),
+                ComponentInstance.isFieldModified(instances, (inst: MovementInstance) => inst.speedX)
+            ),
+            new NumberData(
+                "speedY",
+                () => instances.map(inst => inst.speedY.get(inst.template.speedY)),
+                (value: number) => instances.forEach(inst => inst.speedY.set(value)),
+                ComponentInstance.isFieldModified(instances, (inst: MovementInstance) => inst.speedY)
+            )
         ];
     }
 

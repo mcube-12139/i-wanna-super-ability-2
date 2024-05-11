@@ -7,7 +7,6 @@ import { EditorExampleController } from './EditorExampleController';
 import { EditorAction, EditorActionCreate, EditorActionDelete, EditorActionDeletedObject, EditorActionDrag, EditorActionSelect } from './EditorAction';
 import { PrefabData } from './PrefabData';
 import { SelectorController } from './SelectorController';
-import { ComponentTemplate } from './ComponentTemplate';
 import { LoopArray, LoopArrayPointer } from './LoopArray';
 import { SweetDate } from './SweetDate';
 import { RegionSelectorController } from './RegionSelectorController';
@@ -739,6 +738,12 @@ export class EditSceneController extends Component {
         this.toggleWindow("MainMenuWindow");
     }
 
+    createSelector(object: NodeData) {
+        const selector = instantiate(this.selectorPrefab);
+        this.selectorContainer.addChild(selector);
+        this.selectorMap.set(object, selector);
+    }
+
     updateSelector(object: NodeData) {
         const node = object.node;
         
@@ -776,9 +781,7 @@ export class EditSceneController extends Component {
 
         for (const object of objects) {
             if (!this.selectorMap.has(object)) {
-                const selector = instantiate(this.selectorPrefab);
-                this.selectorContainer.addChild(selector);
-                this.selectorMap.set(object, selector);
+                this.createSelector(object);
             }
 
             this.updateSelector(object);
@@ -854,6 +857,12 @@ export class EditSceneController extends Component {
                 const node = EditSceneController.addNode(layerData, prefabData, nodeData.x, nodeData.y);
                 nodeData.node = node;
             }
+        }
+
+        // 重新创建选择框
+        for (const object of EditSceneController.selectedObjects) {
+            this.createSelector(object);
+            this.updateSelector(object);
         }
     }
 }

@@ -1,22 +1,24 @@
-import { EditBox, Label, Node, Sprite, Toggle, instantiate, math, resources } from "cc";
+import { EditBox, Label, Node, Sprite, Toggle, color, instantiate, math, resources } from "cc";
 
 export abstract class DataType {
-    abstract createEditInterface(): Node;
+    abstract createEditInterface(onChange: () => void): Node;
 }
 
 export class StringData extends DataType {
     name: string;
     getter: () => string[];
     setter: (value: string) => void;
+    modified: boolean;
 
-    constructor(name: string, getter: () => string[], setter: (value: string) => void) {
+    constructor(name: string, getter: () => string[], setter: (value: string) => void, modified: boolean) {
         super();
         this.name = name;
         this.getter = getter;
         this.setter = setter;
+        this.modified = modified;
     }
 
-    createEditInterface(): Node {
+    createEditInterface(onChange: () => void): Node {
         const node = instantiate(resources.get("main/Prefab/SweetLayoutHor"));
 
         const labelNode = instantiate(resources.get("main/Prefab/SweetLabel"));
@@ -25,6 +27,9 @@ export class StringData extends DataType {
         node.addChild(labelNode);
 
         const inputNode = instantiate(resources.get("main/Prefab/SweetInput"));
+        if (!this.modified) {
+            label.color = new math.Color("#A3FF6F");
+        }
         const input = inputNode.getComponent(EditBox);
         let initialText = "";
         for (const str of this.getter()) {
@@ -39,7 +44,9 @@ export class StringData extends DataType {
         }
         input.string = initialText;
         inputNode.on("editing-did-ended", (input: EditBox) => {
+            label.color = math.Color.WHITE;
             this.setter(input.string);
+            onChange();
         });
         node.addChild(inputNode);
 
@@ -51,15 +58,17 @@ export class BooleanData extends DataType {
     name: string;
     getter: () => boolean[];
     setter: (value: boolean) => void;
+    modified: boolean;
 
-    constructor(name: string, getter: () => boolean[], setter: (value: boolean) => void) {
+    constructor(name: string, getter: () => boolean[], setter: (value: boolean) => void, modified: boolean) {
         super();
         this.name = name;
         this.getter = getter;
         this.setter = setter;
+        this.modified = modified;
     }
 
-    createEditInterface(): Node {
+    createEditInterface(onChange: () => void): Node {
         const node = instantiate(resources.get("main/Prefab/SweetLayoutHor"));
 
         const toggleNode = instantiate(resources.get("main/Prefab/SweetToggle"));
@@ -90,12 +99,17 @@ export class BooleanData extends DataType {
             if (toggle.isChecked) {
                 toggle.checkMark.getComponent(Sprite).color = new math.Color("#FFFFFF");
             }
+            label.color = math.Color.WHITE;
             this.setter(toggle.isChecked);
+            onChange();
         });
         node.addChild(toggleNode);
 
         const labelNode = instantiate(resources.get("main/Prefab/SweetLabel"));
         const label = labelNode.getComponent(Label);
+        if (!this.modified) {
+            label.color = new math.Color("#A3FF6F");
+        }
         label.string = this.name;
         node.addChild(labelNode);
 
@@ -107,17 +121,19 @@ export class NumberData extends DataType {
     name: string;
     getter: () => number[];
     setter: (value: number) => void;
+    modified: boolean;
 
     initialText: string;
 
-    constructor(name: string, getter: () => number[], setter: (value: number) => void) {
+    constructor(name: string, getter: () => number[], setter: (value: number) => void, modified: boolean) {
         super();
         this.name = name;
         this.getter = getter;
         this.setter = setter;
+        this.modified = modified;
     }
 
-    createEditInterface(): Node {
+    createEditInterface(onChange: () => void): Node {
         const node = instantiate(resources.get("main/Prefab/SweetLayoutHor"));
 
         const labelNode = instantiate(resources.get("main/Prefab/SweetLabel"));
@@ -126,6 +142,9 @@ export class NumberData extends DataType {
         node.addChild(labelNode);
 
         const inputNode = instantiate(resources.get("main/Prefab/SweetInput"));
+        if (!this.modified) {
+            label.color = new math.Color("#A3FF6F");
+        }
         const input = inputNode.getComponent(EditBox);
 
         let flag = 0;
@@ -151,7 +170,9 @@ export class NumberData extends DataType {
         inputNode.on("editing-did-ended", (input: EditBox) => {
             const num = parseFloat(input.string);
             if (!isNaN(num)) {
+                label.color = math.Color.WHITE;
                 this.setter(num);
+                onChange();
             } else {
                 input.string = this.initialText;
             }
