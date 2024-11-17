@@ -1,6 +1,6 @@
 import { _decorator, Component, Label, Node, resources, Sprite } from 'cc';
-import { PrefabData } from './PrefabData';
-import { EditSceneController } from './EditSceneController';
+import { EditPrefab } from './Edit/PrefabData';
+import { EditSceneController } from './Edit/EditData';
 const { ccclass, property } = _decorator;
 
 @ccclass('PrefabItemController')
@@ -13,7 +13,7 @@ export class PrefabItemController extends Component {
     label: Label;
 
     selected: boolean;
-    data: PrefabData;
+    data: EditPrefab;
 
     onLoad() {
         this.selected = false;
@@ -23,7 +23,7 @@ export class PrefabItemController extends Component {
         this.node.on(Node.EventType.MOUSE_UP, this.onMouseUp, this);
     }
 
-    setData(data: PrefabData) {
+    setData(data: EditPrefab) {
         this.data = data;
         if (data === EditSceneController.nowPrefabData) {
             this.selected = true;

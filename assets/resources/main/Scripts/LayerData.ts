@@ -1,5 +1,5 @@
 import { Node } from "cc";
-import { NodeData, NodeFile } from "./NodeData";
+import { NodeData, NodeFile } from "./Edit/NodeData";
 
 export class LayerData {
     name: string;

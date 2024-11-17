@@ -1,5 +1,5 @@
 import { _decorator, Component, Graphics, math } from 'cc';
-import { EditSceneController } from './EditSceneController';
+import { EditSceneController } from './Edit/EditData';
 const { ccclass, property } = _decorator;
 
 @ccclass('GridController')

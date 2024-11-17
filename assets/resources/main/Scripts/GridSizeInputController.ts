@@ -1,5 +1,5 @@
 import { _decorator, CCInteger, Component, EditBox, Node } from 'cc';
-import { EditSceneController } from './EditSceneController';
+import { EditSceneController } from './Edit/EditData';
 const { ccclass, property } = _decorator;
 
 @ccclass('GridSizeInputController')

@@ -1,6 +1,6 @@
 import { _decorator, Component, Node } from 'cc';
 import { MenuOptionController } from './MenuOptionController';
-import { EditSceneController } from './EditSceneController';
+import { EditSceneController } from './Edit/EditData';
 const { ccclass, property } = _decorator;
 
 export const enum MainMenuOptionId {

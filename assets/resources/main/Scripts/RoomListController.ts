@@ -1,6 +1,6 @@
 import { _decorator, Component, instantiate, Prefab, Node } from 'cc';
 import { RoomListItemController, RoomListItemData } from './RoomListItemController';
-import { EditSceneController } from './EditSceneController';
+import { EditSceneController } from './Edit/EditData';
 const { ccclass, property } = _decorator;
 
 @ccclass('RoomListController')

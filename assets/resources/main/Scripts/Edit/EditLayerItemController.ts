@@ -1,5 +1,5 @@
 import { _decorator, Component, EventMouse, Label, Node, Sprite, Toggle } from 'cc';
-import { EditSceneController } from './EditSceneController';
+import { EditSceneController } from './Edit/EditData';
 import { LayerData } from './LayerData';
 const { ccclass, property } = _decorator;
 

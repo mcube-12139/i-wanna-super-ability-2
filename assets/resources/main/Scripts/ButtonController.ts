@@ -5,7 +5,7 @@ import { Input } from 'cc';
 import { CCFloat } from 'cc';
 import { _decorator, Component, Graphics } from 'cc';
 import { SweetGlobal } from './SweetGlobal';
-import { EditSceneController } from './EditSceneController';
+import { EditSceneController } from './Edit/EditData';
 const { ccclass, property } = _decorator;
 
 enum ButtonActionId {

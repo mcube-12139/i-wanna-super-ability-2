@@ -1,6 +1,6 @@
 import { _decorator, Camera, Component, director, EventKeyboard, Input, input, KeyCode, math } from 'cc';
 import { SweetGlobal } from './SweetGlobal';
-import { EditSceneController } from './EditSceneController';
+import { EditSceneController } from './Edit/EditData';
 const { ccclass, property } = _decorator;
 
 @ccclass('PreviewSceneController')
