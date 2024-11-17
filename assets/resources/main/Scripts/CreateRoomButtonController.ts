@@ -1,5 +1,5 @@
 import { _decorator, Button, Component, EditBox, Label } from 'cc';
-import { EditSceneController } from './Edit/EditData';
+import { EditData } from './Edit/EditData';
 const { ccclass, property } = _decorator;
 
 @ccclass('CreateRoomButtonController')
@@ -18,12 +18,12 @@ export class CreateRoomButtonController extends Component {
         if (roomName === "") {
             this.illegalLabel.string = "房间名不能是空";
         } else {
-            const result = EditSceneController.createRoom(roomName);
+            const result = EditData.instance.createRoom(roomName);
             if (result.ok) {
-                EditSceneController.instance.closeWindow();
-                EditSceneController.instance.rebuildRoom();
+                EditData.instance.closeWindow();
+                // EditData.instance.rebuildRoom();
             } else {
-                this.illegalLabel.string = result.error;
+                // this.illegalLabel.string = result.error;
             }
         }
     }

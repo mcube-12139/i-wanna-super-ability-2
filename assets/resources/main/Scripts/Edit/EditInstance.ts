@@ -24,6 +24,14 @@ export class EditInstance {
         return new EditInstance(node, data, null, children);
     }
 
+    recover() {
+        this.node = new Node();
+        for (const component of this.data.components) {
+            component.addToNode(this.node);
+        }
+        this.children.forEach(child => child.recover());
+    }
+
     addChild(instance: EditInstance) {
         this.node.addChild(instance.node);
         this.data.addChild(instance.data);
@@ -52,15 +60,16 @@ export class EditInstance {
     }
     
     getInstanceAt(position: Vec2): EditInstance | null {
-        for (const object of this.children) {
-            const got = object.getInstanceAt(position);
-            if (got != null) {
-                return got;
+        for (const child of this.children) {
+            const checkedChild = child.getInstanceAt(position);
+            if (checkedChild != null) {
+                return checkedChild;
             }
         }
 
         const rect = this.data.getLocalRect();
         if (
+            rect !== null &&
             position.x >= rect.xMin &&
             position.x <= rect.xMax &&
             position.y >= rect.yMin &&

@@ -1,9 +1,11 @@
-import { Mat4, Quat, Rect, Vec3, Vec4 } from "cc";
+import { Rect, Sprite, Vec3 } from "cc";
 import { EditPrefab } from "./PrefabData";
 import { LinkedValue } from "./LinkedValue";
 import { IComponentData } from "./ComponentData/IComponentData";
 import { TransformData } from "./ComponentData/TransformData";
 import { SweetUid } from "../SweetUid";
+import { SpriteData } from "./ComponentData/SpriteData";
+import { ComponentDataType } from "./ComponentData/ComponentDataType";
 
 export class NodeData {
     id: string;
@@ -50,7 +52,7 @@ export class NodeData {
     serialize(): object {
         return {
             id: this.id,
-            prefab: this.prefab.id,
+            prefab: this.prefab?.id ?? null,
             name: this.name.serialize(),
             active: this.active.serialize(),
             contentRect: this.contentRect.serializeType((rect: Rect) => ({
@@ -67,6 +69,11 @@ export class NodeData {
     getTransform(): TransformData | null {
         const component = this.components.find(component => component.getType() === ComponentDataType.TRANSFORM);
         return component !== undefined ? component as TransformData : null;
+    }
+
+    getSprite(): SpriteData | null {
+        const component = this.components.find(component => component.getType() === ComponentDataType.SPRITE);
+        return component !== undefined ? component as SpriteData : null;
     }
 
     getLocalRect(): Rect | null {

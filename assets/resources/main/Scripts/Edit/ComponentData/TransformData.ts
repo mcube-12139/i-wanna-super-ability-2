@@ -1,5 +1,6 @@
 import { Mat4, Node, Quat, Vec3 } from "cc";
 import { IComponentData } from "./IComponentData";
+import { ComponentDataType } from "./ComponentDataType";
 
 export class TransformData implements IComponentData {
     id: string;

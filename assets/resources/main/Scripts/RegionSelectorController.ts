@@ -1,4 +1,4 @@
-import { _decorator, Component, Graphics, Node } from 'cc';
+import { _decorator, Component, Graphics, Node, Rect } from 'cc';
 const { ccclass, property } = _decorator;
 
 @ccclass('RegionSelectorController')
@@ -9,11 +9,11 @@ export class RegionSelectorController extends Component {
         this.graphics = this.getComponent(Graphics);
     }
 
-    setRegion(left: number, top: number, right: number, bottom: number) {
-        this.node.setPosition(left, top);
+    setRegion(rect: Rect) {
+        this.node.setPosition(rect.x, rect.y);
 
         this.graphics.clear();
-        this.graphics.rect(0, 0, right - left, bottom - top);
+        this.graphics.rect(0, 0, rect.width, rect.height);
         this.graphics.fill();
         this.graphics.stroke();
     }

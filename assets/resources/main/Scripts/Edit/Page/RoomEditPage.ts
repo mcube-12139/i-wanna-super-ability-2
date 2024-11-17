@@ -1,7 +1,7 @@
 import { Color, sys, Vec2, Node, Rect, instantiate, size } from "cc";
 import { EditInstance } from "../EditInstance";
 import { EditPrefab } from "../PrefabData";
-import { RoomMetadata } from "../../RoomFile";
+import { RoomDataSummary } from "../../RoomFile";
 import { LoopArray, LoopArrayPointer } from "../../LoopArray";
 import { IEditPage } from "./IEditPage";
 import { SweetDate } from "../../SweetDate";
@@ -44,7 +44,15 @@ export class RoomEditPage implements IEditPage {
     }
 
     open(): void {
-        this.node.addChild(this.data.root.node);
+        if (!this.node.isValid) {
+            this.recover();
+        }
+
+        EditData.instance.camera.clearColor = new Color(this.data.roomColor);
+        EditData.instance.objectShadowController.enable();
+        EditData.instance.objectShadowController.setPrefab(this.nowPrefab);
+        EditData.instance.gridController.redraw();
+        this.node.active = true;
     }
 
     switchOut(): void {
@@ -53,10 +61,35 @@ export class RoomEditPage implements IEditPage {
 
     save(): void {
         const time = SweetDate.now();
-        const metadata = new RoomMetadata(this.data.name, time);
 
-        sys.localStorage.setItem(`editRoomMetadata${this.data.id}`, JSON.stringify(metadata));
         sys.localStorage.setItem(`editRoom${this.data.id}`, JSON.stringify(this.data.serialize()));
+        const roomListStr = sys.localStorage.getItem("editRoomList");
+        let roomList: RoomDataSummary[];
+        if (roomListStr !== null) {
+            roomList = JSON.parse(roomListStr);
+        } else {
+            roomList = [];
+        }
+        let summary = roomList.find(v => v.id === this.data.id);
+        if (summary === undefined) {
+            summary = new RoomDataSummary(this.data.id, this.data.name, time);
+            roomList.push(summary);
+        } else {
+            summary.name = this.data.name;
+            summary.editTime = time;
+        }
+        sys.localStorage.setItem("editRoomList", JSON.stringify(roomList));
+    }
+
+    recover() {
+        this.node = new Node();
+        this.root.recover();
+
+        // 重新创建选择框
+        for (const instance of this.selectors.keys()) {
+            this.createSelector(instance);
+            this.updateSelector(instance);
+        }
     }
 
     rename(name: string) {
@@ -239,6 +272,14 @@ export class RoomEditPage implements IEditPage {
             this.actionIndex.decrease();
             const action = this.actionIndex.get();
             action.undo();
+        }
+    }
+
+    redo() {
+        if (this.actions.comparePointer(this.actionIndex, this.actions.next) === -1) {
+            const action = this.actionIndex.get();
+            action.redo();
+            this.actionIndex.increase();
         }
     }
 }

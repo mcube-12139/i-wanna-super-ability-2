@@ -1,5 +1,6 @@
 import { _decorator, Component, Graphics, math } from 'cc';
-import { EditSceneController } from './Edit/EditData';
+import { EditData } from './Edit/EditData';
+import { RoomEditPage } from './Edit/Page/RoomEditPage';
 const { ccclass, property } = _decorator;
 
 @ccclass('GridController')
@@ -11,14 +12,16 @@ export class GridController extends Component {
     }
 
     redraw() {
-        if (EditSceneController.gridVisible) {
+        const page = EditData.instance.nowPage as RoomEditPage;
+
+        if (page.data.gridVisible) {
             this.graphics.enabled = true;
-            this.graphics.fillColor = new math.Color(EditSceneController.gridColor);
+            this.graphics.fillColor = new math.Color(page.data.gridColor);
             this.graphics.clear();
-            for (let i = 0; i < 800; i += EditSceneController.gridWidth) {
+            for (let i = 0; i < 800; i += page.data.gridSize.x) {
                 this.graphics.rect(i, 0, 1, 450);
             }
-            for (let j = 0; j < 450; j += EditSceneController.gridHeight) {
+            for (let j = 0; j < 450; j += page.data.gridSize.y) {
                 this.graphics.rect(0, j, 800, 1);
             }
             this.graphics.fill();

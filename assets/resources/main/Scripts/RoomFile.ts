@@ -1,10 +1,12 @@
 import { LayerFile } from "./LayerData";
 
-export class RoomMetadata {
+export class RoomDataSummary {
+    id: string;
     name: string;
     editTime: string;
 
-    constructor(name: string, editTime: string) {
+    constructor(id: string, name: string, editTime: string) {
+        this.id = id;
         this.name = name;
         this.editTime = editTime;
     }

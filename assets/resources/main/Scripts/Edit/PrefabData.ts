@@ -1,4 +1,4 @@
-import { Color, Rect, SpriteFrame, Vec2, Vec3, resources } from "cc";
+import { Color, Rect, resources, SpriteFrame, Vec2, Vec3 } from "cc";
 import { NodeData } from "./NodeData";
 import { LinkedValue } from "./LinkedValue";
 import { TransformData } from "./ComponentData/TransformData";
@@ -97,6 +97,15 @@ export class EditPrefab {
             new EditPrefab("PlayerStart", 0, 0, 32, 32, "player start", "PlayerLayer", []),
             */
         ];
+    }
+
+    get sprite(): SpriteFrame {
+        const data = this.data.getSprite();
+        if (data !== null) {
+            return resources.get(`${data.path}/spriteFrame`, SpriteFrame);
+        }
+
+        return resources.get("main/Sprites/unknown/spriteFrame", SpriteFrame);
     }
 
     createLinked(): NodeData {

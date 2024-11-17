@@ -1,5 +1,6 @@
 import { Color, Node, resources, Sprite, SpriteFrame, Vec3 } from "cc";
 import { IComponentData } from "./IComponentData";
+import { ComponentDataType } from "./ComponentDataType";
 
 export class SpriteData implements IComponentData {
     id: string;

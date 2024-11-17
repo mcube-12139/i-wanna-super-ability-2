@@ -1,19 +1,12 @@
 import { _decorator, Camera, Color, Component, find, instantiate, math, Node, Prefab, Rect, sys, UITransform, Vec2, Vec3 } from 'cc';
 import { SweetGlobal } from '../SweetGlobal';
 import { GridController } from '../GridController';
-import { ObjectShadowController } from '../ObjectShadowController';
+import { ObjectShadowController } from './ObjectShadowController';
 import { MainMenuOptionId } from '../MainMenuOptionController';
-import { EditorExampleController } from '../EditorExampleController';
 import { EditPrefab } from './PrefabData';
-import { SelectorController } from '../SelectorController';
-import { LoopArray, LoopArrayPointer } from '../LoopArray';
-import { SweetDate } from '../SweetDate';
 import { RegionSelectorController } from '../RegionSelectorController';
 import { NodeData } from './NodeData';
-import { LayerData, LayerFile } from '../LayerData';
-import { RoomFile, RoomMetadata } from '../RoomFile';
-import { ComponentInstance } from '../ComponentInstance';
-import { NodeComponents } from '../NodeComponents';
+import { RoomFile, RoomDataSummary } from '../RoomFile';
 import { RoomEditPage } from './Page/RoomEditPage';
 import { IEditPage } from './Page/IEditPage';
 import { RoomData } from './RoomData';
@@ -23,15 +16,14 @@ import { EditActionCreate } from './Action/EditActionCreate';
 import { EditActionDrag } from './Action/EditActionDrag';
 import { SweetUid } from '../SweetUid';
 import { LinkedValue } from './LinkedValue';
-const { ccclass, property } = _decorator;
+import { StageController } from '../StageController';
 
 export class EditData {
     regionSelectorPrefab: Prefab;
     selectorPrefab: Prefab;
     editorExamplePrefab: Prefab;
-    regionSelectorContainer: Node;
     camera: Camera;
-    windowLayer: Node;
+    windowParent: Node;
     gridNode: Node;
     selectorContainer: Node;
     objectShadow: Node;
@@ -39,10 +31,9 @@ export class EditData {
     gridController: GridController;
     objectShadowController: ObjectShadowController;
 
-    selectRegionX: number;
-    selectRegionY: number;
-    selectRegionEndX: number;
-    selectRegionEndY: number;
+    selectedRegionStartPos = new Vec2(0, 0);
+    selectedRegionEndPos = new Vec2(0, 0);
+    regionSelectorNode: Node;
     regionSelector: RegionSelectorController;
 
     nowWindow: Node | null = null;
@@ -52,10 +43,7 @@ export class EditData {
     pageParent: Node;
     
     prefabData: EditPrefab[];
-    static prefabDataMap: Map<string, EditPrefab>;
     static mainMenuOptionId: MainMenuOptionId;
-
-    static roomMetadataList: RoomMetadata[];
 
     createdInstances: EditInstance[];
     deletedInstances: EditActionDeletedData[];
@@ -130,6 +118,7 @@ export class EditData {
         */
 
         const pageNode = new Node();
+        pageNode.addComponent(StageController);
         const rootNode = new Node();
         pageNode.addChild(rootNode);
         this.pageParent.addChild(pageNode);
@@ -168,7 +157,7 @@ export class EditData {
             data,
             root,
             root,
-            EditData.instance.prefabData[0]
+            this.prefabData[0]
         );
         this.openPage(page);
         page.save();
@@ -180,25 +169,38 @@ export class EditData {
 
     init() {
         this.prefabData = EditPrefab.createData();
+        this.pages = [];
+        this.nowPage = null;
+    }
 
-        this.pageParent = find("Canvas/PageParent");
-        this.gridNode = find("Canvas/Grid");
-        this.objectShadow = find("Canvas/ObjectShadow");
+    initNode(
+        camera: Node,
+        grid: Node,
+        regionSelector: Node,
+        objectShadow: Node,
+        pageParent: Node,
+        windowParent: Node
+    ) {
+        this.camera = camera.getComponent(Camera);
+        this.windowParent = windowParent;
+        this.pageParent = pageParent;
+        this.gridNode = grid;
+        this.objectShadow = objectShadow;
+        this.regionSelectorNode = regionSelector;
 
         this.objectShadowController = this.objectShadow.getComponent(ObjectShadowController);
         this.gridController = this.gridNode.getComponent(GridController);
-
-        this.gridController.redraw();
+        this.regionSelector = this.regionSelectorNode.getComponent(RegionSelectorController);
 
         if (this.nowPage === null) {
             this.toggleWindow("SelectRoomWindow");
         } else {
             // 打开过，只需要重新创建
-            this.rebuildRoom();
+            this.nowPage.open();
         }
     }
 
-    onDisable() {
+    dispose() {
         EditData.instance = null;
     }
 
@@ -207,7 +209,7 @@ export class EditData {
             this.closeWindow();
         }
         const window = SweetGlobal.createByPrefab(prefabName);
-        this.windowLayer.addChild(window);
+        this.windowParent.addChild(window);
         this.nowWindow = window;
         this.objectShadowController.disable();
     }
@@ -223,89 +225,63 @@ export class EditData {
         this.toggleWindow("MainMenuWindow");
     }
 
-    calcRegion(x1: number, y1: number, x2: number, y2: number) {
-        let left: number;
-        let right: number;
-        let top: number;
-        let bottom: number;
+    calcRegion(x1: number, y1: number, x2: number, y2: number): Rect {
+        let xMin: number;
+        let xMax: number;
+        let yMin: number;
+        let yMax: number;
 
         if (x2 > x1) {
-            left = x1;
-            right = x2;
+            xMin = x1;
+            xMax = x2;
         } else {
-            left = x2;
-            right = x1;
+            xMin = x2;
+            xMax = x1;
         }
-        if (y2 > this.selectRegionY) {
-            top = y1;
-            bottom = y2;
+        if (y2 > y1) {
+            yMin = y1;
+            yMax = y2;
         } else {
-            top = y2;
-            bottom = y1;
+            yMin = y2;
+            yMax = y1;
         }
 
-        return { left, top, right, bottom };
+        return new Rect(xMin, yMin, xMax - xMin + 1, yMax - yMin + 1);
     }
 
-    startSelectRegion(x: number, y: number) {
-        const regionSelectorNode = instantiate(this.regionSelectorPrefab);
-        this.regionSelector = regionSelectorNode.getComponent(RegionSelectorController);
-        this.regionSelectorContainer.addChild(regionSelectorNode);
+    startSelectRegion(position: Vec2) {
+        this.regionSelectorNode.active = true;
 
-        this.selectRegionX = x;
-        this.selectRegionY = y;
+        this.selectedRegionStartPos.set(position);
     }
 
-    updateSelectRegion(x: number, y: number) {
-        const { left, top, right, bottom } = this.calcRegion(this.selectRegionX, this.selectRegionY, x, y);
-        const objects = EditData.getObjectsInRegion(left, top, right, bottom);
-        this.setSelectedObjects(objects);
-        this.regionSelector.setRegion(left, top, right, bottom);
+    updateSelectRegion(position: Vec2) {
+        const page = this.nowPage as RoomEditPage;
+
+        this.selectedRegionEndPos.set(position);
+        const rect = this.calcRegion(this.selectedRegionStartPos.x, this.selectedRegionStartPos.y, position.x, position.y);
+        const instances = page.getInstancesInterGlobalRect(rect);
+        // todo: 显示选择框阴影
+        this.regionSelector.setRegion(rect);
     }
 
-    endSelectRegion(x: number, y: number) {
-        const { left, top, right, bottom } = this.calcRegion(this.selectRegionX, this.selectRegionY, x, y);
-        const objects = EditData.getObjectsInRegion(left, top, right, bottom);
+    endSelectRegion() {
+        const page = this.nowPage as RoomEditPage;
+
+        const rect = this.calcRegion(this.selectedRegionStartPos.x, this.selectedRegionStartPos.y, this.selectedRegionEndPos.x, this.selectedRegionEndPos.y);
+        const instances = page.getInstancesInterGlobalRect(rect);
         this.regionSelector.node.destroy();
 
-        EditData.selectObjects(objects);
-    }
-
-    rebuildRoom() {
-        this.camera.clearColor = new math.Color(EditData.nowRoomBackColor);
-        this.objectShadowController.updateSprite();
-        this.gridController.redraw();
-
-        // 重新创建层
-        for (const layerData of EditData.layers) {
-            const layerNode = new Node(layerData.name);
-            layerData.node = layerNode;
-            layerNode.setPosition(-400, -225);
-
-            let indexBefore = this.node.children.findIndex(v => v.name === "Stage");
-            this.node.insertChild(layerNode, indexBefore);
-
-            // 创建节点
-            for (const nodeData of layerData.objects) {
-                const prefabData = nodeData.prefab;
-
-                const node = EditData.addNode(layerData, prefabData, nodeData.x, nodeData.y);
-                nodeData.node = node;
-            }
-        }
-
-        // 重新创建选择框
-        for (const object of EditData.selectedObjects) {
-            this.createSelector(object);
-            this.updateSelector(object);
-        }
+        page.selectInstances(instances);
     }
 
     openPage(page: IEditPage) {
         this.pages.push(page);
         
-        // 摧毁当前节点
-        this.nowPage.switchOut();
+        if (this.nowPage !== null) {
+            // 摧毁当前节点
+            this.nowPage.switchOut();
+        }
         this.nowPage = page;
 
         page.open();
