@@ -1,10 +1,11 @@
 import { Node } from "cc";
-import { ComponentDataType } from "./ComponentDataType";
+import { ComponentType } from "./ComponentType";
 
 export interface IComponentData {
     id: string;
-    clone(): IComponentData;
+    prefab?: IComponentData;
+    createLinked(): IComponentData;
     addToNode(node: Node): void;
-    serialize(): any;
-    getType(): ComponentDataType;
+    serializeData(): any;
+    getType(): ComponentType;
 }

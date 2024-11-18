@@ -14,14 +14,14 @@ export class GridController extends Component {
     redraw() {
         const page = EditData.instance.nowPage as RoomEditPage;
 
-        if (page.data.gridVisible) {
+        if (page.gridVisible) {
             this.graphics.enabled = true;
-            this.graphics.fillColor = new math.Color(page.data.gridColor);
+            this.graphics.fillColor = new math.Color(page.gridColor);
             this.graphics.clear();
-            for (let i = 0; i < 800; i += page.data.gridSize.x) {
+            for (let i = 0; i < 800; i += page.gridSize.x) {
                 this.graphics.rect(i, 0, 1, 450);
             }
-            for (let j = 0; j < 450; j += page.data.gridSize.y) {
+            for (let j = 0; j < 450; j += page.gridSize.y) {
                 this.graphics.rect(0, j, 800, 1);
             }
             this.graphics.fill();

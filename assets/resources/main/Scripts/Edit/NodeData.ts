@@ -1,32 +1,33 @@
-import { Rect, Sprite, Vec3 } from "cc";
-import { EditPrefab } from "./PrefabData";
+import { Rect, Vec3 } from "cc";
+import { EditPrefab } from "./EditPrefab";
 import { LinkedValue } from "./LinkedValue";
 import { IComponentData } from "./ComponentData/IComponentData";
 import { TransformData } from "./ComponentData/TransformData";
 import { SweetUid } from "../SweetUid";
 import { SpriteData } from "./ComponentData/SpriteData";
-import { ComponentDataType } from "./ComponentData/ComponentDataType";
+import { ComponentType } from "./ComponentData/ComponentType";
+import { ComponentDataTool } from "./ComponentData/ComponentDataTool";
 
 export class NodeData {
     id: string;
-    prefab: EditPrefab;
-    prefabData: NodeData;
+    prefab?: EditPrefab;
+    prefabData?: NodeData;
     name: LinkedValue<string>;
     active: LinkedValue<boolean>;
     contentRect: LinkedValue<Rect>;
     components: IComponentData[];
-    parent: NodeData | null;
+    parent?: NodeData;
     children: NodeData[];
 
     constructor(
         id: string,
-        prefab: EditPrefab,
-        prefabData: NodeData,
+        prefab: EditPrefab | undefined,
+        prefabData: NodeData | undefined,
         name: LinkedValue<string>,
         active: LinkedValue<boolean>,
         contentRect: LinkedValue<Rect>,
         components: IComponentData[],
-        parent: NodeData | null,
+        parent: NodeData | undefined,
         children: NodeData[]
     ) {
         this.id = id;
@@ -46,7 +47,7 @@ export class NodeData {
     }
 
     getContentRect(): Rect {
-        return this.prefab !== null ? this.contentRect.getValue(this.prefabData.getContentRect()) : this.contentRect.value;
+        return this.prefabData !== undefined ? this.contentRect.getValue(this.prefabData.getContentRect()) : this.contentRect.value;
     }
 
     serialize(): object {
@@ -55,36 +56,36 @@ export class NodeData {
             prefab: this.prefab?.id ?? null,
             name: this.name.serialize(),
             active: this.active.serialize(),
-            contentRect: this.contentRect.serializeType((rect: Rect) => ({
+            contentRect: this.contentRect.serializeSpecial((rect: Rect) => ({
                 x: rect.x,
                 y: rect.y,
                 width: rect.width,
                 height: rect.height
             })),
-            components: this.components.map(component => component.serialize()),
+            components: this.components.map(component => ComponentDataTool.serialize(component)),
             children: this.children.map(child => child.serialize())
         };
     }
 
-    getTransform(): TransformData | null {
-        const component = this.components.find(component => component.getType() === ComponentDataType.TRANSFORM);
-        return component !== undefined ? component as TransformData : null;
+    getTransform(): TransformData | undefined {
+        const component = this.components.find(component => component.getType() === ComponentType.TRANSFORM);
+        return component !== undefined ? component as TransformData : undefined;
     }
 
-    getSprite(): SpriteData | null {
-        const component = this.components.find(component => component.getType() === ComponentDataType.SPRITE);
-        return component !== undefined ? component as SpriteData : null;
+    getSprite(): SpriteData | undefined {
+        const component = this.components.find(component => component.getType() === ComponentType.SPRITE);
+        return component !== undefined ? component as SpriteData : undefined;
     }
 
-    getLocalRect(): Rect | null {
+    getLocalRect(): Rect | undefined {
         const component = this.getTransform();
-        if (component !== null) {
+        if (component !== undefined) {
             const contentRect = this.getContentRect();
             const points = [
                 new Vec3(contentRect.xMin, contentRect.yMin, 0),
-                new Vec3(contentRect.xMin, contentRect.yMax, 0),
-                new Vec3(contentRect.xMax, contentRect.yMin, 0),
-                new Vec3(contentRect.xMax, contentRect.yMax, 0)
+                new Vec3(contentRect.xMin, contentRect.yMax - 1, 0),
+                new Vec3(contentRect.xMax - 1, contentRect.yMin, 0),
+                new Vec3(contentRect.xMax - 1, contentRect.yMax - 1, 0)
             ];
             component.transformPoints(points);
 
@@ -96,24 +97,24 @@ export class NodeData {
             return new Rect(xMin, yMin, xMax - xMin + 1, yMax - yMin + 1);
         }
 
-        return null;
+        return undefined;
     }
 
-    getGlobalRect(): Rect | null {
+    getGlobalRect(): Rect | undefined {
         const rect = this.getContentRect();
         const points = [
             new Vec3(rect.xMin, rect.yMin, 0),
-            new Vec3(rect.xMin, rect.yMax, 0),
-            new Vec3(rect.xMax, rect.yMin, 0),
-            new Vec3(rect.xMax, rect.yMax, 0)
+            new Vec3(rect.xMin, rect.yMax - 1, 0),
+            new Vec3(rect.xMax - 1, rect.yMin, 0),
+            new Vec3(rect.xMax - 1, rect.yMax - 1, 0)
         ]
 
-        for (let data: NodeData = this; data !== null; data = data.parent) {
+        for (let data: NodeData | undefined = this; data !== undefined; data = data.parent) {
             const transform = data.getTransform();
-            if (transform !== null) {
+            if (transform !== undefined) {
                 transform.transformPoints(points);
             } else {
-                return null;
+                return undefined;
             }
         }
 
@@ -133,23 +134,9 @@ export class NodeData {
             new LinkedValue<string>(false, ""),
             new LinkedValue<boolean>(false, false),
             new LinkedValue<Rect>(false, new Rect()),
-            this.components.map(component => component.clone()),
-            null,
+            this.components.map(component => component.createLinked()),
+            undefined,
             this.children.map(child => child.createLinked(prefab))
         );
-    }
-}
-
-export class NodeFile {
-    prefabName: string;
-    x: number;
-    y: number;
-    components: any;
-
-    constructor(prefabName: string, x: number, y: number, components: any) {
-        this.prefabName = prefabName;
-        this.x = x;
-        this.y = y;
-        this.components = components;
     }
 }

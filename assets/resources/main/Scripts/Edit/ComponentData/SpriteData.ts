@@ -1,38 +1,62 @@
-import { Color, Node, resources, Sprite, SpriteFrame, Vec3 } from "cc";
+import { Color, Node, resources, Sprite, SpriteFrame } from "cc";
 import { IComponentData } from "./IComponentData";
-import { ComponentDataType } from "./ComponentDataType";
+import { ComponentType } from "./ComponentType";
+import { LinkedValue } from "../LinkedValue";
+import { SweetUid } from "../../SweetUid";
 
 export class SpriteData implements IComponentData {
     id: string;
-    
-    path: string;
-    color: Color;
+    prefab?: SpriteData;
 
-    constructor(id: string, path: string, color: Color) {
+    path: LinkedValue<string>;
+    color: LinkedValue<Color>;
+
+    constructor(id: string, prefab: SpriteData | undefined, path: LinkedValue<string>, color: LinkedValue<Color>) {
         this.id = id;
+        this.prefab = prefab;
         this.path = path;
         this.color = color;
     }
 
-    clone(): IComponentData {
-        return new SpriteData(this.id, this.path, this.color);
+    getPath(): string {
+        if (this.prefab !== undefined) {
+            return this.path.getValue(this.prefab.getPath());
+        }
+
+        return this.path.value;
+    }
+
+    getColor(): Color {
+        if (this.prefab !== undefined) {
+            return this.color.getValue(this.prefab.getColor());
+        }
+
+        return this.color.value;
+    }
+
+    createLinked(): IComponentData {
+        return new SpriteData(
+            SweetUid.create(),
+            this,
+            new LinkedValue(false, ""),
+            new LinkedValue(false, new Color())
+        );
     }
 
     addToNode(node: Node): void {
         const sprite = node.addComponent(Sprite);
-        sprite.spriteFrame = resources.get(this.path, SpriteFrame);
-        sprite.color = this.color;
+        sprite.spriteFrame = resources.get(`${this.getPath()}/spriteFrame`, SpriteFrame);
+        sprite.color = new Color(this.getColor());
     }
 
-    serialize(): object {
+    serializeData() {
         return {
-            id: this.id,
-            path: this.path,
-            color: this.color.toHEX()
+            path: this.path.serialize(),
+            color: this.color.serializeSpecial(value => value.toHEX())
         };
     }
     
-    getType(): ComponentDataType {
-        return ComponentDataType.SPRITE;
+    getType(): ComponentType {
+        return ComponentType.SPRITE;
     }
 }

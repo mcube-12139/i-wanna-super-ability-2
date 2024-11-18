@@ -4,10 +4,10 @@ import { NodeData } from "./NodeData";
 export class EditInstance {
     node: Node;
     data: NodeData;
-    parent: EditInstance | null;
+    parent?: EditInstance;
     children: EditInstance[];
 
-    constructor(node: Node, data: NodeData, parent: EditInstance | null, children: EditInstance[]) {
+    constructor(node: Node, data: NodeData, parent: EditInstance | undefined, children: EditInstance[]) {
         this.node = node;
         this.data = data;
         this.parent = parent;
@@ -21,7 +21,7 @@ export class EditInstance {
         }
         const children = data.children.map(child => EditInstance.fromNodeData(child));
 
-        return new EditInstance(node, data, null, children);
+        return new EditInstance(node, data, undefined, children);
     }
 
     recover() {
@@ -41,61 +41,66 @@ export class EditInstance {
 
     destroy() {
         this.node.destroy();
-        this.parent.children.splice(this.parent.children.indexOf(this), 1);
-        this.parent = null;
+        if (this.parent !== undefined) {
+            this.parent.children.splice(this.parent.children.indexOf(this), 1);
+            this.parent = undefined;
+        }
     }
 
-    getPosition(): Vec3 | null {
+    getPosition(): Vec3 | undefined {
         const transform = this.data.getTransform();
-        if (transform !== null) {
-            return transform.position.clone();
+        if (transform !== undefined) {
+            return transform.getPosition();
         }
 
-        return null;
+        return undefined;
     }
 
     setPosition(position: Vec3): void {
-        this.data.getTransform().position.set(position);
-        this.node.setPosition(position);
+        const transform = this.data.getTransform();
+        if (transform !== undefined) {
+            transform.position.setValue(position);
+            this.node.setPosition(position);
+        }
     }
     
-    getInstanceAt(position: Vec2): EditInstance | null {
+    getInstanceAt(position: Vec2): EditInstance | undefined {
         for (const child of this.children) {
             const checkedChild = child.getInstanceAt(position);
-            if (checkedChild != null) {
+            if (checkedChild != undefined) {
                 return checkedChild;
             }
         }
 
         const rect = this.data.getLocalRect();
         if (
-            rect !== null &&
+            rect !== undefined &&
             position.x >= rect.xMin &&
-            position.x <= rect.xMax &&
+            position.x < rect.xMax &&
             position.y >= rect.yMin &&
-            position.y <= rect.yMax
+            position.y < rect.yMax
         ) {
             return this;
         }
 
-        return null;
+        return undefined;
     }
 
     /**
-     * 获取与指定区域碰撞的子节点或 null
+     * 获取与指定区域碰撞的子节点或 undefined
      * @param x 
      * @param y 
      * @returns 
      */
-    getChildInterRect(rect: Rect): EditInstance | null {
+    getChildInterRect(rect: Rect): EditInstance | undefined {
         for (const instance of this.children) {
             const localRect = instance.data.getLocalRect();
-            if (localRect !== null) {
+            if (localRect !== undefined) {
                 if (
-                    rect.xMax >= localRect.xMin && 
-                    rect.xMin <= localRect.xMax && 
-                    rect.yMax >= localRect.yMin && 
-                    rect.yMin <= localRect.yMax
+                    rect.xMax > localRect.xMin && 
+                    rect.xMin < localRect.xMax && 
+                    rect.yMax > localRect.yMin && 
+                    rect.yMin < localRect.yMax
                 ) {
                     // 与待创建区域重叠
                     return instance;
@@ -103,7 +108,7 @@ export class EditInstance {
             }
         }
 
-        return null;
+        return undefined;
     }
 
     getChildrenInterGlobalRect(rect: Rect): EditInstance[] {
@@ -114,10 +119,11 @@ export class EditInstance {
 
             const globalRect = instance.data.getGlobalRect();
             if (
-                rect.xMax >= globalRect.xMin && 
-                rect.xMin <= globalRect.xMax &&
-                rect.yMax >= globalRect.yMin && 
-                rect.yMin <= globalRect.yMax
+                globalRect !== undefined &&
+                rect.xMax > globalRect.xMin && 
+                rect.xMin < globalRect.xMax &&
+                rect.yMax > globalRect.yMin && 
+                rect.yMin < globalRect.yMax
             ) {
                 // 与待创建区域重叠
                 result.push(instance);

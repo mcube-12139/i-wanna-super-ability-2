@@ -20,6 +20,14 @@ export class LinkedValue<T> {
         this.value = value;
     }
 
+    clone() {
+        return new LinkedValue(this.modified, this.value);
+    }
+
+    cloneSpecial(fun: (value: T) => T) {
+        return new LinkedValue(this.modified, fun(this.value));
+    }
+
     serialize(): object {
         return this.modified ? {
             modified: true,
@@ -29,7 +37,7 @@ export class LinkedValue<T> {
         };
     }
 
-    serializeType(fun: (value: T) => any) {
+    serializeSpecial(fun: (value: T) => any) {
         return this.modified ? {
             modified: true,
             value: fun(this.value)

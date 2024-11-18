@@ -1,7 +1,7 @@
 import { _decorator, Component, director, EventKeyboard, EventMouse, Input, input, KeyCode, Vec2, Vec3 } from 'cc';
-import { EditData } from './Edit/EditData';
-import { MainMenuOptionId } from './MainMenuOptionController';
-import { RoomEditPage } from './Edit/Page/RoomEditPage';
+import { EditData } from './EditData';
+import { MainMenuOptionId } from '../MainMenuOptionController';
+import { RoomEditPage } from './Page/RoomEditPage';
 const { ccclass, property } = _decorator;
 
 const enum StageAction {
@@ -12,14 +12,14 @@ const enum StageAction {
     SELECT_REGION
 }
 
-@ccclass('StageController')
-export class StageController extends Component {
+@ccclass('StageControl')
+export class StageControl extends Component {
     noSnapMousePos = new Vec2(0, 0);
     mousePos = new Vec2(0, 0);
     ctrlHeld = false;
     shiftHeld = false;
     altHeld = false;
-    action: number;
+    action: StageAction = StageAction.NONE;
 
     start() {
         input.on(Input.EventType.MOUSE_DOWN, this.onMouseDown, this);
@@ -43,7 +43,7 @@ export class StageController extends Component {
                     if (instance === null) {
                         // 没点到物体，创建
                         this.action = StageAction.CREATE;
-                        EditData.instance.startCreate();
+                        page.startCreate();
                         this.createObject();
                     } else {
                         // 点到物体了，选中并拖动
@@ -51,17 +51,17 @@ export class StageController extends Component {
                         if (!page.selectors.has(instance)) {
                             page.selectInstances([instance]);
                         }
-                        EditData.instance.startDrag(this.mousePos);
+                        page.startDrag(this.mousePos);
                     }
                 } else {
                     // Shift + 左键，框选
                     this.action = StageAction.SELECT_REGION;
-                    EditData.instance.startSelectRegion(this.noSnapMousePos);
+                    page.startSelectRegion(this.noSnapMousePos);
                 }
             } else if (button === EventMouse.BUTTON_RIGHT) {
                 // 右键，取消选择，并开始删除
                 this.action = StageAction.DELETE;
-                EditData.instance.startDelete();
+                page.startDelete();
 
                 const instance = page.getInstanceAt(this.noSnapMousePos);
                 if (instance === null) {
@@ -87,7 +87,7 @@ export class StageController extends Component {
                 }
             } else if (this.action === StageAction.DRAG) {
                 if (updated) {
-                    EditData.instance.dragTo(this.mousePos);
+                    page.dragTo(this.mousePos);
                 }
             } else if (this.action === StageAction.DELETE) {
                 if (updated && !this.altHeld) {
@@ -97,36 +97,38 @@ export class StageController extends Component {
                     }
                 }
             } else if (this.action === StageAction.SELECT_REGION) {
-                EditData.instance.updateSelectRegion(this.noSnapMousePos);
+                page.updateSelectRegion(this.noSnapMousePos);
             }
         }
     }
 
     onMouseUp(event: EventMouse) {
+        const page = EditData.instance.nowPage as RoomEditPage;
+
         if (EditData.instance.nowWindow === null) {
             const button = event.getButton();
             if (button === EventMouse.BUTTON_LEFT) {
                 if (this.action === StageAction.CREATE) {
                     this.action = StageAction.NONE;
-                    EditData.instance.endCreate();
+                    page.endCreate();
                 } else if (this.action === StageAction.DRAG) {
                     this.action = StageAction.NONE;
-                    EditData.instance.endDrag();
+                    page.endDrag();
                 } else if (this.action === StageAction.SELECT_REGION) {
                     this.action = StageAction.NONE;
-                    EditData.instance.endSelectRegion();
+                    page.endSelectRegion();
                 }
             } else if (button === EventMouse.BUTTON_RIGHT) {
                 if (this.action === StageAction.DELETE) {
                     this.action = StageAction.NONE;
                 }
-                EditData.instance.endDelete();
+                page.endDelete();
             }
         }
     }
 
     onKeyDown(event: EventKeyboard) {
-        const page = EditData.instance.nowPage;
+        const page = EditData.instance.nowPage as RoomEditPage;
 
         if (EditData.instance.nowWindow === null) {
             if (event.keyCode === KeyCode.ALT_LEFT) {
@@ -187,8 +189,8 @@ export class StageController extends Component {
         let mouseY: number;
         // 根据 Alt 是否按住，计算网格坐标
         if (!this.altHeld) {
-            mouseX = page.data.gridSize.x * Math.floor(position.x / page.data.gridSize.x);
-            mouseY = page.data.gridSize.y * Math.floor(position.y / page.data.gridSize.y);
+            mouseX = page.gridSize.x * Math.floor(position.x / page.gridSize.x);
+            mouseY = page.gridSize.y * Math.floor(position.y / page.gridSize.y);
         } else {
             mouseX = position.x;
             mouseY = position.y;

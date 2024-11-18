@@ -29,56 +29,60 @@ export class EditPrefab {
                 "NeedleU",
                 new NodeData(
                     "wc2oxetf52dvuo3anyudtu8ic14mlz6w",
-                    null,
-                    null,
+                    undefined,
+                    undefined,
                     new LinkedValue<string>(true, "NeedleU"),
                     new LinkedValue<boolean>(true, true),
                     new LinkedValue(true, new Rect(-16, -16, 32, 32)),
                     [
                         new TransformData(
                             "solheu50fec5wrdarwje1zo56azm1ru9",
-                            new Vec3(0, 0, 0),
-                            new Vec3(0, 0, 0),
-                            new Vec3(1, 1, 1)
+                            undefined,
+                            new LinkedValue(true, new Vec3(0, 0, 0)),
+                            new LinkedValue(true, new Vec3(0, 0, 0)),
+                            new LinkedValue(true, new Vec3(1, 1, 1))
                         ),
                         new SpriteData(
                             "u263duyqzrcwgjrasikjy1i0rb8slopv",
-                            "main/Sprites/needle u",
-                            new Color(Color.WHITE)
+                            undefined,
+                            new LinkedValue(true, "main/Sprites/needle u"),
+                            new LinkedValue(true, Color.WHITE.clone())
                         )
                     ],
-                    null,
+                    undefined,
                     []
                 ),
-                new Vec2(-16, -16)
+                new Vec2(16, 16)
             ),
             new EditPrefab(
                 "2ykye086y5pmc7f23k94m7wcgpxwre6a",
                 "NeedleD",
                 new NodeData(
                     "1tltkz729c9ahwf2dhllzsd94p5j5zsv",
-                    null,
-                    null,
+                    undefined,
+                    undefined,
                     new LinkedValue<string>(true, "NeedleD"),
                     new LinkedValue<boolean>(true, true),
                     new LinkedValue(true, new Rect(-16, -16, 32, 32)),
                     [
                         new TransformData(
                             "atc6kn3i9c1htt4r2fn6mxkzvxlj2kwr",
-                            new Vec3(0, 0, 0),
-                            new Vec3(0, 0, 0),
-                            new Vec3(1, 1, 1)
+                            undefined,
+                            new LinkedValue(true, new Vec3(0, 0, 0)),
+                            new LinkedValue(true, new Vec3(0, 0, 0)),
+                            new LinkedValue(true, new Vec3(1, 1, 1))
                         ),
                         new SpriteData(
                             "2c28csromzl4t6zkovmrcmklmzu16iln",
-                            "main/Sprites/needle d",
-                            new Color(Color.WHITE)
+                            undefined,
+                            new LinkedValue(true, "main/Sprites/needle d"),
+                            new LinkedValue(true, Color.WHITE.clone())
                         )
                     ],
-                    null,
+                    undefined,
                     []
                 ),
-                new Vec2(-16, -16)
+                new Vec2(16, 16)
             ),
             /*
             new EditPrefab("NeedleL", 0, 0, 32, 32, "needle l", "NeedleLayer", []),
@@ -100,15 +104,19 @@ export class EditPrefab {
     }
 
     get sprite(): SpriteFrame {
-        const data = this.data.getSprite();
-        if (data !== null) {
-            return resources.get(`${data.path}/spriteFrame`, SpriteFrame);
-        }
-
-        return resources.get("main/Sprites/unknown/spriteFrame", SpriteFrame);
+        const path = this.data.getSprite()?.getPath() ?? "main/Sprites/unknown";
+        return resources.get(`${path}/spriteFrame`, SpriteFrame)!;
     }
 
     createLinked(): NodeData {
         return this.data.createLinked(this);
+    }
+
+    serialize() {
+        return {
+            id: this.id,
+            name: this.name,
+
+        }
     }
 }

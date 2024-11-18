@@ -20,7 +20,6 @@ export class ButtonController extends Component {
     static actionIdMap = new Map<ButtonActionId, (controller: ButtonController) => void>([
         [ButtonActionId.START_GAME, controller => {
             SweetGlobal.autosave = true;
-            EditData.initData();
             director.loadScene("edit");
         }],
         [ButtonActionId.LOAD_GAME, controller => {
