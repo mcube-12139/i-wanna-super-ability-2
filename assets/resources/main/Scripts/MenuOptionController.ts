@@ -4,11 +4,11 @@ const { ccclass, property } = _decorator;
 @ccclass('MenuOptionController')
 export class MenuOptionController extends Component {
     @property(Sprite)
-    background: Sprite;
+    background!: Sprite;
     @property(Node)
-    container: Node;
+    container!: Node;
     @property(Prefab)
-    view: Prefab;
+    pagePrefab!: Prefab;
 
     selected: boolean = false;
 
@@ -20,9 +20,9 @@ export class MenuOptionController extends Component {
 
     select() {
         // 取消其他选项选中
-        const children = this.node.parent.children;
+        const children = this.node.parent!.children;
         for (const child of children) {
-            const controller = child.getComponent(MenuOptionController);
+            const controller = child.getComponent(MenuOptionController)!;
             if (controller.selected) {
                 controller.unselect();
             }
@@ -30,7 +30,7 @@ export class MenuOptionController extends Component {
         
         this.selected = true;
         this.background.enabled = true;
-        const viewNode = instantiate(this.view);
+        const viewNode = instantiate(this.pagePrefab);
         this.container.addChild(viewNode);
     }
 
@@ -42,17 +42,17 @@ export class MenuOptionController extends Component {
         this.background.enabled = false;
     }
 
-    onMouseEnter(_) {
+    onMouseEnter(_: MouseEvent) {
         this.background.enabled = true;
     }
 
-    onMouseLeave(_) {
+    onMouseLeave(_: MouseEvent) {
         if (!this.selected) {
             this.background.enabled = false;
         }
     }
 
-    onMouseUp(_) {
+    onMouseUp(_: MouseEvent) {
         if (!this.selected) {
             this.select();
         }

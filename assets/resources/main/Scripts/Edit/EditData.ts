@@ -84,7 +84,7 @@ export class EditData {
         this.prefabData = EditPrefab.createData();
     }
 
-    static initData(data: {
+    static initData(nodes: {
         selectorPrefab: Prefab,
         camera: Camera,
         grid: Node,
@@ -99,15 +99,13 @@ export class EditData {
         if (rootResourceStr !== null) {
             rootResource = EditResourceTool.deserialize(JSON.parse(rootResourceStr)) as RootResource;
         } else {
-            rootResource = new RootResource(SweetUid.create(), "untitled", []);
+            rootResource = new RootResource(SweetUid.create(), "root", []);
         }
-        console.log(rootResource);
-        this.optionalInstance = new EditData(data, rootResource);
+        this.optionalInstance = new EditData(nodes, rootResource);
 
         if (this.instance.nowPage === undefined) {
             this.instance.toggleWindow("SelectRoomWindow");
         } else {
-            // 打开过，只需要重新创建
             this.instance.nowPage.open();
         }
     }
@@ -117,7 +115,7 @@ export class EditData {
     }
 
     createRoom(name: string) {
-        // 检查房间名是否重复
+        // 检查名字是否重复
         if (EditResourceTool.findTypeName(this.rootResource, EditResourceType.ROOM, name) !== undefined) {
             return {
                 ok: false,
@@ -156,7 +154,7 @@ export class EditData {
             name,
             rootData,
             new Vec2(800, 450),
-            new Color(102, 204, 255, 255)
+            new Color(148, 191, 255, 255)
         );
 
         const page = new RoomEditPage(

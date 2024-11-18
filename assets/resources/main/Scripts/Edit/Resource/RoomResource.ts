@@ -9,7 +9,9 @@ export class RoomResource implements IEditResource {
     id: string;
     name: string;
     parent?: IEditResource | undefined;
-    children?: IEditResource[] = undefined;
+    get children(): undefined {
+        return undefined;
+    }
     
     constructor(
         id: string,

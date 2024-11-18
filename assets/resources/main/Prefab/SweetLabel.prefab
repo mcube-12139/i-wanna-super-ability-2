@@ -74,7 +74,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 0,
-      "height": 31.499999999999996
+      "height": 31.5
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -114,7 +114,7 @@
     "_verticalAlign": 1,
     "_actualFontSize": 34.6875,
     "_fontSize": 20,
-    "_fontFamily": "站酷快乐体2016修订版",
+    "_fontFamily": "Consolas",
     "_lineHeight": 25,
     "_overflow": 0,
     "_enableWrapText": true,
