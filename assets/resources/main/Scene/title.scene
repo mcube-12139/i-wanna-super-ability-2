@@ -23,7 +23,7 @@
     "_active": true,
     "_components": [],
     "_prefab": {
-      "__id__": 67
+      "__id__": 68
     },
     "_lpos": {
       "__type__": "cc.Vec3",
@@ -54,7 +54,7 @@
     },
     "autoReleaseAssets": false,
     "_globals": {
-      "__id__": 68
+      "__id__": 77
     },
     "_id": "91d396bf-13c3-43aa-b7fa-5ba1e38e3182"
   },
@@ -93,6 +93,9 @@
       },
       {
         "__id__": 66
+      },
+      {
+        "__id__": 67
       }
     ],
     "_prefab": null,
@@ -184,7 +187,7 @@
     "_priority": 0,
     "_fov": 45,
     "_fovAxis": 0,
-    "_orthoHeight": 228.76404494382024,
+    "_orthoHeight": 252.97297297297297,
     "_near": 0,
     "_far": 1000,
     "_color": {
@@ -340,8 +343,8 @@
     ],
     "value": {
       "__type__": "cc.Size",
-      "width": 127.9999853698502,
-      "height": 50.400000000000006
+      "width": 128,
+      "height": 50.4
     }
   },
   {
@@ -533,8 +536,8 @@
     ],
     "value": {
       "__type__": "cc.Size",
-      "width": 127.9999853698502,
-      "height": 50.400000000000006
+      "width": 128,
+      "height": 50.4
     }
   },
   {
@@ -721,8 +724,8 @@
     ],
     "value": {
       "__type__": "cc.Size",
-      "width": 127.9999853698502,
-      "height": 50.400000000000006
+      "width": 128,
+      "height": 50.4
     }
   },
   {
@@ -886,8 +889,8 @@
     ],
     "value": {
       "__type__": "cc.Size",
-      "width": 63.9999926849251,
-      "height": 50.400000000000006
+      "width": 64,
+      "height": 50.4
     }
   },
   {
@@ -1028,12 +1031,41 @@
     "_id": "c5V1EV8IpMtrIvY1OE9t2u"
   },
   {
+    "__type__": "6413795JLlP5YDWQkdb24TW",
+    "_name": "",
+    "_objFlags": 0,
+    "__editorExtras__": {},
+    "node": {
+      "__id__": 2
+    },
+    "_enabled": true,
+    "__prefab": null,
+    "startGameButton": null,
+    "loadGameButton": null,
+    "selectLevelButton": null,
+    "settingButton": null,
+    "_id": "222bev2PdJP5d4jUMnulzn"
+  },
+  {
     "__type__": "cc.PrefabInfo",
     "root": null,
     "asset": null,
     "fileId": "91d396bf-13c3-43aa-b7fa-5ba1e38e3182",
     "instance": null,
-    "targetOverrides": null,
+    "targetOverrides": [
+      {
+        "__id__": 69
+      },
+      {
+        "__id__": 71
+      },
+      {
+        "__id__": 73
+      },
+      {
+        "__id__": 75
+      }
+    ],
     "nestedPrefabInstanceRoots": [
       {
         "__id__": 5
@@ -1050,30 +1082,118 @@
     ]
   },
   {
+    "__type__": "cc.TargetOverrideInfo",
+    "source": {
+      "__id__": 67
+    },
+    "sourceInfo": null,
+    "propertyPath": [
+      "startGameButton"
+    ],
+    "target": {
+      "__id__": 5
+    },
+    "targetInfo": {
+      "__id__": 70
+    }
+  },
+  {
+    "__type__": "cc.TargetInfo",
+    "localID": [
+      "caB+cOThBHX7O4HyzNrny8"
+    ]
+  },
+  {
+    "__type__": "cc.TargetOverrideInfo",
+    "source": {
+      "__id__": 67
+    },
+    "sourceInfo": null,
+    "propertyPath": [
+      "loadGameButton"
+    ],
+    "target": {
+      "__id__": 15
+    },
+    "targetInfo": {
+      "__id__": 72
+    }
+  },
+  {
+    "__type__": "cc.TargetInfo",
+    "localID": [
+      "caB+cOThBHX7O4HyzNrny8"
+    ]
+  },
+  {
+    "__type__": "cc.TargetOverrideInfo",
+    "source": {
+      "__id__": 67
+    },
+    "sourceInfo": null,
+    "propertyPath": [
+      "selectLevelButton"
+    ],
+    "target": {
+      "__id__": 32
+    },
+    "targetInfo": {
+      "__id__": 74
+    }
+  },
+  {
+    "__type__": "cc.TargetInfo",
+    "localID": [
+      "caB+cOThBHX7O4HyzNrny8"
+    ]
+  },
+  {
+    "__type__": "cc.TargetOverrideInfo",
+    "source": {
+      "__id__": 67
+    },
+    "sourceInfo": null,
+    "propertyPath": [
+      "settingButton"
+    ],
+    "target": {
+      "__id__": 46
+    },
+    "targetInfo": {
+      "__id__": 76
+    }
+  },
+  {
+    "__type__": "cc.TargetInfo",
+    "localID": [
+      "caB+cOThBHX7O4HyzNrny8"
+    ]
+  },
+  {
     "__type__": "cc.SceneGlobals",
     "ambient": {
-      "__id__": 69
+      "__id__": 78
     },
     "shadows": {
-      "__id__": 70
+      "__id__": 79
     },
     "_skybox": {
-      "__id__": 71
+      "__id__": 80
     },
     "fog": {
-      "__id__": 72
+      "__id__": 81
     },
     "octree": {
-      "__id__": 73
+      "__id__": 82
     },
     "skin": {
-      "__id__": 74
+      "__id__": 83
     },
     "lightProbeInfo": {
-      "__id__": 75
+      "__id__": 84
     },
     "postSettings": {
-      "__id__": 76
+      "__id__": 85
     },
     "bakedWithStationaryMainLight": false,
     "bakedWithHighpLightmap": false

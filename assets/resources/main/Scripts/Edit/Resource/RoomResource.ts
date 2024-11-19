@@ -1,3 +1,4 @@
+import { resources, SpriteFrame } from "cc";
 import { EditResourceType } from "./EditResourceType";
 import { IEditResource } from "./IEditResource";
 
@@ -11,6 +12,9 @@ export class RoomResource implements IEditResource {
     parent?: IEditResource | undefined;
     get children(): undefined {
         return undefined;
+    }
+    get icon(): SpriteFrame {
+        return resources.get("main/Sprites/room/spriteFrame", SpriteFrame)!;
     }
     
     constructor(

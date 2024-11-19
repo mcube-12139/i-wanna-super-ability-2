@@ -9,6 +9,9 @@ export class RootResource implements IEditResource {
     name: string;
     parent: undefined;
     children: IEditResource[] | undefined;
+    get icon(): undefined {
+        return undefined;
+    }
     
     constructor(id: string, name: string, children: IEditResource[]) {
         this.id = id;

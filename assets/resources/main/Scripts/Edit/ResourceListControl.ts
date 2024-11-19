@@ -1,7 +1,8 @@
-import { _decorator, Component, Node, ScrollView } from 'cc';
+import { _decorator, Component, Node, ScrollView, Toggle } from 'cc';
 import { EditResourceTool } from './Resource/EditResourceTool';
 import { EditData } from './EditData';
 import { ResourceItemControl } from './ResourceItemControl';
+import { ButtonController } from '../ButtonController';
 const { ccclass, property } = _decorator;
 
 @ccclass('ResourceListControl')
@@ -9,13 +10,27 @@ export class ResourceListControl extends Component {
     scrollView!: ScrollView;
     selectedItems: ResourceItemControl[] = [];
 
-    start() {
+    init(elements: {
+        enableMultiple: Toggle,
+        open: ButtonController,
+        createRoom: ButtonController
+    }) {
         this.scrollView = this.getComponent(ScrollView)!;
 
         const node = EditResourceTool.createItemNode(EditData.instance.rootResource, 0);
         const nodeControl = node.getComponent(ResourceItemControl)!;
-        nodeControl.initEvents(this);
+        nodeControl.setEvents({
+            list: this,
+            enableMultiple: elements.enableMultiple,
+            open: elements.open,
+            createRoom: elements.createRoom
+        });
         this.scrollView.content!.addChild(node);
+    }
+
+    selectItem(item: ResourceItemControl) {
+        item.select();
+        this.selectedItems.push(item);
     }
 
     setSelectedItems(...items: ResourceItemControl[]) {

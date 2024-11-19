@@ -1,7 +1,7 @@
-import { _decorator, Component, Label, Node, resources, Sprite, SpriteFrame } from 'cc';
+import { _decorator, Component, Label, Node, resources, Sprite, SpriteFrame, Toggle } from 'cc';
 import { IEditResource } from './Resource/IEditResource';
-import { EditResourceTool } from './Resource/EditResourceTool';
 import { ResourceListControl } from './ResourceListControl';
+import { ButtonController } from '../ButtonController';
 const { ccclass, property } = _decorator;
 
 @ccclass('ResourceItemControl')
@@ -25,7 +25,7 @@ export class ResourceItemControl extends Component {
         if (data.children === undefined) {
             this.children!.destroy();
             this.children = undefined;
-            sprite = EditResourceTool.getMetadata(data.type).sprite!;
+            sprite = data.icon!;
         } else {
             this.childrenVisible = true;
             sprite = resources.get("main/Sprites/expanded/spriteFrame", SpriteFrame)!;
@@ -34,14 +34,41 @@ export class ResourceItemControl extends Component {
         this.resourceName.string = data.name;
     }
 
-    initEvents(listControl: ResourceListControl) {
-        this.background.node.on(Node.EventType.MOUSE_ENTER, (e: MouseEvent) => this.onMouseEnter(e, listControl), this);
-        this.background.node.on(Node.EventType.MOUSE_LEAVE, (e: MouseEvent) => this.onMouseLeave(e, listControl), this);
-        this.background.node.on(Node.EventType.TOUCH_END, (e: TouchEvent) => this.onTouchEnd(e, listControl), this);
+    setEvents(elements: {
+        list: ResourceListControl,
+        enableMultiple: Toggle,
+        open: ButtonController,
+        createRoom: ButtonController
+    }) {
+        this.background.node.on(Node.EventType.MOUSE_ENTER, (e: MouseEvent) => this.onMouseEnter(e, elements.list), this);
+        this.background.node.on(Node.EventType.MOUSE_LEAVE, (e: MouseEvent) => this.onMouseLeave(e, elements.list), this);
+        this.background.node.on(Node.EventType.TOUCH_END, (e: TouchEvent) => {
+            if (this.children !== undefined) {
+                this.childrenVisible = !this.childrenVisible;
+                this.children!.active = this.childrenVisible;
+                this.icon.spriteFrame = resources.get(`main/Sprites/${this.childrenVisible ? "expanded" : "collapsed"}/spriteFrame`, SpriteFrame)!;
+
+                elements.open.setEnabled(false);
+            } else {
+                elements.open.setEnabled(true);
+            }
+
+            if (!elements.enableMultiple) {
+                elements.list.setSelectedItems(this);
+            } else {
+                elements.list.selectItem(this);
+            }
+
+            if (elements.list.selectedItems.length === 1) {
+                elements.createRoom.setEnabled(true);
+            } else {
+                elements.createRoom.setEnabled(false);
+            }
+        }, this);
 
         if (this.children !== undefined) {
             for (const child of this.children.children) {
-                child.getComponent(ResourceItemControl)!.initEvents(listControl);
+                child.getComponent(ResourceItemControl)!.setEvents(elements);
             }
         }
     }
@@ -62,15 +89,6 @@ export class ResourceItemControl extends Component {
         if (!listControl.isItemSelected(this)) {
             this.background.enabled = false;
         }
-    }
-
-    onTouchEnd(event: TouchEvent, listControl: ResourceListControl) {
-        if (this.children !== undefined) {
-            this.childrenVisible = !this.childrenVisible;
-            this.children!.active = this.childrenVisible;
-            this.icon.spriteFrame = resources.get(`main/Sprites/${this.childrenVisible ? "expanded" : "collapsed"}/spriteFrame`, SpriteFrame)!;
-        }
-        listControl.setSelectedItems(this);
     }
 }
 

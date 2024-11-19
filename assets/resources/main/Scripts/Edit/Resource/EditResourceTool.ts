@@ -1,5 +1,4 @@
-import { instantiate, Node, Prefab, resources, SpriteFrame } from "cc";
-import { EditResourceMetadata } from "./EditResourceMetadata";
+import { instantiate, Node, Prefab, resources } from "cc";
 import { EditResourceType } from "./EditResourceType";
 import { IEditResource } from "./IEditResource";
 import { RoomResource } from "./RoomResource";
@@ -7,29 +6,6 @@ import { RootResource } from "./RootResource";
 import { ResourceItemControl } from "../ResourceItemControl";
 
 export class EditResourceTool {
-    static getMetadata(type: EditResourceType): EditResourceMetadata {
-        if (type === EditResourceType.ROOT) {
-            return new EditResourceMetadata(undefined, (data: any) => {
-                const children: IEditResource[] = [];
-                const resource = new RootResource(data.id, data.name, children);
-                for (const childData of data.children) {
-                    const child = EditResourceTool.deserialize(childData);
-                    children.push(child);
-                    child.parent = resource;
-                }
-
-                return resource;
-            });
-        }
-        if (type === EditResourceType.ROOM) {
-            return new EditResourceMetadata(resources.get("main/Sprites/room/spriteFrame", SpriteFrame)!, (data: any) => {
-                return new RoomResource(data.id, data.name, undefined);
-            });
-        }
-        
-        throw new Error("unknown resource type");
-    }
-
     static createItemNode(resource: IEditResource, depth: number): Node {
         const node = instantiate(resources.get("main/Prefab/ResourceItem", Prefab)!);
         if (depth !== 0) {
@@ -80,6 +56,22 @@ export class EditResourceTool {
     }
 
     static deserialize(data: any): IEditResource {
-        return this.getMetadata(data.type).deserializeFun(data);
+        const type = data.type;
+        if (type === EditResourceType.ROOT) {
+            const children: IEditResource[] = [];
+            const resource = new RootResource(data.id, data.name, children);
+            for (const childData of data.children) {
+                const child = EditResourceTool.deserialize(childData);
+                children.push(child);
+                child.parent = resource;
+            }
+
+            return resource;
+        }
+        if (type === EditResourceType.ROOM) {
+            return new RoomResource(data.id, data.name, undefined);
+        }
+        
+        throw new Error("unknown resource type");
     }
 }
