@@ -32,7 +32,7 @@ export class StageControl extends Component {
     onMouseDown(event: EventMouse) {
         const page = EditData.instance.nowPage as RoomEditPage;
 
-        if (EditData.instance.nowWindow === null) {
+        if (EditData.instance.nowWindow === undefined) {
             const button = event.getButton();
             const uiLocation = event.getUILocation();
             this.setMousePosition(uiLocation);
@@ -40,7 +40,7 @@ export class StageControl extends Component {
                 if (!this.shiftHeld) {
                     // 左键
                     const instance = page.getInstanceAt(uiLocation);
-                    if (instance === null) {
+                    if (instance === undefined) {
                         // 没点到物体，创建
                         this.action = StageAction.CREATE;
                         page.startCreate();
@@ -64,7 +64,7 @@ export class StageControl extends Component {
                 page.startDelete();
 
                 const instance = page.getInstanceAt(this.noSnapMousePos);
-                if (instance === null) {
+                if (instance === undefined) {
                     page.selectInstances([]);
                 } else {
                     page.deleteInstance(instance);
@@ -76,7 +76,7 @@ export class StageControl extends Component {
     onMouseMove(event: EventMouse) {
         const page = EditData.instance.nowPage as RoomEditPage;
 
-        if (EditData.instance.nowWindow === null) {
+        if (EditData.instance.nowWindow === undefined) {
             const uiLocation = event.getUILocation();
             const localPos = new Vec3();
             this.node.inverseTransformPoint(localPos, new Vec3(uiLocation.x, uiLocation.y, 0));
@@ -92,7 +92,7 @@ export class StageControl extends Component {
             } else if (this.action === StageAction.DELETE) {
                 if (updated && !this.altHeld) {
                     const instance = page.getInstanceAt(this.noSnapMousePos);
-                    if (instance !== null) {
+                    if (instance !== undefined) {
                         page.deleteInstance(instance);
                     }
                 }
@@ -105,7 +105,7 @@ export class StageControl extends Component {
     onMouseUp(event: EventMouse) {
         const page = EditData.instance.nowPage as RoomEditPage;
 
-        if (EditData.instance.nowWindow === null) {
+        if (EditData.instance.nowWindow === undefined) {
             const button = event.getButton();
             if (button === EventMouse.BUTTON_LEFT) {
                 if (this.action === StageAction.CREATE) {
@@ -130,7 +130,7 @@ export class StageControl extends Component {
     onKeyDown(event: EventKeyboard) {
         const page = EditData.instance.nowPage as RoomEditPage;
 
-        if (EditData.instance.nowWindow === null) {
+        if (EditData.instance.nowWindow === undefined) {
             if (event.keyCode === KeyCode.ALT_LEFT) {
                 this.altHeld = true;
             } else if (event.keyCode === KeyCode.SHIFT_LEFT) {
@@ -169,7 +169,7 @@ export class StageControl extends Component {
     }
 
     onKeyUp(event: EventKeyboard) {
-        if (EditData.instance.nowWindow === null) {
+        if (EditData.instance.nowWindow === undefined) {
             if (event.keyCode === KeyCode.ALT_LEFT) {
                 this.altHeld = false;
             } else if (event.keyCode === KeyCode.CTRL_LEFT) {

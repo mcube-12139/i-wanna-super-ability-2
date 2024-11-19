@@ -16,7 +16,7 @@ export class SweetGlobal {
     };
 
     static createByPrefab(name: string): Node {
-        return instantiate(resources.get(`main/Prefab/${name}`) as Prefab);
+        return instantiate(resources.get(`main/Prefab/${name}`, Prefab)!);
     }
 
     static createOnLayerByPrefab(prefabName: string, layerName: string): Node {

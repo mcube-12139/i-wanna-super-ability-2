@@ -1,70 +1,93 @@
-import { CCBoolean, Color, Label } from 'cc';
+import { CCBoolean, Color, Label, Node, UITransform } from 'cc';
 import { Enum } from 'cc';
 import { director } from 'cc';
-import { Input } from 'cc';
-import { CCFloat } from 'cc';
 import { _decorator, Component, Graphics } from 'cc';
 import { SweetGlobal } from './SweetGlobal';
-import { EditData } from './Edit/EditData';
+import { ResourceListControl } from './Edit/ResourceListControl';
 const { ccclass, property } = _decorator;
 
 enum ButtonActionId {
     START_GAME,
     LOAD_GAME,
     SELECT_LEVEL,
-    SETTING
+    SETTING,
+    OPEN_RESOURCE
 }
 
 @ccclass('ButtonController')
 export class ButtonController extends Component {
-    static actionIdMap = new Map<ButtonActionId, (controller: ButtonController) => void>([
-        [ButtonActionId.START_GAME, controller => {
+    static actionIdMap = new Map<ButtonActionId, () => void>([
+        [ButtonActionId.START_GAME, () => {
             SweetGlobal.autosave = true;
             director.loadScene("edit");
         }],
-        [ButtonActionId.LOAD_GAME, controller => {
+        [ButtonActionId.LOAD_GAME, () => {
             SweetGlobal.loadFile();
         }],
-        [ButtonActionId.SELECT_LEVEL, controller => {
+        [ButtonActionId.SELECT_LEVEL, () => {
             director.loadScene("selectLevel");
         }],
-        [ButtonActionId.SETTING, controller => {
+        [ButtonActionId.SETTING, () => {
             director.loadScene("setting");
+        }],
+        [ButtonActionId.OPEN_RESOURCE, () => {
+
         }]
     ]);
 
+    @property(Label)
+    label!: Label;
+    @property(Graphics)
+    graphics!: Graphics;
     @property({type: Enum(ButtonActionId)})
-    actionId: ButtonActionId;
-    @property(CCFloat)
-    width: number;
-    @property(CCFloat)
-    height: number;
+    actionId!: ButtonActionId;
+
+    @property({
+        type: ResourceListControl,
+        visible: function (this: ButtonController) {
+            return this.actionId === ButtonActionId.OPEN_RESOURCE;
+        }
+    })
+    list?: ResourceListControl;
+
     @property(CCBoolean)
     buttonEnabled: boolean = true;
 
-    private graphics: Graphics;
-    private text: Label;
-
     start() {
-        // 画出背景
-        this.graphics = this.node.getChildByName("Background").getComponent(Graphics);
-        this.graphics.rect(-this.width / 2, -this.height / 2, this.width, this.height);
-        this.graphics.fill();
-
-        this.text = this.node.getChildByName("Text").getComponent(Label);
-
         // 设置触摸事件
-        this.node.on(Input.EventType.TOUCH_START, this.onTouchStart, this);
+        this.node.on(Node.EventType.MOUSE_ENTER, this.onMouseEnter, this);
+        this.node.on(Node.EventType.MOUSE_LEAVE, this.onMouseLeave, this);
+        this.node.on(Node.EventType.TOUCH_END, this.onTouchEnd, this);
     }
 
-    disableButton() {
-        this.buttonEnabled = false;
-        this.text.color = new Color(255, 255, 255, 128);
+    setEnabled(enabled: boolean) {
+        this.buttonEnabled = enabled;
+        this.label.color = enabled ? new Color(255, 255, 255, 255): new Color(255, 255, 255, 128);
     }
 
-    onTouchStart() {
+    redraw() {
+        const transform = this.getComponent(UITransform)!;
+        this.graphics.rect(
+            -transform.anchorX * transform.width,
+            -transform.anchorY * transform.height,
+            transform.width,
+            transform.height
+        );
+        this.graphics.fill();
+    }
+
+    onMouseEnter() {
+        this.graphics.fillColor.set(255, 255, 255, 77);
+        this.redraw();
+    }
+
+    onMouseLeave() {
+        this.graphics.clear();
+    }
+
+    onTouchEnd() {
         if (this.buttonEnabled) {
-            ButtonController.actionIdMap.get(this.actionId)(this);
+            ButtonController.actionIdMap.get(this.actionId)!.bind(this)();
         }
     }
 }

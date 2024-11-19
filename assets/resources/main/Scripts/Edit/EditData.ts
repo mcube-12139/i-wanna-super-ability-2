@@ -104,7 +104,7 @@ export class EditData {
         this.optionalInstance = new EditData(nodes, rootResource);
 
         if (this.instance.nowPage === undefined) {
-            this.instance.toggleWindow("SelectRoomWindow");
+            this.instance.toggleWindow("MainMenuWindow");
         } else {
             this.instance.nowPage.open();
         }
