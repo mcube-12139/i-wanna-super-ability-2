@@ -17,7 +17,7 @@ export class ResourceListControl extends Component {
     }) {
         this.scrollView = this.getComponent(ScrollView)!;
 
-        const node = EditResourceTool.createItemNode(EditData.instance.rootResource, 0);
+        const node = EditResourceTool.createItemNode(EditData.instance.rootResource);
         const nodeControl = node.getComponent(ResourceItemControl)!;
         nodeControl.setEvents({
             list: this,

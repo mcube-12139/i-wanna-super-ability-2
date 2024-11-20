@@ -1,3 +1,4 @@
+import { IEditPage } from "../Page/IEditPage";
 import { EditResourceType } from "./EditResourceType";
 import { IEditResource } from "./IEditResource";
 
@@ -17,5 +18,9 @@ export class RootResource implements IEditResource {
         this.id = id;
         this.name = name;
         this.children = children;
+    }
+    
+    createEditPage(): IEditPage {
+        throw new Error("Method not implemented.");
     }
 }

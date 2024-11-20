@@ -1,4 +1,4 @@
-import { Color, Vec2 } from "cc";
+import { Color, sys, Vec2 } from "cc";
 import { NodeData } from "./NodeData";
 
 export class RoomData {
@@ -23,6 +23,22 @@ export class RoomData {
         this.color = color;
     }
 
+    static deserialize(data: any): RoomData {
+        const color = new Color();
+        return new RoomData(
+            data.id,
+            data.name,
+            NodeData.deserialize(data.root),
+            new Vec2(data.size.x, data.size.y),
+            Color.fromHEX(color, data.color)
+        );
+    }
+
+    static load(id: string): RoomData {
+        const str = sys.localStorage.getItem(`editRoom${id}`);
+        return this.deserialize(JSON.parse(str));
+    }
+
     serialize(): object {
         return {
             id: this.id,
@@ -34,5 +50,9 @@ export class RoomData {
             },
             color: this.color.toHEX()
         };
+    }
+
+    save() {
+        sys.localStorage.setItem(`editRoom${this.id}`, JSON.stringify(this.serialize()));
     }
 }

@@ -19,9 +19,17 @@ export class EditInstance {
         for (const component of data.components) {
             component.addToNode(node);
         }
-        const children = data.children.map(child => EditInstance.fromNodeData(child));
 
-        return new EditInstance(node, data, undefined, children);
+        const children: EditInstance[] = [];
+        const result = new EditInstance(node, data, undefined, children);
+        data.children.forEach(child => {
+            const childData = EditInstance.fromNodeData(child);
+            childData.parent = result;
+            node.addChild(childData.node);
+            children.push(childData);
+        });
+
+        return result;
     }
 
     recover() {

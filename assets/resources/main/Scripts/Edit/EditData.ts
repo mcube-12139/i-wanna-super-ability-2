@@ -19,6 +19,8 @@ import { RoomResource } from './Resource/RoomResource';
 import { EditResourceTool } from './Resource/EditResourceTool';
 import { RootResource } from './Resource/RootResource';
 import { EditResourceType } from './Resource/EditResourceType';
+import { IEditResource } from './Resource/IEditResource';
+import { IComponentData } from './ComponentData/IComponentData';
 
 export class EditData {
     selectorPrefab: Prefab;
@@ -45,6 +47,8 @@ export class EditData {
     rootResource: RootResource;
     
     prefabData: EditPrefab[];
+    prefabDataMap: Map<string, EditPrefab>;
+    prefabComponentMap: Map<string, IComponentData>;
     static mainMenuOptionId: MainMenuOptionId;
 
     createdInstances: EditInstance[] = [];
@@ -82,6 +86,11 @@ export class EditData {
         this.regionSelectorControl = this.regionSelector.getComponent(RegionSelectorController)!;
 
         this.prefabData = EditPrefab.createData();
+        this.prefabDataMap = new Map(this.prefabData.map(prefab => [prefab.id, prefab]));
+        this.prefabComponentMap = new Map();
+        for (const prefab of this.prefabData) {
+            this.addComponentsToMap(prefab.data);
+        }
     }
 
     static initData(nodes: {
@@ -110,53 +119,46 @@ export class EditData {
         }
     }
 
+    addComponentsToMap(data: NodeData) {
+        for (const component of data.components) {
+            this.prefabComponentMap.set(component.id, component);
+        }
+        for (const child of data.children) {
+            this.addComponentsToMap(child);
+        }
+    }
+
+    getPrefab(id: string): EditPrefab | undefined {
+        return this.prefabDataMap.get(id);
+    }
+
+    getComponentPrefab(id: string): IComponentData | undefined {
+        return this.prefabComponentMap.get(id);
+    }
+
     saveResource(): void {
         sys.localStorage.setItem("editResources", JSON.stringify(EditResourceTool.serialize(this.rootResource)));
     }
 
-    createRoom(name: string) {
-        // 检查名字是否重复
-        if (EditResourceTool.findTypeName(this.rootResource, EditResourceType.ROOM, name) !== undefined) {
-            return {
-                ok: false,
-                error: "房间名重复"
-            };
-        }
-        
-        const id = SweetUid.create();
-
+    addResource(resource: IEditResource, parent: IEditResource, before: IEditResource | undefined): void {
+        /*
         const pageNode = new Node();
         pageNode.addComponent(StageControl);
         const rootNode = new Node();
         pageNode.addChild(rootNode);
         this.pageParent.addChild(pageNode);
+        */
 
-        const rootData = new NodeData(
-            SweetUid.create(),
-            undefined,
-            undefined,
-            new LinkedValue<string>(true, "Root"),
-            new LinkedValue<boolean>(true, true),
-            new LinkedValue<Rect>(true, new Rect(0, 0, 0, 0)),
-            [],
-            undefined,
-            []
-        );
+        /*
         const root = new EditInstance(
             rootNode,
             rootData,
             undefined,
             []
         );
+        */
 
-        const data = new RoomData(
-            id,
-            name,
-            rootData,
-            new Vec2(800, 450),
-            new Color(148, 191, 255, 255)
-        );
-
+        /*
         const page = new RoomEditPage(
             pageNode,
             name,
@@ -169,16 +171,11 @@ export class EditData {
             this.prefabData[0]
         );
         this.openPage(page);
-        page.save();
+        */
         
         // 保存到资源表
-        const resourceData = new RoomResource(id, name, this.rootResource);
-        EditResourceTool.addChild(this.rootResource, resourceData);
+        EditResourceTool.insertChild(parent, resource, before);
         this.saveResource();
-
-        return {
-            ok: true
-        };
     }
 
     dispose() {
@@ -208,7 +205,10 @@ export class EditData {
         this.toggleWindow("MainMenuWindow");
     }
 
-    openPage(page: IEditPage) {
+    openPage(resource: IEditResource) {
+        const page = resource.createEditPage();
+
+        this.pageParent.addChild(page.node);
         this.pages.push(page);
         
         if (this.nowPage !== undefined) {

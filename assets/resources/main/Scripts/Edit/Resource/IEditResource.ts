@@ -1,5 +1,6 @@
 import { SpriteFrame } from "cc";
 import { EditResourceType } from "./EditResourceType";
+import { IEditPage } from "../Page/IEditPage";
 
 export interface IEditResource {
     id: string;
@@ -8,4 +9,6 @@ export interface IEditResource {
     parent?: IEditResource;
     children?: IEditResource[];
     icon?: SpriteFrame;
+
+    createEditPage(): IEditPage;
 }

@@ -7,6 +7,7 @@ import { SweetUid } from "../SweetUid";
 import { SpriteData } from "./ComponentData/SpriteData";
 import { ComponentType } from "./ComponentData/ComponentType";
 import { ComponentDataTool } from "./ComponentData/ComponentDataTool";
+import { EditData } from "./EditData";
 
 export class NodeData {
     id: string;
@@ -39,6 +40,36 @@ export class NodeData {
         this.components = components;
         this.parent = parent;
         this.children = children;
+    }
+
+    static deserialize(data: any): NodeData {
+        const prefab = EditData.instance.getPrefab(data.prefab);
+
+        const children: NodeData[] = [];
+        const nodeData = new NodeData(
+            data.id,
+            prefab,
+            prefab?.data ?? undefined,
+            LinkedValue.deserialize<string>(data.name),
+            LinkedValue.deserialize<boolean>(data.active),
+            LinkedValue.deserializeSpecial<Rect>(data.contentRect, (value: any) => new Rect(
+                value.x,
+                value.y,
+                value.width,
+                value.height
+            )),
+            data.components.map((component: any) => ComponentDataTool.deserialize(component)),
+            undefined,
+            children
+        );
+
+        for (const child of data.children) {
+            const childData = NodeData.deserialize(child);
+            childData.parent = nodeData;
+            children.push(childData);
+        }
+
+        return nodeData;
     }
 
     addChild(data: NodeData) {

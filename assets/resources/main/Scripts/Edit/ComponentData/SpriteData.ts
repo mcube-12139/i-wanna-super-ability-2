@@ -3,6 +3,7 @@ import { IComponentData } from "./IComponentData";
 import { ComponentType } from "./ComponentType";
 import { LinkedValue } from "../LinkedValue";
 import { SweetUid } from "../../SweetUid";
+import { EditData } from "../EditData";
 
 export class SpriteData implements IComponentData {
     id: string;
@@ -16,6 +17,15 @@ export class SpriteData implements IComponentData {
         this.prefab = prefab;
         this.path = path;
         this.color = color;
+    }
+
+    static deserialize(data: any): SpriteData {
+        return new SpriteData(
+            data.id,
+            EditData.instance.getComponentPrefab(data.prefab) as (SpriteData | undefined),
+            LinkedValue.deserialize<string>(data.data.path),
+            LinkedValue.deserializeSpecial<Color>(data.data.color, (value: any) => new Color().fromHEX(value))
+        );
     }
 
     getPath(): string {

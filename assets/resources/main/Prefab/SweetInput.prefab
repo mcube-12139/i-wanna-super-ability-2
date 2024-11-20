@@ -134,7 +134,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 158,
-      "height": 32
+      "height": 24
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -173,9 +173,9 @@
     "_horizontalAlign": 0,
     "_verticalAlign": 1,
     "_actualFontSize": 39.555,
-    "_fontSize": 20,
-    "_fontFamily": "站酷快乐体2016修订版",
-    "_lineHeight": 40,
+    "_fontSize": 16,
+    "_fontFamily": "Consolas",
+    "_lineHeight": 32,
     "_overflow": 1,
     "_enableWrapText": false,
     "_font": null,
@@ -292,13 +292,13 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 0,
-      "height": 40.31999999999999
+      "width": 158,
+      "height": 24
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
-      "x": 0.5,
-      "y": 0.5
+      "x": 0,
+      "y": 1
     },
     "_id": ""
   },
@@ -331,11 +331,11 @@
     "_string": "",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 66.75,
-    "_fontSize": 40,
-    "_fontFamily": "Arial",
+    "_actualFontSize": 22.65,
+    "_fontSize": 16,
+    "_fontFamily": "Consolas",
     "_lineHeight": 32,
-    "_overflow": 0,
+    "_overflow": 1,
     "_enableWrapText": false,
     "_font": null,
     "_isSystemFontUsed": true,
@@ -402,7 +402,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 160,
-      "height": 32
+      "height": 24
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -438,7 +438,7 @@
       "a": 255
     },
     "_spriteFrame": {
-      "__uuid__": "4a049723-f20c-405f-851d-9f1338b0e998@f9941",
+      "__uuid__": "2db4e998-6666-4eba-883a-04e1c2b81a70@f9941",
       "__expectedType__": "cc.SpriteFrame"
     },
     "_type": 1,
@@ -486,7 +486,7 @@
     "_string": "",
     "_tabIndex": 0,
     "_backgroundImage": {
-      "__uuid__": "4a049723-f20c-405f-851d-9f1338b0e998@f9941",
+      "__uuid__": "2db4e998-6666-4eba-883a-04e1c2b81a70@f9941",
       "__expectedType__": "cc.SpriteFrame"
     },
     "_inputFlag": 5,

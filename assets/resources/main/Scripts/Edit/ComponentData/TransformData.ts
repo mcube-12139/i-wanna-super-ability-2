@@ -3,6 +3,7 @@ import { IComponentData } from "./IComponentData";
 import { ComponentType } from "./ComponentType";
 import { LinkedValue } from "../LinkedValue";
 import { SweetUid } from "../../SweetUid";
+import { EditData } from "../EditData";
 
 export class TransformData implements IComponentData {
     id: string;
@@ -18,6 +19,16 @@ export class TransformData implements IComponentData {
         this.position = position;
         this.rotation = rotation;
         this.scale = scale;
+    }
+
+    static deserialize(data: any) {
+        return new TransformData(
+            data.id,
+            EditData.instance.getComponentPrefab(data.prefab) as (TransformData | undefined),
+            LinkedValue.deserializeSpecial<Vec3>(data.data.position, (value: any) => new Vec3(value.x, value.y, value.z)),
+            LinkedValue.deserializeSpecial<Vec3>(data.data.rotation, (value: any) => new Vec3(value.x, value.y, value.z)),
+            LinkedValue.deserializeSpecial<Vec3>(data.data.scale, (value: any) => new Vec3(value.x, value.y, value.z)),
+        );
     }
 
     createLinked(): IComponentData {

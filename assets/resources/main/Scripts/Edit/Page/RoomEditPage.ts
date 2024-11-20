@@ -13,9 +13,9 @@ import { EditActionCreate } from "../Action/EditActionCreate";
 import { EditActionDrag } from "../Action/EditActionDrag";
 
 export class RoomEditPage implements IEditPage {
+    node: Node;
     title: string;
 
-    node: Node;
     data: RoomData;
 
     gridSize: Vec2;
@@ -72,7 +72,7 @@ export class RoomEditPage implements IEditPage {
     }
 
     save(): void {
-        sys.localStorage.setItem(`editRoom${this.data.id}`, JSON.stringify(this.data.serialize()));
+        this.data.save();
     }
 
     recover() {
@@ -140,6 +140,8 @@ export class RoomEditPage implements IEditPage {
             const data = this.nowPrefab.createLinked();
             const instance = EditInstance.fromNodeData(data);
             instance.setPosition(new Vec3(position.x + this.nowPrefab.origin.x, position.y + this.nowPrefab.origin.y, 0));
+            console.log(instance);
+            console.log(this.creatingRoot);
             this.creatingRoot.addChild(instance);
     
             // 保存操作

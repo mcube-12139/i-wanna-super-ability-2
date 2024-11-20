@@ -28,6 +28,14 @@ export class LinkedValue<T> {
         return new LinkedValue(this.modified, fun(this.value));
     }
 
+    static deserialize<T>(value: any): LinkedValue<T> {
+        return new LinkedValue(value.modified, value.value);
+    }
+
+    static deserializeSpecial<T>(value: any, fun: (value: any) => T): LinkedValue<T> {
+        return new LinkedValue(value.modified, value.modified ? fun(value.value) : value.value);
+    }
+
     serialize(): object {
         return this.modified ? {
             modified: true,

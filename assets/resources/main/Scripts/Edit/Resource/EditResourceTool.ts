@@ -6,17 +6,15 @@ import { RootResource } from "./RootResource";
 import { ResourceItemControl } from "../ResourceItemControl";
 
 export class EditResourceTool {
-    static createItemNode(resource: IEditResource, depth: number): Node {
+    static createItemNode(resource: IEditResource): Node {
         const node = instantiate(resources.get("main/Prefab/ResourceItem", Prefab)!);
-        if (depth !== 0) {
-            node.setPosition(16 * depth, 0, 0);
-        }
         const control = node.getComponent(ResourceItemControl)!;
         control.setData(resource);
 
         if (resource.children !== undefined) {
             for (const child of resource.children) {
-                const childNode = this.createItemNode(child, depth + 1);
+                const childNode = this.createItemNode(child);
+                childNode.getComponent(ResourceItemControl)!.parent = control;
                 control.children!.addChild(childNode);
             }
         }
@@ -26,6 +24,15 @@ export class EditResourceTool {
 
     static addChild(resource: IEditResource, child: IEditResource): void {
         resource.children!.push(child);
+        child.parent = resource;
+    }
+
+    static insertChild(resource: IEditResource, child: IEditResource, before: IEditResource | undefined): void {
+        if (before !== undefined) {
+            resource.children!.splice(resource.children!.indexOf(before), 0, child);
+        } else {
+            resource.children!.push(child);
+        }
         child.parent = resource;
     }
 

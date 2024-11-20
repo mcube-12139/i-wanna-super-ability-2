@@ -42,12 +42,16 @@ export class ButtonController extends Component {
     }
 
     onMouseEnter() {
-        this.graphics.fillColor.set(255, 255, 255, 77);
-        this.redraw();
+        if (this.buttonEnabled) {
+            this.graphics.fillColor.set(255, 255, 255, 77);
+            this.redraw();
+        }
     }
 
     onMouseLeave() {
-        this.graphics.clear();
+        if (this.buttonEnabled) {
+            this.graphics.clear();
+        }
     }
 }
 
