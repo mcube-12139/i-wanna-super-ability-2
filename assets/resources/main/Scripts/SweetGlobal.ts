@@ -1,8 +1,14 @@
-import { Prefab, director, instantiate, resources, Node, find, Component } from "cc";
+import { Prefab, director, instantiate, resources, Node, find, Component, SpriteFrame } from "cc";
 import { Tag, TagId } from "./Tag";
 
 export class SweetGlobal {
     static START_GAME_SCENE_NAME = "game";
+
+    static sweetInputPrefab: Prefab;
+    static resourceItemPrefab: Prefab;
+    static expandedSprite: SpriteFrame;
+    static collapsedSprite: SpriteFrame;
+    static roomSprite: SpriteFrame;
 
     static grav = 1;
     static autosave = true;

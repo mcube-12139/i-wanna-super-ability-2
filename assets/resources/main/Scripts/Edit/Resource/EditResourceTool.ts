@@ -5,10 +5,11 @@ import { RoomResource } from "./RoomResource";
 import { RootResource } from "./RootResource";
 import { ResourceItemControl } from "../ResourceItemControl";
 import { EditResourceFile } from "./EditResourceFile";
+import { SweetGlobal } from "../../SweetGlobal";
 
 export class EditResourceTool {
     static createItemNode(resource: IEditResource): Node {
-        const node = instantiate(resources.get("main/Prefab/ResourceItem", Prefab)!);
+        const node = instantiate(SweetGlobal.resourceItemPrefab);
         const control = node.getComponent(ResourceItemControl)!;
         control.setData(resource);
 

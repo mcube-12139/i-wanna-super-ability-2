@@ -173,7 +173,7 @@
     "_priority": 0,
     "_fov": 45,
     "_fovAxis": 0,
-    "_orthoHeight": 284.75524475524475,
+    "_orthoHeight": 252.97297297297297,
     "_near": 0,
     "_far": 1000,
     "_color": {
@@ -283,6 +283,26 @@
     },
     "_enabled": true,
     "__prefab": null,
+    "sweetInputPrefab": {
+      "__uuid__": "6f5402d1-256f-437b-8400-23f60c0bf102",
+      "__expectedType__": "cc.Prefab"
+    },
+    "resourceItemPrefab": {
+      "__uuid__": "415a80ec-fd08-4640-89d2-e3de2b562ede",
+      "__expectedType__": "cc.Prefab"
+    },
+    "expandedSprite": {
+      "__uuid__": "868c9dd0-e2e1-47f2-8176-083e7fac4cff@f9941",
+      "__expectedType__": "cc.SpriteFrame"
+    },
+    "collapsedSprite": {
+      "__uuid__": "a6d9fed7-f34a-4191-ab5c-dbb64ebad93e@f9941",
+      "__expectedType__": "cc.SpriteFrame"
+    },
+    "roomSprite": {
+      "__uuid__": "81a747ea-68aa-4674-91f5-e2ce53c21f66@f9941",
+      "__expectedType__": "cc.SpriteFrame"
+    },
     "_id": "11vFmLXn5OSro8GUIayW0P"
   },
   {
@@ -373,6 +393,7 @@
       "z": 0
     },
     "_distance": 0,
+    "_planeBias": 1,
     "_shadowColor": {
       "__type__": "cc.Color",
       "r": 76,

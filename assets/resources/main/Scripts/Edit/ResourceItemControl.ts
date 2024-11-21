@@ -2,6 +2,7 @@ import { _decorator, Component, EditBox, instantiate, Label, Layout, Node, Prefa
 import { IEditResource } from './Resource/IEditResource';
 import { ResourceListControl } from './ResourceListControl';
 import { ButtonController } from '../ButtonController';
+import { SweetGlobal } from '../SweetGlobal';
 const { ccclass, property } = _decorator;
 
 @ccclass('ResourceItemControl')
@@ -36,7 +37,7 @@ export class ResourceItemControl extends Component {
         this.icon.spriteFrame = icon;
         
         this.resourceName.node.active = false;
-        const node = instantiate(resources.get("main/Prefab/SweetInput", Prefab)!);
+        const node = instantiate(SweetGlobal.sweetInputPrefab);
         node.on("editing-did-ended", (editBox: EditBox) => {
             const name = editBox.textLabel!.string;
             if (over(name)) {
@@ -65,7 +66,7 @@ export class ResourceItemControl extends Component {
         } else {
             this.withChildren = true;
             this.childrenVisible = true;
-            sprite = resources.get("main/Sprites/expanded/spriteFrame", SpriteFrame)!;
+            sprite = SweetGlobal.expandedSprite;
         }
         this.icon.spriteFrame = sprite;
         this.resourceName.string = data.name;
@@ -74,7 +75,7 @@ export class ResourceItemControl extends Component {
     open(): void {
         this.childrenVisible = !this.childrenVisible;
         this.children!.active = this.childrenVisible;
-        this.icon.spriteFrame = resources.get(`main/Sprites/${this.childrenVisible ? "expanded" : "collapsed"}/spriteFrame`, SpriteFrame)!;
+        this.icon.spriteFrame = this.childrenVisible ? SweetGlobal.expandedSprite : SweetGlobal.collapsedSprite;
     }
 
     setEvents(elements: {

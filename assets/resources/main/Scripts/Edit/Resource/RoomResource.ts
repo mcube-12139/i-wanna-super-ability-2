@@ -11,10 +11,11 @@ import { RoomEditPage } from "../Page/RoomEditPage";
 import { StageControl } from "../StageControl";
 import { EditData } from "../EditData";
 import { LinkedArray } from "../LinkedArray";
+import { SweetGlobal } from "../../SweetGlobal";
 
 export class RoomResource implements IEditResource {
     static get icon(): SpriteFrame {
-        return resources.get("main/Sprites/room/spriteFrame", SpriteFrame)!;
+        return SweetGlobal.roomSprite;
     }
 
     get type(): EditResourceType {

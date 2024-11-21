@@ -12,6 +12,8 @@ const { ccclass, property } = _decorator;
 
 @ccclass('ResourcePageControl')
 export class ResourcePageControl extends Component {
+    @property(Prefab)
+    resourcePrefab!: Prefab;
     @property(ResourceListControl)
     resourceList!: ResourceListControl;
     @property(Toggle)
@@ -39,7 +41,7 @@ export class ResourcePageControl extends Component {
         this.createRoomButton.onTouchEnd((e: TouchEvent) => {
             const selected = this.resourceList.selectedItems[0];
 
-            const itemNode = instantiate(resources.get("main/Prefab/ResourceItem", Prefab)!);
+            const itemNode = instantiate(this.resourcePrefab);
 
             let parent: ResourceItemControl;
             let before: IEditResource | undefined;

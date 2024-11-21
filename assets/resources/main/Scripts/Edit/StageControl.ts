@@ -168,9 +168,6 @@ export class StageControl extends Component {
             } else if (event.keyCode === KeyCode.F3) {
                 // F3 - 打开"房间"页面
                 EditData.instance.openMainMenuWindow(MainMenuOptionId.ROOM);
-            } else if (event.keyCode === KeyCode.F4) {
-                // F4 - 打开"物体"页面
-                EditData.instance.openMainMenuWindow(MainMenuOptionId.OBJECT);
             } else if (event.keyCode === KeyCode.F5) {
                 // F5 - 打开"实例"页面
                 EditData.instance.openMainMenuWindow(MainMenuOptionId.INSTANCE);

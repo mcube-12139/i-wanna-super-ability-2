@@ -2166,6 +2166,10 @@
     "__prefab": {
       "__id__": 122
     },
+    "resourcePrefab": {
+      "__uuid__": "415a80ec-fd08-4640-89d2-e3de2b562ede",
+      "__expectedType__": "cc.Prefab"
+    },
     "resourceList": {
       "__id__": 46
     },
@@ -2200,6 +2204,9 @@
       },
       {
         "__id__": 128
+      },
+      {
+        "__id__": 130
       }
     ],
     "nestedPrefabInstanceRoots": [
@@ -2281,6 +2288,28 @@
     "__type__": "cc.TargetInfo",
     "localID": [
       "18YV1GlzxIOIRaS93PotqU"
+    ]
+  },
+  {
+    "__type__": "cc.TargetOverrideInfo",
+    "source": {
+      "__id__": 94
+    },
+    "sourceInfo": null,
+    "propertyPath": [
+      "label"
+    ],
+    "target": {
+      "__id__": 89
+    },
+    "targetInfo": {
+      "__id__": 131
+    }
+  },
+  {
+    "__type__": "cc.TargetInfo",
+    "localID": [
+      "24luknEdBK/bn2RJEpVKQ7"
     ]
   }
 ]
