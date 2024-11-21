@@ -4,6 +4,7 @@ import { ComponentType } from "./ComponentType";
 import { LinkedValue } from "../LinkedValue";
 import { SweetUid } from "../../SweetUid";
 import { EditData } from "../EditData";
+import { ComponentDataTool } from "./ComponentDataTool";
 
 export class TransformData implements IComponentData {
     id: string;
@@ -25,9 +26,9 @@ export class TransformData implements IComponentData {
         return new TransformData(
             data.id,
             EditData.instance.getComponentPrefab(data.prefab) as (TransformData | undefined),
-            LinkedValue.deserializeSpecial<Vec3>(data.data.position, (value: any) => new Vec3(value.x, value.y, value.z)),
-            LinkedValue.deserializeSpecial<Vec3>(data.data.rotation, (value: any) => new Vec3(value.x, value.y, value.z)),
-            LinkedValue.deserializeSpecial<Vec3>(data.data.scale, (value: any) => new Vec3(value.x, value.y, value.z)),
+            LinkedValue.deserializeSpecial<Vec3>(data.position, (value: any) => new Vec3(value.x, value.y, value.z)),
+            LinkedValue.deserializeSpecial<Vec3>(data.rotation, (value: any) => new Vec3(value.x, value.y, value.z)),
+            LinkedValue.deserializeSpecial<Vec3>(data.scale, (value: any) => new Vec3(value.x, value.y, value.z)),
         );
     }
 
@@ -46,7 +47,7 @@ export class TransformData implements IComponentData {
             return this.position.getValue(this.prefab.getPosition());
         }
 
-        return this.position.value;
+        return this.position.value!;
     }
 
     getRotation(): Vec3 {
@@ -54,7 +55,7 @@ export class TransformData implements IComponentData {
             return this.rotation.getValue(this.prefab.getRotation());
         }
 
-        return this.rotation.value;
+        return this.rotation.value!;
     }
 
     getScale(): Vec3 {
@@ -62,7 +63,7 @@ export class TransformData implements IComponentData {
             return this.scale.getValue(this.prefab.getScale());
         }
 
-        return this.scale.value;
+        return this.scale.value!;
     }
 
     addToNode(node: Node): void {
@@ -71,8 +72,11 @@ export class TransformData implements IComponentData {
         node.setScale(this.getScale());
     }
 
-    serializeData() {
+    serialize() {
         return {
+            type: ComponentType.TRANSFORM,
+            id: this.id,
+            prefab: this.prefab?.id ?? null,
             position: this.position.serializeSpecial(value => ({
                 x: value.x,
                 y: value.y,

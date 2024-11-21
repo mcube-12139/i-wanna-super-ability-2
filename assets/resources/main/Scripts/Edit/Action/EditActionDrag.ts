@@ -1,6 +1,8 @@
 import { Vec3 } from "cc";
 import { EditInstance } from "../EditInstance";
 import { IEditAction } from "./IEditAction";
+import { EditData } from "../EditData";
+import { RoomEditPage } from "../Page/RoomEditPage";
 
 export class EditActionDrag implements IEditAction {
     instances: EditInstance[];
@@ -13,13 +15,13 @@ export class EditActionDrag implements IEditAction {
 
     undo(): void {
         for (const instance of this.instances) {
-            instance.setPosition(instance.getPosition().add3f(-this.movement.x, -this.movement.y, -this.movement.z));
+            (EditData.instance.nowPage as RoomEditPage).setInstancePosition(instance, instance.getPosition()!.add3f(-this.movement.x, -this.movement.y, -this.movement.z));
         }
     }
 
     redo(): void {
         for (const instance of this.instances) {
-            instance.setPosition(instance.getPosition().add(this.movement));
+            (EditData.instance.nowPage as RoomEditPage).setInstancePosition(instance, instance.getPosition()!.add(this.movement));
         }
     }
 }

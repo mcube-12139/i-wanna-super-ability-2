@@ -11,6 +11,8 @@ export class EditSceneControl extends Component {
     @property(Node)
     grid!: Node;
     @property(Node)
+    selectorShadow!: Node;
+    @property(Node)
     selectorParent!: Node;
     @property(Node)
     regionSelector!: Node;
@@ -27,6 +29,7 @@ export class EditSceneControl extends Component {
                 selectorPrefab: this.selectorPrefab,
                 camera: this.camera,
                 grid: this.grid,
+                selectorShadow: this.selectorShadow,
                 selectorParent: this.selectorParent,
                 objectShadow: this.objectShadow,
                 windowParent: this.windowParent,

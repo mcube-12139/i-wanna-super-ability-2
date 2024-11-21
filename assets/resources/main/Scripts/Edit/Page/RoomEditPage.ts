@@ -1,4 +1,4 @@
-import { Color, sys, Vec2, Node, Rect, instantiate, Vec3 } from "cc";
+import { Color, sys, Vec2, Node, Rect, instantiate, Vec3, UITransform } from "cc";
 import { EditInstance } from "../EditInstance";
 import { EditPrefab } from "../EditPrefab";
 import { LoopArray, LoopArrayPointer } from "../../LoopArray";
@@ -127,6 +127,15 @@ export class RoomEditPage implements IEditPage {
         this.actionIndex.assign(this.actions.next);
     }
 
+    setInstancePosition(instance: EditInstance, position: Vec3) {
+        instance.setPosition(position);
+        // 设置选择框位置
+        if (this.selectors.has(instance)) {
+            const rect = instance.data.getGlobalRect()!;
+            this.selectors.get(instance)!.setPosition(rect.x - 3, rect.y - 3, position.z);
+        }
+    }
+
     createInstance(position: Vec2) {
         const rect = this.nowPrefab.data.getContentRect();
         const targetRect = new Rect(
@@ -140,8 +149,6 @@ export class RoomEditPage implements IEditPage {
             const data = this.nowPrefab.createLinked();
             const instance = EditInstance.fromNodeData(data);
             instance.setPosition(new Vec3(position.x + this.nowPrefab.origin.x, position.y + this.nowPrefab.origin.y, 0));
-            console.log(instance);
-            console.log(this.creatingRoot);
             this.creatingRoot.addChild(instance);
     
             // 保存操作
@@ -163,7 +170,11 @@ export class RoomEditPage implements IEditPage {
         return this.root.getChildrenInterGlobalRect(rect);
     }
     
-    deleteInstance(instance: EditInstance) {
+    /**
+     * 删除实例，如果被选中则删除所有选中
+     * @param instance 
+     */
+    deleteInstanceMaybeSelected(instance: EditInstance) {
         if (this.selectors.has(instance)) {
             // 该实例被选中，删除所有选中
             for (const [selectedInstance, selector] of this.selectors.entries()) {
@@ -210,8 +221,7 @@ export class RoomEditPage implements IEditPage {
         const movementX = position.x - EditData.instance.dragEndPos.x;
         const movementY = position.y - EditData.instance.dragEndPos.y;
         for (const instance of this.selectors.keys()) {
-            instance.setPosition(instance.getPosition()!.add3f(movementX, movementY, 0));
-            this.updateSelector(instance);
+            this.setInstancePosition(instance, instance.getPosition()!.add3f(movementX, movementY, 0));
         }
         EditData.instance.dragEndPos.set(position);
     }
@@ -272,7 +282,7 @@ export class RoomEditPage implements IEditPage {
 
     createSelector(instance: EditInstance) {
         const selector = instantiate(EditData.instance.selectorPrefab);
-        EditData.instance.selectorContainer.addChild(selector);
+        EditData.instance.selectorParent.addChild(selector);
         this.selectors.set(instance, selector);
     }
 
@@ -281,10 +291,9 @@ export class RoomEditPage implements IEditPage {
             const selector = this.selectors.get(instance)!;
             const rect = instance.data.getGlobalRect()!;
 
-            selector.setPosition(rect.x, rect.y);
-            const controller = selector.getComponent(SelectorController)!;
-            controller.width = rect.width;
-            controller.height = rect.height;
+            selector.setPosition(rect.x - 3, rect.y - 3);
+            const transform = selector.getComponent(UITransform)!;
+            transform.setContentSize(rect.width + 6, rect.height + 6);
         }
     }
 

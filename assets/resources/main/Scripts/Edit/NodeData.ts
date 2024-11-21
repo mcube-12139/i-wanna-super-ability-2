@@ -8,44 +8,62 @@ import { SpriteData } from "./ComponentData/SpriteData";
 import { ComponentType } from "./ComponentData/ComponentType";
 import { ComponentDataTool } from "./ComponentData/ComponentDataTool";
 import { EditData } from "./EditData";
+import { LinkedArray } from "./LinkedArray";
+import { IIdentity } from "../IIdentity";
 
-export class NodeData {
+export class NodeData implements IIdentity<NodeData> {
     id: string;
-    prefab?: EditPrefab;
-    prefabData?: NodeData;
+    editPrefab?: EditPrefab;
+    prefab?: NodeData;
     name: LinkedValue<string>;
     active: LinkedValue<boolean>;
     contentRect: LinkedValue<Rect>;
-    components: IComponentData[];
+    innerComponents: LinkedArray<IComponentData>;
     parent?: NodeData;
-    children: NodeData[];
+    innerChildren: LinkedArray<NodeData>;
+
+    get components(): Iterable<IComponentData> {
+        return this.innerComponents.iterValues();
+    }
+
+    get children(): Iterable<NodeData> {
+        return this.innerChildren.iterValues();
+    }
+
+    get linkedComponents(): Iterable<IComponentData> {
+        return this.innerComponents.iterLinkedValues(this.prefab?.linkedComponents);
+    }
+
+    get linkedChildren(): Iterable<NodeData> {
+        return this.innerChildren.iterLinkedValues(this.prefab?.linkedChildren);
+    }
 
     constructor(
         id: string,
-        prefab: EditPrefab | undefined,
-        prefabData: NodeData | undefined,
+        editPrefab: EditPrefab | undefined,
+        prefab: NodeData | undefined,
         name: LinkedValue<string>,
         active: LinkedValue<boolean>,
         contentRect: LinkedValue<Rect>,
-        components: IComponentData[],
+        components: LinkedArray<IComponentData>,
         parent: NodeData | undefined,
-        children: NodeData[]
+        children: LinkedArray<NodeData>
     ) {
         this.id = id;
+        this.editPrefab = editPrefab;
         this.prefab = prefab;
-        this.prefabData = prefabData;
         this.name = name;
         this.active = active;
         this.contentRect = contentRect;
-        this.components = components;
+        this.innerComponents = components;
         this.parent = parent;
-        this.children = children;
+        this.innerChildren = children;
     }
 
     static deserialize(data: any): NodeData {
         const prefab = EditData.instance.getPrefab(data.prefab);
 
-        const children: NodeData[] = [];
+        const children = LinkedArray.deserialize<NodeData>(data.children, (value: any) => NodeData.deserialize(value));
         const nodeData = new NodeData(
             data.id,
             prefab,
@@ -58,15 +76,13 @@ export class NodeData {
                 value.width,
                 value.height
             )),
-            data.components.map((component: any) => ComponentDataTool.deserialize(component)),
+            LinkedArray.deserialize<IComponentData>(data.components, (value: any) => ComponentDataTool.deserialize(value)),
             undefined,
             children
         );
 
-        for (const child of data.children) {
-            const childData = NodeData.deserialize(child);
-            childData.parent = nodeData;
-            children.push(childData);
+        for (const child of children.iterValues()) {
+            child.parent = nodeData;
         }
 
         return nodeData;
@@ -74,11 +90,11 @@ export class NodeData {
 
     addChild(data: NodeData) {
         data.parent = this;
-        this.children.push(data);
+        this.innerChildren.push(this.editPrefab?.data.linkedChildren, data);
     }
 
     getContentRect(): Rect {
-        return this.prefabData !== undefined ? this.contentRect.getValue(this.prefabData.getContentRect()) : this.contentRect.value;
+        return this.prefab !== undefined ? this.contentRect.getValue(this.prefab.getContentRect()) : this.contentRect.value!;
     }
 
     serialize(): object {
@@ -93,19 +109,29 @@ export class NodeData {
                 width: rect.width,
                 height: rect.height
             })),
-            components: this.components.map(component => ComponentDataTool.serialize(component)),
-            children: this.children.map(child => child.serialize())
+            components: this.innerComponents.serialize(),
+            children: this.innerChildren.serialize()
         };
     }
 
     getTransform(): TransformData | undefined {
-        const component = this.components.find(component => component.getType() === ComponentType.TRANSFORM);
-        return component !== undefined ? component as TransformData : undefined;
+        for (const component of this.components) {
+            if (component.getType() === ComponentType.TRANSFORM) {
+                return component as any as TransformData;
+            }
+        }
+
+        return undefined;
     }
 
     getSprite(): SpriteData | undefined {
-        const component = this.components.find(component => component.getType() === ComponentType.SPRITE);
-        return component !== undefined ? component as SpriteData : undefined;
+        for (const component of this.components) {
+            if (component.getType() === ComponentType.SPRITE) {
+                return component as any as SpriteData;
+            }
+        }
+
+        return undefined;
     }
 
     getLocalRect(): Rect | undefined {
@@ -145,7 +171,7 @@ export class NodeData {
             if (transform !== undefined) {
                 transform.transformPoints(points);
             } else {
-                return undefined;
+                break;
             }
         }
 
@@ -157,17 +183,17 @@ export class NodeData {
         return new Rect(xMin, yMin, xMax - xMin + 1, yMax - yMin + 1);
     }
 
-    createLinked(prefab: EditPrefab): NodeData {
+    createLinked(): NodeData {
         return new NodeData(
             SweetUid.create(),
-            prefab,
-            this,
-            new LinkedValue<string>(false, ""),
-            new LinkedValue<boolean>(false, false),
-            new LinkedValue<Rect>(false, new Rect()),
-            this.components.map(component => component.createLinked()),
             undefined,
-            this.children.map(child => child.createLinked(prefab))
+            this,
+            new LinkedValue<string>(false, undefined),
+            new LinkedValue<boolean>(false, undefined),
+            new LinkedValue<Rect>(false, undefined),
+            LinkedArray.createLinked<IComponentData>(this.innerComponents.iterValues()),
+            undefined,
+            LinkedArray.createLinked<NodeData>(this.innerChildren.iterValues())
         );
     }
 }

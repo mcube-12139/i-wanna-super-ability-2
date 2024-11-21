@@ -1,4 +1,4 @@
-import { Camera, Color, Node, Prefab, Rect, sys, Vec2 } from 'cc';
+import { Camera, Node, Prefab, sys, Vec2 } from 'cc';
 import { SweetGlobal } from '../SweetGlobal';
 import { GridController } from '../GridController';
 import { ObjectShadowControl } from './ObjectShadowControl';
@@ -6,19 +6,12 @@ import { MainMenuOptionId } from '../MainMenuOptionController';
 import { EditPrefab } from './EditPrefab';
 import { RegionSelectorController } from '../RegionSelectorController';
 import { NodeData } from './NodeData';
-import { RoomEditPage } from './Page/RoomEditPage';
 import { IEditPage } from './Page/IEditPage';
-import { RoomData } from './RoomData';
 import { EditInstance } from './EditInstance';
 import { EditActionDeletedData } from './Action/EditActionDelete';
 import { SweetUid } from '../SweetUid';
-import { LinkedValue } from './LinkedValue';
-import { StageControl } from './StageControl';
-import { SweetDate } from '../SweetDate';
-import { RoomResource } from './Resource/RoomResource';
 import { EditResourceTool } from './Resource/EditResourceTool';
 import { RootResource } from './Resource/RootResource';
-import { EditResourceType } from './Resource/EditResourceType';
 import { IEditResource } from './Resource/IEditResource';
 import { IComponentData } from './ComponentData/IComponentData';
 
@@ -27,7 +20,8 @@ export class EditData {
     camera: Camera;
     grid: Node;
     gridControl: GridController;
-    selectorContainer: Node;
+    selectorShadow: Node;
+    selectorParent: Node;
 
     objectShadow: Node;
     objectShadowController: ObjectShadowControl;
@@ -65,6 +59,7 @@ export class EditData {
         selectorPrefab: Prefab,
         camera: Camera,
         grid: Node,
+        selectorShadow: Node,
         selectorParent: Node,
         objectShadow: Node,
         windowParent: Node,
@@ -74,7 +69,8 @@ export class EditData {
         this.selectorPrefab = nodes.selectorPrefab;
         this.camera = nodes.camera;
         this.grid = nodes.grid;
-        this.selectorContainer = nodes.selectorParent;
+        this.selectorShadow = nodes.selectorShadow,
+        this.selectorParent = nodes.selectorParent;
         this.objectShadow = nodes.objectShadow;
         this.windowParent = nodes.windowParent;
         this.regionSelector = nodes.regionSelector;
@@ -86,7 +82,7 @@ export class EditData {
         this.regionSelectorControl = this.regionSelector.getComponent(RegionSelectorController)!;
 
         this.prefabData = EditPrefab.createData();
-        this.prefabDataMap = new Map(this.prefabData.map(prefab => [prefab.id, prefab]));
+        this.prefabDataMap = new Map(this.prefabData.map(prefab => [prefab.data.id, prefab]));
         this.prefabComponentMap = new Map();
         for (const prefab of this.prefabData) {
             this.addComponentsToMap(prefab.data);
@@ -97,6 +93,7 @@ export class EditData {
         selectorPrefab: Prefab,
         camera: Camera,
         grid: Node,
+        selectorShadow: Node,
         selectorParent: Node,
         objectShadow: Node,
         windowParent: Node,
@@ -141,38 +138,6 @@ export class EditData {
     }
 
     addResource(resource: IEditResource, parent: IEditResource, before: IEditResource | undefined): void {
-        /*
-        const pageNode = new Node();
-        pageNode.addComponent(StageControl);
-        const rootNode = new Node();
-        pageNode.addChild(rootNode);
-        this.pageParent.addChild(pageNode);
-        */
-
-        /*
-        const root = new EditInstance(
-            rootNode,
-            rootData,
-            undefined,
-            []
-        );
-        */
-
-        /*
-        const page = new RoomEditPage(
-            pageNode,
-            name,
-            data,
-            new Vec2(32, 32),
-            new Color(40, 40, 40, 255),
-            true,
-            root,
-            root,
-            this.prefabData[0]
-        );
-        this.openPage(page);
-        */
-        
         // 保存到资源表
         EditResourceTool.insertChild(parent, resource, before);
         this.saveResource();

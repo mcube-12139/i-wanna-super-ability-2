@@ -1,4 +1,4 @@
-import { _decorator, Component, director, EventKeyboard, EventMouse, Input, input, KeyCode, Vec2, Vec3 } from 'cc';
+import { _decorator, Component, director, EventKeyboard, EventMouse, Input, input, KeyCode, Sprite, UITransform, Vec2, Vec3 } from 'cc';
 import { EditData } from './EditData';
 import { MainMenuOptionId } from '../MainMenuOptionController';
 import { RoomEditPage } from './Page/RoomEditPage';
@@ -29,6 +29,12 @@ export class StageControl extends Component {
         input.on(Input.EventType.KEY_UP, this.onKeyUp, this);
     }
 
+    startAction(action: StageAction) {
+        this.action = action;
+        EditData.instance.selectorShadow.active = false;
+        EditData.instance.objectShadow.active = false;
+    }
+
     onMouseDown(event: EventMouse) {
         const page = EditData.instance.nowPage as RoomEditPage;
 
@@ -42,12 +48,12 @@ export class StageControl extends Component {
                     const instance = page.getInstanceAt(uiLocation);
                     if (instance === undefined) {
                         // 没点到物体，创建
-                        this.action = StageAction.CREATE;
+                        this.startAction(StageAction.CREATE);
                         page.startCreate();
-                        this.createObject();
+                        page.createInstance(this.mousePos);
                     } else {
                         // 点到物体了，选中并拖动
-                        this.action = StageAction.DRAG;
+                        this.startAction(StageAction.DRAG);
                         if (!page.selectors.has(instance)) {
                             page.selectInstances([instance]);
                         }
@@ -55,19 +61,19 @@ export class StageControl extends Component {
                     }
                 } else {
                     // Shift + 左键，框选
-                    this.action = StageAction.SELECT_REGION;
+                    this.startAction(StageAction.SELECT_REGION);
                     page.startSelectRegion(this.noSnapMousePos);
                 }
             } else if (button === EventMouse.BUTTON_RIGHT) {
                 // 右键，取消选择，并开始删除
-                this.action = StageAction.DELETE;
+                this.startAction(StageAction.DELETE);
                 page.startDelete();
 
                 const instance = page.getInstanceAt(this.noSnapMousePos);
                 if (instance === undefined) {
                     page.selectInstances([]);
                 } else {
-                    page.deleteInstance(instance);
+                    page.deleteInstanceMaybeSelected(instance);
                 }
             }
         }
@@ -81,9 +87,11 @@ export class StageControl extends Component {
             const localPos = new Vec3();
             this.node.inverseTransformPoint(localPos, new Vec3(uiLocation.x, uiLocation.y, 0));
             const updated = this.setMousePosition(new Vec2(localPos.x, localPos.y));
+
+            const instance = page.getInstanceAt(this.noSnapMousePos);
             if (this.action === StageAction.CREATE) {
                 if (updated && !this.altHeld) {
-                    this.createObject();
+                    page.createInstance(this.mousePos);
                 }
             } else if (this.action === StageAction.DRAG) {
                 if (updated) {
@@ -91,13 +99,27 @@ export class StageControl extends Component {
                 }
             } else if (this.action === StageAction.DELETE) {
                 if (updated && !this.altHeld) {
-                    const instance = page.getInstanceAt(this.noSnapMousePos);
                     if (instance !== undefined) {
-                        page.deleteInstance(instance);
+                        page.deleteInstanceMaybeSelected(instance);
                     }
                 }
             } else if (this.action === StageAction.SELECT_REGION) {
                 page.updateSelectRegion(this.noSnapMousePos);
+            } else {
+                // 无操作
+                if (instance !== undefined) {
+                    // 指向了实例，显示选择框影子
+                    EditData.instance.objectShadow.active = false;
+
+                    const shadow = EditData.instance.selectorShadow;
+                    shadow.active = true;
+                    const rect = instance.data.getGlobalRect()!;
+                    shadow.setPosition(rect.x - 3, rect.y - 3);
+                    shadow.getComponent(UITransform)!.setContentSize(rect.width + 6, rect.height + 6);
+                } else {
+                    EditData.instance.objectShadow.active = true;
+                    EditData.instance.selectorShadow.active = false;
+                }
             }
         }
     }
@@ -203,11 +225,5 @@ export class StageControl extends Component {
             EditData.instance.objectShadow.setPosition(mouseX, mouseY);
         }
         return updated;
-    }
-
-    createObject() {
-        const page = EditData.instance.nowPage as RoomEditPage;
-
-        page.createInstance(this.mousePos);
     }
 }

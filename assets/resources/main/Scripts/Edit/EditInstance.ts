@@ -1,5 +1,7 @@
 import { Node, Rect, Vec2, Vec3 } from "cc";
 import { NodeData } from "./NodeData";
+import { EditData } from "./EditData";
+import { RoomEditPage } from "./Page/RoomEditPage";
 
 export class EditInstance {
     node: Node;
@@ -16,25 +18,25 @@ export class EditInstance {
 
     static fromNodeData(data: NodeData): EditInstance {
         const node = new Node();
-        for (const component of data.components) {
+        for (const component of data.linkedComponents) {
             component.addToNode(node);
         }
 
         const children: EditInstance[] = [];
         const result = new EditInstance(node, data, undefined, children);
-        data.children.forEach(child => {
+        for (const child of data.linkedChildren) {
             const childData = EditInstance.fromNodeData(child);
             childData.parent = result;
             node.addChild(childData.node);
             children.push(childData);
-        });
+        }
 
         return result;
     }
 
     recover() {
         this.node = new Node();
-        for (const component of this.data.components) {
+        for (const component of this.data.linkedComponents) {
             component.addToNode(this.node);
         }
         this.children.forEach(child => child.recover());

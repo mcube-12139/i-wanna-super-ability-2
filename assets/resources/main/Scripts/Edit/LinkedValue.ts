@@ -1,8 +1,8 @@
 export class LinkedValue<T> {
     modified: boolean;
-    value: T;
+    value?: T;
 
-    constructor(modified: boolean, value: T) {
+    constructor(modified: boolean, value: T | undefined) {
         this.modified = modified;
         this.value = value;
     }
@@ -12,7 +12,7 @@ export class LinkedValue<T> {
             return linked;
         }
 
-        return this.value;
+        return this.value!;
     }
 
     setValue(value: T) {
@@ -25,7 +25,7 @@ export class LinkedValue<T> {
     }
 
     cloneSpecial(fun: (value: T) => T) {
-        return new LinkedValue(this.modified, fun(this.value));
+        return new LinkedValue(this.modified, this.modified ? fun(this.value!) : undefined);
     }
 
     static deserialize<T>(value: any): LinkedValue<T> {
@@ -33,7 +33,7 @@ export class LinkedValue<T> {
     }
 
     static deserializeSpecial<T>(value: any, fun: (value: any) => T): LinkedValue<T> {
-        return new LinkedValue(value.modified, value.modified ? fun(value.value) : value.value);
+        return new LinkedValue(value.modified, value.modified ? fun(value.value) : undefined);
     }
 
     serialize(): object {
@@ -48,7 +48,7 @@ export class LinkedValue<T> {
     serializeSpecial(fun: (value: T) => any) {
         return this.modified ? {
             modified: true,
-            value: fun(this.value)
+            value: fun(this.value!)
         } : {
             modified: false
         };

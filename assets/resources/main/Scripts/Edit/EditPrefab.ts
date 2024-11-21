@@ -3,6 +3,8 @@ import { NodeData } from "./NodeData";
 import { LinkedValue } from "./LinkedValue";
 import { TransformData } from "./ComponentData/TransformData";
 import { SpriteData } from "./ComponentData/SpriteData";
+import { LinkedArray } from "./LinkedArray";
+import { IComponentData } from "./ComponentData/IComponentData";
 
 export class EditPrefab {
     id: string;
@@ -34,7 +36,7 @@ export class EditPrefab {
                     new LinkedValue<string>(true, "NeedleU"),
                     new LinkedValue<boolean>(true, true),
                     new LinkedValue(true, new Rect(-16, -16, 32, 32)),
-                    [
+                    LinkedArray.createUnlinked<IComponentData>([
                         new TransformData(
                             "solheu50fec5wrdarwje1zo56azm1ru9",
                             undefined,
@@ -48,9 +50,9 @@ export class EditPrefab {
                             new LinkedValue(true, "main/Sprites/needle u"),
                             new LinkedValue(true, Color.WHITE.clone())
                         )
-                    ],
+                    ]),
                     undefined,
-                    []
+                    LinkedArray.createUnlinked<NodeData>([])
                 ),
                 new Vec2(16, 16)
             ),
@@ -64,7 +66,7 @@ export class EditPrefab {
                     new LinkedValue<string>(true, "NeedleD"),
                     new LinkedValue<boolean>(true, true),
                     new LinkedValue(true, new Rect(-16, -16, 32, 32)),
-                    [
+                    LinkedArray.createUnlinked<IComponentData>([
                         new TransformData(
                             "atc6kn3i9c1htt4r2fn6mxkzvxlj2kwr",
                             undefined,
@@ -78,9 +80,9 @@ export class EditPrefab {
                             new LinkedValue(true, "main/Sprites/needle d"),
                             new LinkedValue(true, Color.WHITE.clone())
                         )
-                    ],
+                    ]),
                     undefined,
-                    []
+                    LinkedArray.createUnlinked<NodeData>([])
                 ),
                 new Vec2(16, 16)
             ),
@@ -109,7 +111,9 @@ export class EditPrefab {
     }
 
     createLinked(): NodeData {
-        return this.data.createLinked(this);
+        const linked = this.data.createLinked();
+        linked.editPrefab = this;
+        return linked;
     }
 
     serialize() {

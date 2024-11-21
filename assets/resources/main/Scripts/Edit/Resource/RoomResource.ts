@@ -10,6 +10,7 @@ import { EditInstance } from "../EditInstance";
 import { RoomEditPage } from "../Page/RoomEditPage";
 import { StageControl } from "../StageControl";
 import { EditData } from "../EditData";
+import { LinkedArray } from "../LinkedArray";
 
 export class RoomResource implements IEditResource {
     static get icon(): SpriteFrame {
@@ -50,9 +51,9 @@ export class RoomResource implements IEditResource {
             new LinkedValue<string>(true, "Root"),
             new LinkedValue<boolean>(true, true),
             new LinkedValue<Rect>(true, new Rect(0, 0, 0, 0)),
-            [],
+            LinkedArray.createUnlinked([]),
             undefined,
-            []
+            LinkedArray.createUnlinked([])
         );
 
         const data = new RoomData(
