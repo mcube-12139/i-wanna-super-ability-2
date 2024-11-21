@@ -1,3 +1,5 @@
+import { LinkedData } from "../LinkedData";
+
 export class LinkedValue<T> {
     modified: boolean;
     value?: T;
@@ -28,15 +30,15 @@ export class LinkedValue<T> {
         return new LinkedValue(this.modified, this.modified ? fun(this.value!) : undefined);
     }
 
-    static deserialize<T>(value: any): LinkedValue<T> {
+    static deserialize<T>(value: LinkedData<T>): LinkedValue<T> {
         return new LinkedValue(value.modified, value.value);
     }
 
-    static deserializeSpecial<T>(value: any, fun: (value: any) => T): LinkedValue<T> {
-        return new LinkedValue(value.modified, value.modified ? fun(value.value) : undefined);
+    static deserializeSpecial<S, T>(value: LinkedData<S>, fun: (value: S) => T): LinkedValue<T> {
+        return new LinkedValue(value.modified, value.modified ? fun(value.value!) : undefined);
     }
 
-    serialize(): object {
+    serialize(): LinkedData<T> {
         return this.modified ? {
             modified: true,
             value: this.value
@@ -45,7 +47,7 @@ export class LinkedValue<T> {
         };
     }
 
-    serializeSpecial(fun: (value: T) => any) {
+    serializeSpecial<S>(fun: (value: T) => S): LinkedData<S> {
         return this.modified ? {
             modified: true,
             value: fun(this.value!)

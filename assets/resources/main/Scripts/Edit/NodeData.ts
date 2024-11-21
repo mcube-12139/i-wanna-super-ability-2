@@ -9,9 +9,13 @@ import { ComponentType } from "./ComponentData/ComponentType";
 import { ComponentDataTool } from "./ComponentData/ComponentDataTool";
 import { EditData } from "./EditData";
 import { LinkedArray } from "./LinkedArray";
-import { IIdentity } from "../IIdentity";
+import { ILinkable } from "../ILinkable";
+import { NodeDataFile } from "./NodeDataFile";
+import { ILinkableFile } from "../ILinkableFile";
+import { RectDataFile } from "../RectDataFile";
+import { IComponentDataFile } from "./ComponentData/IComponentDataFile";
 
-export class NodeData implements IIdentity<NodeData> {
+export class NodeData implements ILinkable<NodeData> {
     id: string;
     editPrefab?: EditPrefab;
     prefab?: NodeData;
@@ -60,23 +64,23 @@ export class NodeData implements IIdentity<NodeData> {
         this.innerChildren = children;
     }
 
-    static deserialize(data: any): NodeData {
-        const prefab = EditData.instance.getPrefab(data.prefab);
+    static deserialize(data: NodeDataFile): NodeData {
+        const prefab = EditData.instance.getPrefab(data.prefab ?? undefined);
 
-        const children = LinkedArray.deserialize<NodeData>(data.children, (value: any) => NodeData.deserialize(value));
+        const children = LinkedArray.deserialize(data.children, (value: ILinkableFile) => NodeData.deserialize(value as NodeDataFile));
         const nodeData = new NodeData(
             data.id,
             prefab,
-            prefab?.data ?? undefined,
-            LinkedValue.deserialize<string>(data.name),
-            LinkedValue.deserialize<boolean>(data.active),
-            LinkedValue.deserializeSpecial<Rect>(data.contentRect, (value: any) => new Rect(
+            prefab?.data,
+            LinkedValue.deserialize(data.name),
+            LinkedValue.deserialize(data.active),
+            LinkedValue.deserializeSpecial(data.contentRect, (value: RectDataFile) => new Rect(
                 value.x,
                 value.y,
                 value.width,
                 value.height
             )),
-            LinkedArray.deserialize<IComponentData>(data.components, (value: any) => ComponentDataTool.deserialize(value)),
+            LinkedArray.deserialize(data.components, (value: ILinkableFile) => ComponentDataTool.deserialize(value as IComponentDataFile)),
             undefined,
             children
         );
@@ -97,27 +101,27 @@ export class NodeData implements IIdentity<NodeData> {
         return this.prefab !== undefined ? this.contentRect.getValue(this.prefab.getContentRect()) : this.contentRect.value!;
     }
 
-    serialize(): object {
-        return {
-            id: this.id,
-            prefab: this.prefab?.id ?? null,
-            name: this.name.serialize(),
-            active: this.active.serialize(),
-            contentRect: this.contentRect.serializeSpecial((rect: Rect) => ({
-                x: rect.x,
-                y: rect.y,
-                width: rect.width,
-                height: rect.height
-            })),
-            components: this.innerComponents.serialize(),
-            children: this.innerChildren.serialize()
-        };
+    serialize() {
+        return new NodeDataFile(
+            this.id,
+            this.prefab?.id ?? null,
+            this.name.serialize(),
+            this.active.serialize(),
+            this.contentRect.serializeSpecial((rect: Rect) => new RectDataFile(
+                rect.x,
+                rect.y,
+                rect.width,
+                rect.height
+            )),
+            this.innerComponents.serialize(),
+            this.innerChildren.serialize()
+        );
     }
 
     getTransform(): TransformData | undefined {
         for (const component of this.components) {
             if (component.getType() === ComponentType.TRANSFORM) {
-                return component as any as TransformData;
+                return component as TransformData;
             }
         }
 
@@ -127,7 +131,7 @@ export class NodeData implements IIdentity<NodeData> {
     getSprite(): SpriteData | undefined {
         for (const component of this.components) {
             if (component.getType() === ComponentType.SPRITE) {
-                return component as any as SpriteData;
+                return component as SpriteData;
             }
         }
 

@@ -1,5 +1,7 @@
 import { Color, sys, Vec2 } from "cc";
 import { NodeData } from "./NodeData";
+import { RoomFile } from "./RoomFile";
+import { Vec2File } from "../Vec2File";
 
 export class RoomData {
     id: string;
@@ -23,7 +25,7 @@ export class RoomData {
         this.color = color;
     }
 
-    static deserialize(data: any): RoomData {
+    static deserialize(data: RoomFile): RoomData {
         const color = new Color();
         return new RoomData(
             data.id,
@@ -39,17 +41,14 @@ export class RoomData {
         return this.deserialize(JSON.parse(str));
     }
 
-    serialize(): object {
-        return {
-            id: this.id,
-            name: this.name,
-            root: this.root.serialize(),
-            size: {
-                x: this.size.x,
-                y: this.size.y
-            },
-            color: this.color.toHEX()
-        };
+    serialize(): RoomFile {
+        return new RoomFile(
+            this.id,
+            this.name,
+            this.root.serialize(),
+            new Vec2File(this.size),
+            this.color.toHEX()
+        );
     }
 
     save() {

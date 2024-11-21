@@ -4,6 +4,7 @@ import { IEditResource } from "./IEditResource";
 import { RoomResource } from "./RoomResource";
 import { RootResource } from "./RootResource";
 import { ResourceItemControl } from "../ResourceItemControl";
+import { EditResourceFile } from "./EditResourceFile";
 
 export class EditResourceTool {
     static createItemNode(resource: IEditResource): Node {
@@ -53,21 +54,21 @@ export class EditResourceTool {
         return undefined;
     }
 
-    static serialize(resource: IEditResource): object {
-        return {
-            id: resource.id,
-            type: resource.type,
-            name: resource.name,
-            children: resource.children?.map(child => this.serialize(child)) ?? null
-        }
+    static serialize(resource: IEditResource): EditResourceFile {
+        return new EditResourceFile(
+            resource.id,
+            resource.type,
+            resource.name,
+            resource.children?.map(child => this.serialize(child)) ?? null
+        );
     }
 
-    static deserialize(data: any): IEditResource {
+    static deserialize(data: EditResourceFile): IEditResource {
         const type = data.type;
         if (type === EditResourceType.ROOT) {
             const children: IEditResource[] = [];
             const resource = new RootResource(data.id, data.name, children);
-            for (const childData of data.children) {
+            for (const childData of data.children!) {
                 const child = EditResourceTool.deserialize(childData);
                 children.push(child);
                 child.parent = resource;

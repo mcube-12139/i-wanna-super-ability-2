@@ -14,6 +14,7 @@ import { EditResourceTool } from './Resource/EditResourceTool';
 import { RootResource } from './Resource/RootResource';
 import { IEditResource } from './Resource/IEditResource';
 import { IComponentData } from './ComponentData/IComponentData';
+import { MainMenuWindowController } from '../MainMenuWindowController';
 
 export class EditData {
     selectorPrefab: Prefab;
@@ -43,7 +44,6 @@ export class EditData {
     prefabData: EditPrefab[];
     prefabDataMap: Map<string, EditPrefab>;
     prefabComponentMap: Map<string, IComponentData>;
-    static mainMenuOptionId: MainMenuOptionId;
 
     createdInstances: EditInstance[] = [];
     deletedInstances: EditActionDeletedData[] = [];
@@ -110,7 +110,7 @@ export class EditData {
         this.optionalInstance = new EditData(nodes, rootResource);
 
         if (this.instance.nowPage === undefined) {
-            this.instance.toggleWindow("MainMenuWindow");
+            this.instance.openMainMenuWindow(MainMenuOptionId.RESOURCE);
         } else {
             this.instance.nowPage.open();
         }
@@ -125,12 +125,12 @@ export class EditData {
         }
     }
 
-    getPrefab(id: string): EditPrefab | undefined {
-        return this.prefabDataMap.get(id);
+    getPrefab(id: string | undefined): EditPrefab | undefined {
+        return id !== undefined ? this.prefabDataMap.get(id) : undefined;
     }
 
-    getComponentPrefab(id: string): IComponentData | undefined {
-        return this.prefabComponentMap.get(id);
+    getComponentPrefab(id: string | undefined): IComponentData | undefined {
+        return id === undefined ? undefined : this.prefabComponentMap.get(id);
     }
 
     saveResource(): void {
@@ -166,8 +166,8 @@ export class EditData {
     }
 
     openMainMenuWindow(option: MainMenuOptionId) {
-        EditData.mainMenuOptionId = option;
         this.toggleWindow("MainMenuWindow");
+        this.nowWindow!.getComponent(MainMenuWindowController)!.toggleOption(option);
     }
 
     openPage(resource: IEditResource) {

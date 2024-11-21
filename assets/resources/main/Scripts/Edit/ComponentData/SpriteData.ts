@@ -4,7 +4,7 @@ import { ComponentType } from "./ComponentType";
 import { LinkedValue } from "../LinkedValue";
 import { SweetUid } from "../../SweetUid";
 import { EditData } from "../EditData";
-import { ComponentDataTool } from "./ComponentDataTool";
+import { SpriteDataFile } from "./SpriteDataFile";
 
 export class SpriteData implements IComponentData {
     id: string;
@@ -20,12 +20,12 @@ export class SpriteData implements IComponentData {
         this.color = color;
     }
 
-    static deserialize(data: any): SpriteData {
+    static deserialize(data: SpriteDataFile): SpriteData {
         return new SpriteData(
             data.id,
-            EditData.instance.getComponentPrefab(data.prefab) as (SpriteData | undefined),
-            LinkedValue.deserialize<string>(data.path),
-            LinkedValue.deserializeSpecial<Color>(data.color, (value: any) => new Color().fromHEX(value))
+            EditData.instance.getComponentPrefab(data.prefab ?? undefined) as (SpriteData | undefined),
+            LinkedValue.deserialize(data.path),
+            LinkedValue.deserializeSpecial(data.color, (value: string) => new Color().fromHEX(value))
         );
     }
 
@@ -61,13 +61,12 @@ export class SpriteData implements IComponentData {
     }
 
     serialize() {
-        return {
-            type: ComponentType.SPRITE,
-            id: this.id,
-            prefab: this.prefab?.id ?? null,
-            path: this.path.serialize(),
-            color: this.color.serializeSpecial(value => value.toHEX())
-        };
+        return new SpriteDataFile(
+            this.id,
+            this.prefab?.id ?? null,
+            this.path.serialize(),
+            this.color.serializeSpecial(value => value.toHEX())
+        );
     }
     
     getType(): ComponentType {

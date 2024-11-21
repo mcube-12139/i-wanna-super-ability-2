@@ -1,23 +1,21 @@
-import { _decorator, Component, Node } from 'cc';
-import { MenuOptionController } from './MenuOptionController';
-import { EditSceneController } from './Edit/EditData';
+import { _decorator, Component, Enum, Prefab, Node } from 'cc';
 const { ccclass, property } = _decorator;
 
-export const enum MainMenuOptionId {
-    FILE = 0,
+export enum MainMenuOptionId {
+    RESOURCE = 0,
     EDIT = 1,
     ROOM = 2,
-    OBJECT = 3,
-    INSTANCE = 4
+    INSTANCE = 3
 }
 
 @ccclass('MainMenuOptionController')
 export class MainMenuOptionController extends Component {
-    start() {
-        const opened = this.node.children[EditSceneController.mainMenuOptionId as number];
-        const controller = opened.getComponent(MenuOptionController);
-        controller.select();
-    }
+    @property({type: Enum(MainMenuOptionId)})
+    optionId!: MainMenuOptionId;
+    @property(Node)
+    background!: Node;
+    @property(Prefab)
+    pagePrefab!: Prefab;
 }
 
 

@@ -75,7 +75,7 @@
       "__id__": 1
     },
     "_children": [],
-    "_active": true,
+    "_active": false,
     "_components": [
       {
         "__id__": 3
@@ -152,7 +152,7 @@
     "node": {
       "__id__": 2
     },
-    "_enabled": false,
+    "_enabled": true,
     "__prefab": {
       "__id__": 6
     },
@@ -164,10 +164,10 @@
       "r": 255,
       "g": 255,
       "b": 255,
-      "a": 63
+      "a": 255
     },
     "_spriteFrame": {
-      "__uuid__": "6d199c1b-9944-4bb7-b7a9-cdf118d44836@f9941",
+      "__uuid__": "2db4e998-6666-4eba-883a-04e1c2b81a70@f9941",
       "__expectedType__": "cc.SpriteFrame"
     },
     "_type": 0,
@@ -305,7 +305,7 @@
     "_string": "",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 38.25,
+    "_actualFontSize": 41.625,
     "_fontSize": 24,
     "_fontFamily": "站酷快乐体2016修订版",
     "_lineHeight": 32,
@@ -319,6 +319,29 @@
     "_isUnderline": false,
     "_underlineHeight": 2,
     "_cacheMode": 0,
+    "_enableOutline": false,
+    "_outlineColor": {
+      "__type__": "cc.Color",
+      "r": 0,
+      "g": 0,
+      "b": 0,
+      "a": 255
+    },
+    "_outlineWidth": 2,
+    "_enableShadow": false,
+    "_shadowColor": {
+      "__type__": "cc.Color",
+      "r": 0,
+      "g": 0,
+      "b": 0,
+      "a": 255
+    },
+    "_shadowOffset": {
+      "__type__": "cc.Vec2",
+      "x": 2,
+      "y": 2
+    },
+    "_shadowBlur": 2,
     "_id": ""
   },
   {
@@ -367,7 +390,7 @@
     "fileId": "d8WqqXE7RHLo8IW8Onvz48"
   },
   {
-    "__type__": "3b8bdPqtONPYZ7GLinB2LQZ",
+    "__type__": "795a21glINJd4+Aoq1jPmER",
     "_name": "",
     "_objFlags": 0,
     "__editorExtras__": {},
@@ -381,16 +404,11 @@
     "background": {
       "__id__": 2
     },
-    "container": null,
-    "view": {
-      "__uuid__": "115ce5a5-51a7-4848-bd17-4dbf773baa82",
-      "__expectedType__": "cc.Prefab"
-    },
     "_id": ""
   },
   {
     "__type__": "cc.CompPrefabInfo",
-    "fileId": "18MROXffdHD4dlMrVf3+Kv"
+    "fileId": "1275UQh2RHnbA2Mt8Jbfeu"
   },
   {
     "__type__": "cc.PrefabInfo",

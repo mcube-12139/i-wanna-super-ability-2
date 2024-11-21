@@ -1,8 +1,8 @@
-import { _decorator, Component, director, EventKeyboard, EventMouse, Input, input, KeyCode, Sprite, UITransform, Vec2, Vec3 } from 'cc';
+import { _decorator, Component, director, EventKeyboard, EventMouse, Input, input, KeyCode, UITransform, Vec2, Vec3 } from 'cc';
 import { EditData } from './EditData';
 import { MainMenuOptionId } from '../MainMenuOptionController';
 import { RoomEditPage } from './Page/RoomEditPage';
-const { ccclass, property } = _decorator;
+const { ccclass } = _decorator;
 
 const enum StageAction {
     NONE,
@@ -160,8 +160,8 @@ export class StageControl extends Component {
             } else if (event.keyCode === KeyCode.CTRL_LEFT) {
                 this.ctrlHeld = true;
             } else if (event.keyCode === KeyCode.F1) {
-                // F1 - 打开"文件"页面
-                EditData.instance.openMainMenuWindow(MainMenuOptionId.FILE);
+                // F1 - 打开"资源"页面
+                EditData.instance.openMainMenuWindow(MainMenuOptionId.RESOURCE);
             } else if (event.keyCode === KeyCode.F2) {
                 // F2 - 打开"编辑"页面
                 EditData.instance.openMainMenuWindow(MainMenuOptionId.EDIT);

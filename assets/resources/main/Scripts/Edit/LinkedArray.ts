@@ -1,6 +1,8 @@
-import { IIdentity } from "../IIdentity";
+import { ILinkable } from "../ILinkable";
+import { ILinkableFile } from "../ILinkableFile";
+import { LinkedArrayData } from "../LinkedArrayData";
 
-export class LinkedArray<T extends IIdentity<T>> {
+export class LinkedArray<T extends ILinkable<T>> {
     modified: boolean;
     values?: T[];
     valueMap?: Map<string, T>;
@@ -11,7 +13,7 @@ export class LinkedArray<T extends IIdentity<T>> {
         this.valueMap = valueMap;
     }
 
-    static createLinked<T extends IIdentity<T>>(values: Iterable<T>) {
+    static createLinked<T extends ILinkable<T>>(values: Iterable<T>) {
         const valueMap = new Map<string, T>();
         for (const value of values) {
             valueMap.set(value.id, value.createLinked());
@@ -20,21 +22,21 @@ export class LinkedArray<T extends IIdentity<T>> {
         return new LinkedArray<T>(false, undefined, valueMap);
     }
 
-    static createUnlinked<T extends IIdentity<T>>(values: Iterable<T>) {
+    static createUnlinked<T extends ILinkable<T>>(values: Iterable<T>) {
         return new LinkedArray<T>(true, Array.from(values), undefined);
     }
 
-    static deserialize<T extends IIdentity<T>>(data: any, fun: (value: any) => T): LinkedArray<T> {
+    static deserialize<T extends ILinkable<T>>(data: LinkedArrayData, fun: (value: ILinkableFile) => T): LinkedArray<T> {
         if (!data.modified) {
-            return new LinkedArray(false, undefined, new Map(data.values.map((value: any) => [value.prefab, fun(value)])));
+            return new LinkedArray(false, undefined, new Map(data.values.map((value: ILinkableFile) => [value.prefab!, fun(value)])));
         }
 
-        return new LinkedArray(true, data.values.map((value: any) => fun(value)), undefined);
+        return new LinkedArray(true, data.values.map((value: ILinkableFile) => fun(value)), undefined);
     }
 
-    serialize(): object {
+    serialize(): LinkedArrayData {
         if (!this.modified) {
-            const values = [];
+            const values: ILinkableFile[] = [];
             for (const value of this.valueMap!.values()) {
                 values.push(value.serialize());
             }

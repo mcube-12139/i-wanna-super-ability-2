@@ -4,7 +4,8 @@ import { ComponentType } from "./ComponentType";
 import { LinkedValue } from "../LinkedValue";
 import { SweetUid } from "../../SweetUid";
 import { EditData } from "../EditData";
-import { ComponentDataTool } from "./ComponentDataTool";
+import { Vec3File } from "../../Vec3File";
+import { TransformDataFile } from "./TransformDataFile";
 
 export class TransformData implements IComponentData {
     id: string;
@@ -22,13 +23,13 @@ export class TransformData implements IComponentData {
         this.scale = scale;
     }
 
-    static deserialize(data: any) {
+    static deserialize(data: TransformDataFile) {
         return new TransformData(
             data.id,
-            EditData.instance.getComponentPrefab(data.prefab) as (TransformData | undefined),
-            LinkedValue.deserializeSpecial<Vec3>(data.position, (value: any) => new Vec3(value.x, value.y, value.z)),
-            LinkedValue.deserializeSpecial<Vec3>(data.rotation, (value: any) => new Vec3(value.x, value.y, value.z)),
-            LinkedValue.deserializeSpecial<Vec3>(data.scale, (value: any) => new Vec3(value.x, value.y, value.z)),
+            EditData.instance.getComponentPrefab(data.prefab ?? undefined) as (TransformData | undefined),
+            LinkedValue.deserializeSpecial(data.position, (value: Vec3File) => new Vec3(value.x, value.y, value.z)),
+            LinkedValue.deserializeSpecial(data.rotation, (value: Vec3File) => new Vec3(value.x, value.y, value.z)),
+            LinkedValue.deserializeSpecial(data.scale, (value: Vec3File) => new Vec3(value.x, value.y, value.z)),
         );
     }
 
@@ -73,26 +74,13 @@ export class TransformData implements IComponentData {
     }
 
     serialize() {
-        return {
-            type: ComponentType.TRANSFORM,
-            id: this.id,
-            prefab: this.prefab?.id ?? null,
-            position: this.position.serializeSpecial(value => ({
-                x: value.x,
-                y: value.y,
-                z: value.z
-            })),
-            rotation: this.rotation.serializeSpecial(value => ({
-                x: value.x,
-                y: value.y,
-                z: value.z
-            })),
-            scale: this.scale.serializeSpecial(value => ({
-                x: value.x,
-                y: value.y,
-                z: value.z
-            }))
-        };
+        return new TransformDataFile(
+            this.id,
+            this.prefab?.id ?? null,
+            this.position.serializeSpecial(value => new Vec3File(value)),
+            this.rotation.serializeSpecial(value => new Vec3File(value)),
+            this.scale.serializeSpecial(value => new Vec3File(value))
+        );
     }
     
     getType(): ComponentType {
