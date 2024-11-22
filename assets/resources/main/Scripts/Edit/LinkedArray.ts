@@ -2,7 +2,7 @@ import { ILinkable } from "../ILinkable";
 import { ILinkableFile } from "../ILinkableFile";
 import { LinkedArrayData } from "../LinkedArrayData";
 
-export class LinkedArray<T extends ILinkable<T>> {
+export class LinkedArray<S extends ILinkableFile, T extends ILinkable<S, T>> {
     modified: boolean;
     values?: T[];
     valueMap?: Map<string, T>;
@@ -13,30 +13,30 @@ export class LinkedArray<T extends ILinkable<T>> {
         this.valueMap = valueMap;
     }
 
-    static createLinked<T extends ILinkable<T>>(values: Iterable<T>) {
+    static createLinked<S extends ILinkableFile, T extends ILinkable<S, T>>(values: Iterable<T>): LinkedArray<S, T> {
         const valueMap = new Map<string, T>();
         for (const value of values) {
             valueMap.set(value.id, value.createLinked());
         }
 
-        return new LinkedArray<T>(false, undefined, valueMap);
+        return new LinkedArray(false, undefined, valueMap);
     }
 
-    static createUnlinked<T extends ILinkable<T>>(values: Iterable<T>) {
-        return new LinkedArray<T>(true, Array.from(values), undefined);
+    static createUnlinked<S extends ILinkableFile, T extends ILinkable<S, T>>(values: Iterable<T>): LinkedArray<S, T> {
+        return new LinkedArray(true, Array.from(values), undefined);
     }
 
-    static deserialize<T extends ILinkable<T>>(data: LinkedArrayData, fun: (value: ILinkableFile) => T): LinkedArray<T> {
+    static deserialize<S extends ILinkableFile, T extends ILinkable<S, T>>(data: LinkedArrayData<S>, fun: (value: S) => T): LinkedArray<S, T> {
         if (!data.modified) {
-            return new LinkedArray(false, undefined, new Map(data.values.map((value: ILinkableFile) => [value.prefab!, fun(value)])));
+            return new LinkedArray(false, undefined, new Map(data.values.map((value: S) => [value.prefab!, fun(value)])));
         }
 
-        return new LinkedArray(true, data.values.map((value: ILinkableFile) => fun(value)), undefined);
+        return new LinkedArray(true, data.values.map((value: S) => fun(value)), undefined);
     }
 
-    serialize(): LinkedArrayData {
+    serialize(): LinkedArrayData<S> {
         if (!this.modified) {
-            const values: ILinkableFile[] = [];
+            const values: S[] = [];
             for (const value of this.valueMap!.values()) {
                 values.push(value.serialize());
             }

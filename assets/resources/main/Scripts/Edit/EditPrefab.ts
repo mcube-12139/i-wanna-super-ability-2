@@ -5,6 +5,8 @@ import { TransformData } from "./ComponentData/TransformData";
 import { SpriteData } from "./ComponentData/SpriteData";
 import { LinkedArray } from "./LinkedArray";
 import { IComponentData } from "./ComponentData/IComponentData";
+import { EditData } from "./EditData";
+import { SweetGlobal } from "../SweetGlobal";
 
 export class EditPrefab {
     id: string;
@@ -33,26 +35,26 @@ export class EditPrefab {
                     "wc2oxetf52dvuo3anyudtu8ic14mlz6w",
                     undefined,
                     undefined,
-                    new LinkedValue<string>(true, "NeedleU"),
-                    new LinkedValue<boolean>(true, true),
-                    new LinkedValue(true, new Rect(-16, -16, 32, 32)),
-                    LinkedArray.createUnlinked<IComponentData>([
+                    LinkedValue.createUnlinked("NeedleU"),
+                    LinkedValue.createUnlinked(true),
+                    LinkedValue.createUnlinked(new Rect(-16, -16, 32, 32)),
+                    LinkedArray.createUnlinked([
                         new TransformData(
                             "solheu50fec5wrdarwje1zo56azm1ru9",
                             undefined,
-                            new LinkedValue(true, new Vec3(0, 0, 0)),
-                            new LinkedValue(true, new Vec3(0, 0, 0)),
-                            new LinkedValue(true, new Vec3(1, 1, 1))
+                            LinkedValue.createUnlinked(new Vec3(0, 0, 0)),
+                            LinkedValue.createUnlinked(new Vec3(0, 0, 0)),
+                            LinkedValue.createUnlinked(new Vec3(1, 1, 1))
                         ),
                         new SpriteData(
                             "u263duyqzrcwgjrasikjy1i0rb8slopv",
                             undefined,
-                            new LinkedValue(true, "main/Sprites/needle u"),
-                            new LinkedValue(true, Color.WHITE.clone())
+                            LinkedValue.createUnlinked(EditData.instance.getSprite("gdcxldhbojyo9xmpcfhr44typmermhs5")),
+                            LinkedValue.createUnlinked(Color.WHITE.clone())
                         )
-                    ]),
+                    ] as IComponentData[]),
                     undefined,
-                    LinkedArray.createUnlinked<NodeData>([])
+                    LinkedArray.createUnlinked([])
                 ),
                 new Vec2(16, 16)
             ),
@@ -63,26 +65,26 @@ export class EditPrefab {
                     "1tltkz729c9ahwf2dhllzsd94p5j5zsv",
                     undefined,
                     undefined,
-                    new LinkedValue<string>(true, "NeedleD"),
-                    new LinkedValue<boolean>(true, true),
-                    new LinkedValue(true, new Rect(-16, -16, 32, 32)),
-                    LinkedArray.createUnlinked<IComponentData>([
+                    LinkedValue.createUnlinked("NeedleD"),
+                    LinkedValue.createUnlinked(true),
+                    LinkedValue.createUnlinked(new Rect(-16, -16, 32, 32)),
+                    LinkedArray.createUnlinked([
                         new TransformData(
                             "atc6kn3i9c1htt4r2fn6mxkzvxlj2kwr",
                             undefined,
-                            new LinkedValue(true, new Vec3(0, 0, 0)),
-                            new LinkedValue(true, new Vec3(0, 0, 0)),
-                            new LinkedValue(true, new Vec3(1, 1, 1))
+                            LinkedValue.createUnlinked(new Vec3(0, 0, 0)),
+                            LinkedValue.createUnlinked(new Vec3(0, 0, 0)),
+                            LinkedValue.createUnlinked(new Vec3(1, 1, 1))
                         ),
                         new SpriteData(
                             "2c28csromzl4t6zkovmrcmklmzu16iln",
                             undefined,
-                            new LinkedValue(true, "main/Sprites/needle d"),
-                            new LinkedValue(true, Color.WHITE.clone())
+                            LinkedValue.createUnlinked(EditData.instance.getSprite("166mzd8ya885uq1q5bpsiamwvk0dlokv")),
+                            LinkedValue.createUnlinked(Color.WHITE.clone())
                         )
-                    ]),
+                    ] as IComponentData[]),
                     undefined,
-                    LinkedArray.createUnlinked<NodeData>([])
+                    LinkedArray.createUnlinked([])
                 ),
                 new Vec2(16, 16)
             ),
@@ -106,8 +108,7 @@ export class EditPrefab {
     }
 
     get sprite(): SpriteFrame {
-        const path = this.data.getSprite()?.getPath() ?? "main/Sprites/unknown";
-        return resources.get(`${path}/spriteFrame`, SpriteFrame)!;
+        return this.data.getSprite()?.getFrame()?.sprite ?? SweetGlobal.unknownSprite;
     }
 
     createLinked(): NodeData {
@@ -120,7 +121,6 @@ export class EditPrefab {
         return {
             id: this.id,
             name: this.name,
-
-        }
+        };
     }
 }

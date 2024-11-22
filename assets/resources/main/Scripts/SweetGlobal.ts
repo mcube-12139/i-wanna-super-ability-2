@@ -4,11 +4,19 @@ import { Tag, TagId } from "./Tag";
 export class SweetGlobal {
     static START_GAME_SCENE_NAME = "game";
 
+    static mainMenuWindowPrefab: Prefab;
+    static selectorPrefab: Prefab;
+    static selectorShadowPrefab: Prefab;
     static sweetInputPrefab: Prefab;
     static resourceItemPrefab: Prefab;
+
+    static unknownSprite: SpriteFrame;
+    static needleUSprite: SpriteFrame;
+    static needleDSprite: SpriteFrame;
     static expandedSprite: SpriteFrame;
     static collapsedSprite: SpriteFrame;
     static roomSprite: SpriteFrame;
+    static nodeSprite: SpriteFrame;
 
     static grav = 1;
     static autosave = true;
@@ -27,7 +35,7 @@ export class SweetGlobal {
 
     static createOnLayerByPrefab(prefabName: string, layerName: string): Node {
         const node = instantiate(resources.get(`main/Prefab/${prefabName}`) as Prefab);
-        find(`Canvas/${layerName}`).addChild(node);
+        find(`Canvas/${layerName}`)!.addChild(node);
         return node;
     }
 
@@ -38,7 +46,7 @@ export class SweetGlobal {
     static save() {
         if (Tag.hasNode(TagId.PLAYER)) {
             const player = Tag.getNode(TagId.PLAYER);
-            const sceneName = director.getScene().name;
+            const sceneName = director.getScene()!.name;
 
             this.savedData.sceneName = sceneName;
             this.savedData.playerX = player.position.x;
@@ -63,7 +71,7 @@ export class SweetGlobal {
 
     static loadFile() {
         //* WEB_DESKTOP
-        const data = JSON.parse(localStorage.getItem("gameData"));
+        const data = JSON.parse(localStorage.getItem("gameData")!);
         this.savedData.sceneName = data.sceneName;
         this.savedData.playerX = data.playerX;
         this.savedData.playerY = data.playerY;

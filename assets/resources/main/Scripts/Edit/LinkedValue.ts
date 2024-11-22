@@ -9,6 +9,14 @@ export class LinkedValue<T> {
         this.value = value;
     }
 
+    static createLinked<T>() {
+        return new LinkedValue<T>(false, undefined);
+    }
+
+    static createUnlinked<T>(value: T) {
+        return new LinkedValue(true, value);
+    }
+
     getValue(linked: T): T {
         if (!this.modified) {
             return linked;

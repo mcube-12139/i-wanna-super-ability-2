@@ -4,19 +4,20 @@ import { ComponentType } from "./ComponentType";
 import { LinkedValue } from "../LinkedValue";
 import { SweetUid } from "../../SweetUid";
 import { EditData } from "../EditData";
-import { SpriteDataFile } from "./SpriteDataFile";
+import { SpriteDataFile } from "./SpriteFile";
+import { EditSprite } from "../EditSprite";
 
 export class SpriteData implements IComponentData {
     id: string;
     prefab?: SpriteData;
 
-    path: LinkedValue<string>;
+    frame: LinkedValue<EditSprite>;
     color: LinkedValue<Color>;
 
-    constructor(id: string, prefab: SpriteData | undefined, path: LinkedValue<string>, color: LinkedValue<Color>) {
+    constructor(id: string, prefab: SpriteData | undefined, frame: LinkedValue<EditSprite>, color: LinkedValue<Color>) {
         this.id = id;
         this.prefab = prefab;
-        this.path = path;
+        this.frame = frame;
         this.color = color;
     }
 
@@ -24,17 +25,17 @@ export class SpriteData implements IComponentData {
         return new SpriteData(
             data.id,
             EditData.instance.getComponentPrefab(data.prefab ?? undefined) as (SpriteData | undefined),
-            LinkedValue.deserialize(data.path),
+            LinkedValue.deserializeSpecial(data.frame, (value: string) => EditData.instance.getSprite(value)),
             LinkedValue.deserializeSpecial(data.color, (value: string) => new Color().fromHEX(value))
         );
     }
 
-    getPath(): string {
+    getFrame(): EditSprite {
         if (this.prefab !== undefined) {
-            return this.path.getValue(this.prefab.getPath());
+            return this.frame.getValue(this.prefab.getFrame());
         }
 
-        return this.path.value!;
+        return this.frame.value!;
     }
 
     getColor(): Color {
@@ -49,14 +50,14 @@ export class SpriteData implements IComponentData {
         return new SpriteData(
             SweetUid.create(),
             this,
-            new LinkedValue(false, ""),
-            new LinkedValue(false, new Color())
+            LinkedValue.createLinked(),
+            LinkedValue.createLinked(),
         );
     }
 
     addToNode(node: Node): void {
         const sprite = node.addComponent(Sprite);
-        sprite.spriteFrame = resources.get(`${this.getPath()}/spriteFrame`, SpriteFrame);
+        sprite.spriteFrame = this.getFrame().sprite;
         sprite.color = new Color(this.getColor());
     }
 
@@ -64,7 +65,7 @@ export class SpriteData implements IComponentData {
         return new SpriteDataFile(
             this.id,
             this.prefab?.id ?? null,
-            this.path.serialize(),
+            this.frame.serializeSpecial(value => value.id),
             this.color.serializeSpecial(value => value.toHEX())
         );
     }

@@ -1,4 +1,4 @@
-import { Color, sys, Vec2, Node, Rect, instantiate, Vec3, UITransform } from "cc";
+import { Color, Vec2, Node, Rect, instantiate, Vec3, UITransform } from "cc";
 import { EditInstance } from "../EditInstance";
 import { EditPrefab } from "../EditPrefab";
 import { LoopArray, LoopArrayPointer } from "../../LoopArray";
@@ -8,9 +8,9 @@ import { EditData } from "../EditData";
 import { IEditAction } from "../Action/IEditAction";
 import { EditActionDelete, EditActionDeletedData } from "../Action/EditActionDelete";
 import { EditActionSelect } from "../Action/EditActionSelect";
-import { SelectorController } from "../../SelectorController";
 import { EditActionCreate } from "../Action/EditActionCreate";
 import { EditActionDrag } from "../Action/EditActionDrag";
+import { SweetGlobal } from "../../SweetGlobal";
 
 export class RoomEditPage implements IEditPage {
     node: Node;
@@ -76,8 +76,9 @@ export class RoomEditPage implements IEditPage {
     }
 
     recover() {
-        this.node = new Node();
         this.root.recover();
+        this.node = new Node();
+        this.node.addChild(this.root.node);
 
         // 重新创建选择框
         for (const instance of this.selectors.keys()) {
@@ -262,26 +263,28 @@ export class RoomEditPage implements IEditPage {
         EditData.instance.regionSelector.active = true;
 
         EditData.instance.selectedRegionStartPos.set(position);
+        EditData.instance.regionSelectorControl.clearGraphics();
     }
 
     updateSelectRegion(position: Vec2) {
         EditData.instance.selectedRegionEndPos.set(position);
         const rect = this.calcRegion(EditData.instance.selectedRegionStartPos.x, EditData.instance.selectedRegionStartPos.y, position.x, position.y);
         const instances = this.getInstancesInterGlobalRect(rect);
-        // todo: 显示选择框阴影
+        EditData.instance.setSelectorShadowInstances(instances);
         EditData.instance.regionSelectorControl.setRegion(rect);
     }
 
     endSelectRegion() {
         const rect = this.calcRegion(EditData.instance.selectedRegionStartPos.x, EditData.instance.selectedRegionStartPos.y, EditData.instance.selectedRegionEndPos.x, EditData.instance.selectedRegionEndPos.y);
         const instances = this.getInstancesInterGlobalRect(rect);
-        EditData.instance.regionSelectorControl.node.destroy();
+        EditData.instance.clearSelectorShadows();
+        EditData.instance.regionSelector.active = false;
 
         this.selectInstances(instances);
     }
 
     createSelector(instance: EditInstance) {
-        const selector = instantiate(EditData.instance.selectorPrefab);
+        const selector = instantiate(SweetGlobal.selectorPrefab);
         EditData.instance.selectorParent.addChild(selector);
         this.selectors.set(instance, selector);
     }

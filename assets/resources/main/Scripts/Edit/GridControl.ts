@@ -1,14 +1,14 @@
 import { _decorator, Component, Graphics, math } from 'cc';
-import { EditData } from './Edit/EditData';
-import { RoomEditPage } from './Edit/Page/RoomEditPage';
+import { EditData } from './EditData';
+import { RoomEditPage } from './Page/RoomEditPage';
 const { ccclass, property } = _decorator;
 
 @ccclass('GridController')
-export class GridController extends Component {
-    graphics: Graphics;
+export class GridControl extends Component {
+    graphics!: Graphics;
 
     onLoad() {
-        this.graphics = this.node.getComponent(Graphics);
+        this.graphics = this.node.getComponent(Graphics)!;
     }
 
     redraw() {

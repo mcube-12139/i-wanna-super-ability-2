@@ -39,7 +39,10 @@ export class EditInstance {
         for (const component of this.data.linkedComponents) {
             component.addToNode(this.node);
         }
-        this.children.forEach(child => child.recover());
+        this.children.forEach(child => {
+            child.recover();
+            this.node.addChild(child.node);
+        });
     }
 
     addChild(instance: EditInstance) {

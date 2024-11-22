@@ -1,9 +1,9 @@
 import { LinkedData } from "../../LinkedData";
 import { Vec3File } from "../../Vec3File";
 import { ComponentType } from "./ComponentType";
-import { IComponentDataFile } from "./IComponentDataFile";
+import { IComponentFile } from "./IComponentFile";
 
-export class TransformDataFile implements IComponentDataFile {
+export class TransformDataFile implements IComponentFile {
     id: string;
     prefab: string | null;
     type: ComponentType;

@@ -2,12 +2,12 @@
   "ver": "1.1.50",
   "importer": "prefab",
   "imported": true,
-  "uuid": "e4d9afa6-e06d-4737-af2c-b1e7946ac490",
+  "uuid": "437a840c-e08b-4c7d-9abd-bd5a4707702f",
   "files": [
     ".json"
   ],
   "subMetas": {},
   "userData": {
-    "syncNodeName": "RoomList"
+    "syncNodeName": "MainMenuOption"
   }
 }

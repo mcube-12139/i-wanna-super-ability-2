@@ -1,13 +1,13 @@
-import { _decorator, Component, instantiate, Prefab, resources, Toggle } from 'cc';
-import { ResourceListControl } from './Edit/ResourceListControl';
-import { ButtonController } from './ButtonController';
-import { RoomResource } from './Edit/Resource/RoomResource';
-import { ResourceItemControl } from './Edit/ResourceItemControl';
-import { EditResourceTool } from './Edit/Resource/EditResourceTool';
-import { EditResourceType } from './Edit/Resource/EditResourceType';
-import { ErrorControl } from './ErrorControl';
-import { IEditResource } from './Edit/Resource/IEditResource';
-import { EditData } from './Edit/EditData';
+import { _decorator, Component, instantiate, Prefab, Toggle } from 'cc';
+import { ResourceListControl } from './ResourceListControl';
+import { ButtonController } from '../ButtonController';
+import { RoomResource } from './Resource/RoomResource';
+import { ResourceItemControl } from './ResourceItemControl';
+import { EditResourceTool } from './Resource/EditResourceTool';
+import { EditResourceType } from './Resource/EditResourceType';
+import { ErrorControl } from '../ErrorControl';
+import { IEditResource } from './Resource/IEditResource';
+import { EditData } from './EditData';
 const { ccclass, property } = _decorator;
 
 @ccclass('ResourcePageControl')
@@ -22,6 +22,18 @@ export class ResourcePageControl extends Component {
     openButton!: ButtonController;
     @property(ButtonController)
     createRoomButton!: ButtonController;
+    @property(ButtonController)
+    createPrefabButton!: ButtonController;
+    @property(ButtonController)
+    CutButton!: ButtonController;
+    @property(ButtonController)
+    CopyButton!: ButtonController;
+    @property(ButtonController)
+    PasteButton!: ButtonController;
+    @property(ButtonController)
+    RenameButton!: ButtonController;
+    @property(ButtonController)
+    DeleteButton!: ButtonController;
     @property(ErrorControl)
     errorControl!: ErrorControl;
 
@@ -94,10 +106,4 @@ export class ResourcePageControl extends Component {
             );
         });
     }
-
-    update(deltaTime: number) {
-        
-    }
 }
-
-

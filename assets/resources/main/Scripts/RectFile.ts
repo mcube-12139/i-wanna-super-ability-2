@@ -1,4 +1,4 @@
-export class RectDataFile {
+export class RectFile {
     x: number;
     y: number;
     width: number;

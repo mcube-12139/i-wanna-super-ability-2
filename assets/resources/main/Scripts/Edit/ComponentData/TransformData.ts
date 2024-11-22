@@ -5,7 +5,7 @@ import { LinkedValue } from "../LinkedValue";
 import { SweetUid } from "../../SweetUid";
 import { EditData } from "../EditData";
 import { Vec3File } from "../../Vec3File";
-import { TransformDataFile } from "./TransformDataFile";
+import { TransformDataFile } from "./TransformFile";
 
 export class TransformData implements IComponentData {
     id: string;
@@ -37,9 +37,9 @@ export class TransformData implements IComponentData {
         return new TransformData(
             SweetUid.create(),
             this,
-            new LinkedValue(false, new Vec3()),
-            new LinkedValue(false, new Vec3()),
-            new LinkedValue(false, new Vec3())
+            LinkedValue.createLinked(),
+            LinkedValue.createLinked(),
+            LinkedValue.createLinked()
         );
     }
 

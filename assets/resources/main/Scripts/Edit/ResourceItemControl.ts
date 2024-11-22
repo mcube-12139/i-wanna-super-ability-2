@@ -1,4 +1,4 @@
-import { _decorator, Component, EditBox, instantiate, Label, Layout, Node, Prefab, resources, Sprite, SpriteFrame, Toggle } from 'cc';
+import { _decorator, Component, EditBox, instantiate, Label, Layout, Node, Sprite, SpriteFrame, Toggle } from 'cc';
 import { IEditResource } from './Resource/IEditResource';
 import { ResourceListControl } from './ResourceListControl';
 import { ButtonController } from '../ButtonController';
@@ -33,7 +33,7 @@ export class ResourceItemControl extends Component {
         }
     }
 
-    initName(icon: SpriteFrame, over: (name: string) => boolean) {
+    initName(icon: SpriteFrame | null, over: (name: string) => boolean) {
         this.icon.spriteFrame = icon;
         
         this.resourceName.node.active = false;

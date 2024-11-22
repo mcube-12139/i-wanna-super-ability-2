@@ -173,7 +173,7 @@
     "_priority": 0,
     "_fov": 45,
     "_fovAxis": 0,
-    "_orthoHeight": 252.97297297297297,
+    "_orthoHeight": 263.3893919793014,
     "_near": 0,
     "_far": 1000,
     "_color": {
@@ -283,6 +283,18 @@
     },
     "_enabled": true,
     "__prefab": null,
+    "mainMenuWindowPrefab": {
+      "__uuid__": "55356026-9f73-450b-a22d-eabcf0a3fb82",
+      "__expectedType__": "cc.Prefab"
+    },
+    "selectorPrefab": {
+      "__uuid__": "4ff3102a-4f63-4076-8c28-ae2330212a9c",
+      "__expectedType__": "cc.Prefab"
+    },
+    "selectorShadowPrefab": {
+      "__uuid__": "3307cfb3-1a9e-4a17-9746-535b2f9f0ccf",
+      "__expectedType__": "cc.Prefab"
+    },
     "sweetInputPrefab": {
       "__uuid__": "6f5402d1-256f-437b-8400-23f60c0bf102",
       "__expectedType__": "cc.Prefab"
@@ -290,6 +302,18 @@
     "resourceItemPrefab": {
       "__uuid__": "415a80ec-fd08-4640-89d2-e3de2b562ede",
       "__expectedType__": "cc.Prefab"
+    },
+    "unknownSprite": {
+      "__uuid__": "5a034132-8b49-4347-a229-ff2326096288@f9941",
+      "__expectedType__": "cc.SpriteFrame"
+    },
+    "needleUSprite": {
+      "__uuid__": "fc12ca7d-909f-4ffe-96f4-1a1954fd4bcd@f9941",
+      "__expectedType__": "cc.SpriteFrame"
+    },
+    "needleDSprite": {
+      "__uuid__": "f3ec9ca2-310c-43fa-a515-e025a61676ba@f9941",
+      "__expectedType__": "cc.SpriteFrame"
     },
     "expandedSprite": {
       "__uuid__": "868c9dd0-e2e1-47f2-8176-083e7fac4cff@f9941",
@@ -301,6 +325,10 @@
     },
     "roomSprite": {
       "__uuid__": "81a747ea-68aa-4674-91f5-e2ce53c21f66@f9941",
+      "__expectedType__": "cc.SpriteFrame"
+    },
+    "nodeSprite": {
+      "__uuid__": "e0618cfa-2d97-4fc0-b856-adc9d82faaf3@f9941",
       "__expectedType__": "cc.SpriteFrame"
     },
     "_id": "11vFmLXn5OSro8GUIayW0P"

@@ -1,19 +1,19 @@
 import { LinkedData } from "../../LinkedData";
 import { ComponentType } from "./ComponentType";
-import { IComponentDataFile } from "./IComponentDataFile";
+import { IComponentFile } from "./IComponentFile";
 
-export class SpriteDataFile implements IComponentDataFile {
+export class SpriteDataFile implements IComponentFile {
     id: string;
     type: ComponentType;
     prefab: string | null;
-    path: LinkedData<string>;
+    frame: LinkedData<string>;
     color: LinkedData<string>;
     
-    constructor(id: string, prefab: string | null, path: LinkedData<string>, color: LinkedData<string>) {
+    constructor(id: string, prefab: string | null, frame: LinkedData<string>, color: LinkedData<string>) {
         this.id = id;
         this.type = ComponentType.SPRITE;
         this.prefab = prefab;
-        this.path = path;
+        this.frame = frame;
         this.color = color;
     }
 }

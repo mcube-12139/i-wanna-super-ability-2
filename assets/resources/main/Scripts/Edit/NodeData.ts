@@ -10,21 +10,20 @@ import { ComponentDataTool } from "./ComponentData/ComponentDataTool";
 import { EditData } from "./EditData";
 import { LinkedArray } from "./LinkedArray";
 import { ILinkable } from "../ILinkable";
-import { NodeDataFile } from "./NodeDataFile";
-import { ILinkableFile } from "../ILinkableFile";
-import { RectDataFile } from "../RectDataFile";
-import { IComponentDataFile } from "./ComponentData/IComponentDataFile";
+import { NodeFile } from "./NodeFile";
+import { RectFile } from "../RectFile";
+import { IComponentFile } from "./ComponentData/IComponentFile";
 
-export class NodeData implements ILinkable<NodeData> {
+export class NodeData implements ILinkable<NodeFile, NodeData> {
     id: string;
     editPrefab?: EditPrefab;
     prefab?: NodeData;
     name: LinkedValue<string>;
     active: LinkedValue<boolean>;
     contentRect: LinkedValue<Rect>;
-    innerComponents: LinkedArray<IComponentData>;
+    innerComponents: LinkedArray<IComponentFile, IComponentData>;
     parent?: NodeData;
-    innerChildren: LinkedArray<NodeData>;
+    innerChildren: LinkedArray<NodeFile, NodeData>;
 
     get components(): Iterable<IComponentData> {
         return this.innerComponents.iterValues();
@@ -49,9 +48,9 @@ export class NodeData implements ILinkable<NodeData> {
         name: LinkedValue<string>,
         active: LinkedValue<boolean>,
         contentRect: LinkedValue<Rect>,
-        components: LinkedArray<IComponentData>,
+        components: LinkedArray<IComponentFile, IComponentData>,
         parent: NodeData | undefined,
-        children: LinkedArray<NodeData>
+        children: LinkedArray<NodeFile, NodeData>
     ) {
         this.id = id;
         this.editPrefab = editPrefab;
@@ -64,23 +63,23 @@ export class NodeData implements ILinkable<NodeData> {
         this.innerChildren = children;
     }
 
-    static deserialize(data: NodeDataFile): NodeData {
+    static deserialize(data: NodeFile): NodeData {
         const prefab = EditData.instance.getPrefab(data.prefab ?? undefined);
 
-        const children = LinkedArray.deserialize(data.children, (value: ILinkableFile) => NodeData.deserialize(value as NodeDataFile));
+        const children = LinkedArray.deserialize(data.children, (value: NodeFile) => NodeData.deserialize(value));
         const nodeData = new NodeData(
             data.id,
             prefab,
             prefab?.data,
             LinkedValue.deserialize(data.name),
             LinkedValue.deserialize(data.active),
-            LinkedValue.deserializeSpecial(data.contentRect, (value: RectDataFile) => new Rect(
+            LinkedValue.deserializeSpecial(data.contentRect, (value: RectFile) => new Rect(
                 value.x,
                 value.y,
                 value.width,
                 value.height
             )),
-            LinkedArray.deserialize(data.components, (value: ILinkableFile) => ComponentDataTool.deserialize(value as IComponentDataFile)),
+            LinkedArray.deserialize(data.components, (value: IComponentFile) => ComponentDataTool.deserialize(value)),
             undefined,
             children
         );
@@ -102,12 +101,12 @@ export class NodeData implements ILinkable<NodeData> {
     }
 
     serialize() {
-        return new NodeDataFile(
+        return new NodeFile(
             this.id,
             this.prefab?.id ?? null,
             this.name.serialize(),
             this.active.serialize(),
-            this.contentRect.serializeSpecial((rect: Rect) => new RectDataFile(
+            this.contentRect.serializeSpecial((rect: Rect) => new RectFile(
                 rect.x,
                 rect.y,
                 rect.width,
@@ -192,12 +191,12 @@ export class NodeData implements ILinkable<NodeData> {
             SweetUid.create(),
             undefined,
             this,
-            new LinkedValue<string>(false, undefined),
-            new LinkedValue<boolean>(false, undefined),
-            new LinkedValue<Rect>(false, undefined),
-            LinkedArray.createLinked<IComponentData>(this.innerComponents.iterValues()),
+            LinkedValue.createLinked<string>(),
+            LinkedValue.createLinked<boolean>(),
+            LinkedValue.createLinked<Rect>(),
+            LinkedArray.createLinked(this.innerComponents.iterValues()),
             undefined,
-            LinkedArray.createLinked<NodeData>(this.innerChildren.iterValues())
+            LinkedArray.createLinked(this.innerChildren.iterValues())
         );
     }
 }

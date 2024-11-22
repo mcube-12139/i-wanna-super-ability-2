@@ -49,9 +49,9 @@ export class RoomResource implements IEditResource {
             SweetUid.create(),
             undefined,
             undefined,
-            new LinkedValue<string>(true, "Root"),
-            new LinkedValue<boolean>(true, true),
-            new LinkedValue<Rect>(true, new Rect(0, 0, 0, 0)),
+            LinkedValue.createUnlinked("Root"),
+            LinkedValue.createUnlinked(true),
+            LinkedValue.createUnlinked(new Rect(0, 0, 0, 0)),
             LinkedArray.createUnlinked([]),
             undefined,
             LinkedArray.createUnlinked([])

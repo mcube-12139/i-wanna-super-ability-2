@@ -1,13 +1,13 @@
 import { ComponentType } from "./ComponentType";
 import { IComponentData } from "./IComponentData";
-import { IComponentDataFile } from "./IComponentDataFile";
+import { IComponentFile } from "./IComponentFile";
 import { SpriteData } from "./SpriteData";
-import { SpriteDataFile } from "./SpriteDataFile";
+import { SpriteDataFile } from "./SpriteFile";
 import { TransformData } from "./TransformData";
-import { TransformDataFile } from "./TransformDataFile";
+import { TransformDataFile } from "./TransformFile";
 
 export class ComponentDataTool {
-    static deserialize(data: IComponentDataFile): IComponentData {
+    static deserialize(data: IComponentFile): IComponentData {
         if (data.type === ComponentType.TRANSFORM) {
             return TransformData.deserialize(data as TransformDataFile);
         }

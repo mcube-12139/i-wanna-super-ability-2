@@ -3,10 +3,14 @@ const { ccclass, property } = _decorator;
 
 @ccclass('RegionSelectorController')
 export class RegionSelectorController extends Component {
-    graphics: Graphics;
+    graphics!: Graphics;
 
     onLoad() {
-        this.graphics = this.getComponent(Graphics);
+        this.graphics = this.getComponent(Graphics)!;
+    }
+
+    clearGraphics() {
+        this.graphics.clear();
     }
 
     setRegion(rect: Rect) {
