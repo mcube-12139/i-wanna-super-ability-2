@@ -9,6 +9,10 @@ export class SweetGlobal {
     static selectorShadowPrefab: Prefab;
     static sweetInputPrefab: Prefab;
     static resourceItemPrefab: Prefab;
+    static editPagePrefab: Prefab;
+    static nodeTreePagePrefab: Prefab;
+    static nodePagePrefab: Prefab;
+    static mainMenuOptionPrefab: Prefab;
 
     static unknownSprite: SpriteFrame;
     static needleUSprite: SpriteFrame;

@@ -1,5 +1,5 @@
 import { _decorator, Component, instantiate, Node, resources } from 'cc';
-import { EditSceneController } from './Edit/EditData';
+import { EditSceneController } from './Edit/Editor';
 import { PrefabItemController } from './PrefabItemController';
 const { ccclass, property } = _decorator;
 

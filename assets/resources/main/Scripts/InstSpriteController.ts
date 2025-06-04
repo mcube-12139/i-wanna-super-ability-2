@@ -1,5 +1,5 @@
 import { _decorator, Component, Node, resources, Sprite, SpriteFrame } from 'cc';
-import { EditSceneController } from './Edit/EditData';
+import { EditSceneController } from './Edit/Editor';
 const { ccclass, property } = _decorator;
 
 @ccclass('InstSpriteController')

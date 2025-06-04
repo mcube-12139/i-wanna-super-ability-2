@@ -7,7 +7,7 @@ import { SweetUid } from "../SweetUid";
 import { SpriteData } from "./ComponentData/SpriteData";
 import { ComponentType } from "./ComponentData/ComponentType";
 import { ComponentDataTool } from "./ComponentData/ComponentDataTool";
-import { EditData } from "./EditData";
+import { Editor } from "./Editor";
 import { LinkedArray } from "./LinkedArray";
 import { ILinkable } from "../ILinkable";
 import { NodeFile } from "./NodeFile";
@@ -64,7 +64,7 @@ export class NodeData implements ILinkable<NodeFile, NodeData> {
     }
 
     static deserialize(data: NodeFile): NodeData {
-        const prefab = EditData.instance.getPrefab(data.prefab ?? undefined);
+        const prefab = Editor.instance.getPrefab(data.prefab ?? undefined);
 
         const children = LinkedArray.deserialize(data.children, (value: NodeFile) => NodeData.deserialize(value));
         const nodeData = new NodeData(

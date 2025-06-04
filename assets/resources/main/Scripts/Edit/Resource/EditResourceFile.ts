@@ -4,12 +4,16 @@ export class EditResourceFile {
     id: string;
     type: EditResourceType;
     name: string;
-    children: EditResourceFile[] | null;
+    parentId: string | null;
+    previousId: string | null;
+    nextId: string | null;
 
-    constructor(id: string, type: EditResourceType, name: string, children: EditResourceFile[] | null) {
+    constructor(id: string, type: EditResourceType, name: string, parentId: string | null, previousId: string | null, nextId: string | null) {
         this.id = id;
         this.type = type;
         this.name = name;
-        this.children = children;
+        this.parentId = parentId;
+        this.previousId = previousId;
+        this.nextId = nextId;
     }
 }

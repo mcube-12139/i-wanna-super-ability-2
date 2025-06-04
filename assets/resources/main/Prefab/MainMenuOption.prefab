@@ -305,7 +305,7 @@
     "_string": "",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 41.625,
+    "_actualFontSize": 33.75,
     "_fontSize": 24,
     "_fontFamily": "站酷快乐体2016修订版",
     "_lineHeight": 32,
@@ -400,6 +400,9 @@
     "_enabled": true,
     "__prefab": {
       "__id__": 17
+    },
+    "label": {
+      "__id__": 11
     },
     "background": {
       "__id__": 2

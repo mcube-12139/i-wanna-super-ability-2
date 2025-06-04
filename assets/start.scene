@@ -173,7 +173,7 @@
     "_priority": 0,
     "_fov": 45,
     "_fovAxis": 0,
-    "_orthoHeight": 263.3893919793014,
+    "_orthoHeight": 234.75258918296893,
     "_near": 0,
     "_far": 1000,
     "_color": {
@@ -301,6 +301,14 @@
     },
     "resourceItemPrefab": {
       "__uuid__": "415a80ec-fd08-4640-89d2-e3de2b562ede",
+      "__expectedType__": "cc.Prefab"
+    },
+    "editPagePrefab": {
+      "__uuid__": "24c6a43f-5060-4043-b5ec-1616c4c303de",
+      "__expectedType__": "cc.Prefab"
+    },
+    "mainMenuOptionPrefab": {
+      "__uuid__": "437a840c-e08b-4c7d-9abd-bd5a4707702f",
       "__expectedType__": "cc.Prefab"
     },
     "unknownSprite": {

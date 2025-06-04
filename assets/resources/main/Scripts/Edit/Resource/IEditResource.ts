@@ -7,7 +7,10 @@ export interface IEditResource {
     type: EditResourceType;
     name: string;
     parent?: IEditResource;
-    children?: IEditResource[];
+    previous?: IEditResource;
+    next?: IEditResource;
+    firstChild?: IEditResource;
+    lastChild?: IEditResource;
     icon?: SpriteFrame;
 
     createEditPage(): IEditPage;

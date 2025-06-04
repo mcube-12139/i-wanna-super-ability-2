@@ -7,7 +7,7 @@ import { EditResourceTool } from './Resource/EditResourceTool';
 import { EditResourceType } from './Resource/EditResourceType';
 import { ErrorControl } from '../ErrorControl';
 import { IEditResource } from './Resource/IEditResource';
-import { EditData } from './EditData';
+import { Editor } from './Editor';
 const { ccclass, property } = _decorator;
 
 @ccclass('ResourcePageControl')
@@ -25,15 +25,15 @@ export class ResourcePageControl extends Component {
     @property(ButtonController)
     createPrefabButton!: ButtonController;
     @property(ButtonController)
-    CutButton!: ButtonController;
+    cutButton!: ButtonController;
     @property(ButtonController)
-    CopyButton!: ButtonController;
+    copyButton!: ButtonController;
     @property(ButtonController)
-    PasteButton!: ButtonController;
+    pasteButton!: ButtonController;
     @property(ButtonController)
-    RenameButton!: ButtonController;
+    renameButton!: ButtonController;
     @property(ButtonController)
-    DeleteButton!: ButtonController;
+    deleteButton!: ButtonController;
     @property(ErrorControl)
     errorControl!: ErrorControl;
 
@@ -45,9 +45,9 @@ export class ResourcePageControl extends Component {
         });
 
         this.openButton.onTouchEnd((e: TouchEvent) => {
-            EditData.instance.closeWindow();
+            Editor.instance.closeWindow();
             const selected = this.resourceList.selectedItems[0];
-            EditData.instance.openPage(selected.data);
+            Editor.instance.openPage(selected.data);
         });
 
         this.createRoomButton.onTouchEnd((e: TouchEvent) => {
@@ -91,7 +91,7 @@ export class ResourcePageControl extends Component {
                     // 创建资源，保存
                     const {resource, data} = RoomResource.createResourceAndData(name);
                     data.save();
-                    EditData.instance.addResource(resource, parent.data, before);
+                    Editor.instance.addResource(resource, parent.data, before);
                     // 附加到节点上
                     itemControl.setData(resource);
                     itemControl.setEvents({

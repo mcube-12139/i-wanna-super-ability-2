@@ -4,7 +4,7 @@ import { EditPrefab } from "../EditPrefab";
 import { LoopArray, LoopArrayPointer } from "../../LoopArray";
 import { IEditPage } from "./IEditPage";
 import { RoomData } from "../RoomData";
-import { EditData } from "../EditData";
+import { Editor } from "../Editor";
 import { IEditAction } from "../Action/IEditAction";
 import { EditActionDelete, EditActionDeletedData } from "../Action/EditActionDelete";
 import { EditActionSelect } from "../Action/EditActionSelect";
@@ -60,10 +60,10 @@ export class RoomEditPage implements IEditPage {
             this.recover();
         }
 
-        EditData.instance.camera.clearColor = new Color(this.data.color);
-        EditData.instance.objectShadowController.enable();
-        EditData.instance.objectShadowController.setPrefab(this.nowPrefab);
-        EditData.instance.gridControl.redraw();
+        Editor.instance.camera.clearColor = new Color(this.data.color);
+        Editor.instance.objectShadowControl.enable();
+        Editor.instance.objectShadowControl.setPrefab(this.nowPrefab);
+        Editor.instance.gridControl.redraw();
         this.node.active = true;
     }
 
@@ -104,22 +104,22 @@ export class RoomEditPage implements IEditPage {
 
     setGridSize(size: Vec2) {
         this.gridSize.set(size);
-        EditData.instance.gridControl.redraw();
+        Editor.instance.gridControl.redraw();
     }
 
     setGridColor(color: Color) {
         this.gridColor.set(color);
-        EditData.instance.gridControl.redraw();
+        Editor.instance.gridControl.redraw();
     }
 
     setGridVisible(visible: boolean) {
         this.gridVisible = visible;
-        EditData.instance.gridControl.redraw();
+        Editor.instance.gridControl.redraw();
     }
 
     setBackColor(color: Color) {
         this.gridColor.set(color);
-        EditData.instance.camera.clearColor = color;
+        Editor.instance.camera.clearColor = color;
     }
 
     addAction(action: IEditAction) {
@@ -153,7 +153,7 @@ export class RoomEditPage implements IEditPage {
             this.creatingRoot.addChild(instance);
     
             // 保存操作
-            EditData.instance.createdInstances.push(instance);
+            Editor.instance.createdInstances.push(instance);
         }
     }
 
@@ -181,55 +181,55 @@ export class RoomEditPage implements IEditPage {
             for (const [selectedInstance, selector] of this.selectors.entries()) {
                 selector.destroy();
 
-                EditData.instance.deletedInstances.push(new EditActionDeletedData(selectedInstance.parent!, selectedInstance.data));
+                Editor.instance.deletedInstances.push(new EditActionDeletedData(selectedInstance.parent!, selectedInstance.data));
                 selectedInstance.destroy();
             }
 
             this.selectors.clear();
         } else {
             // 该实例未被选中，删除自身即可
-            EditData.instance.deletedInstances.push(new EditActionDeletedData(instance.parent!, instance.data));
+            Editor.instance.deletedInstances.push(new EditActionDeletedData(instance.parent!, instance.data));
             instance.destroy();
         }
     }
 
     startCreate() {
-        EditData.instance.createdInstances = [];
+        Editor.instance.createdInstances = [];
     }
 
     endCreate() {
-        if (EditData.instance.createdInstances.length !== 0) {
-            this.addAction(new EditActionCreate(this.creatingRoot, EditData.instance.createdInstances));
+        if (Editor.instance.createdInstances.length !== 0) {
+            this.addAction(new EditActionCreate(this.creatingRoot, Editor.instance.createdInstances));
         }
     }
 
     startDelete() {
-        EditData.instance.deletedInstances = [];
+        Editor.instance.deletedInstances = [];
     }
 
     endDelete() {
-        if (EditData.instance.deletedInstances.length !== 0) {
-            this.addAction(new EditActionDelete(EditData.instance.deletedInstances));
+        if (Editor.instance.deletedInstances.length !== 0) {
+            this.addAction(new EditActionDelete(Editor.instance.deletedInstances));
         }
     }
 
     startDrag(position: Vec2) {
-        EditData.instance.dragStartPos.set(position);
-        EditData.instance.dragEndPos.set(position);
+        Editor.instance.dragStartPos.set(position);
+        Editor.instance.dragEndPos.set(position);
     }
 
     dragTo(position: Vec2) {
-        const movementX = position.x - EditData.instance.dragEndPos.x;
-        const movementY = position.y - EditData.instance.dragEndPos.y;
+        const movementX = position.x - Editor.instance.dragEndPos.x;
+        const movementY = position.y - Editor.instance.dragEndPos.y;
         for (const instance of this.selectors.keys()) {
             this.setInstancePosition(instance, instance.getPosition()!.add3f(movementX, movementY, 0));
         }
-        EditData.instance.dragEndPos.set(position);
+        Editor.instance.dragEndPos.set(position);
     }
 
     endDrag() {
-        const movementX = EditData.instance.dragEndPos.x - EditData.instance.dragStartPos.x;
-        const movementY = EditData.instance.dragEndPos.y - EditData.instance.dragStartPos.y;
+        const movementX = Editor.instance.dragEndPos.x - Editor.instance.dragStartPos.x;
+        const movementY = Editor.instance.dragEndPos.y - Editor.instance.dragStartPos.y;
         if (movementX !== 0 || movementY !== 0) {
             this.addAction(new EditActionDrag(Array.from(this.selectors.keys()), new Vec3(movementX, movementY, 0)));
         }
@@ -260,32 +260,32 @@ export class RoomEditPage implements IEditPage {
     }
 
     startSelectRegion(position: Vec2) {
-        EditData.instance.regionSelector.active = true;
+        Editor.instance.regionSelector.active = true;
 
-        EditData.instance.selectedRegionStartPos.set(position);
-        EditData.instance.regionSelectorControl.clearGraphics();
+        Editor.instance.selectedRegionStartPos.set(position);
+        Editor.instance.regionSelectorControl.clearGraphics();
     }
 
     updateSelectRegion(position: Vec2) {
-        EditData.instance.selectedRegionEndPos.set(position);
-        const rect = this.calcRegion(EditData.instance.selectedRegionStartPos.x, EditData.instance.selectedRegionStartPos.y, position.x, position.y);
+        Editor.instance.selectedRegionEndPos.set(position);
+        const rect = this.calcRegion(Editor.instance.selectedRegionStartPos.x, Editor.instance.selectedRegionStartPos.y, position.x, position.y);
         const instances = this.getInstancesInterGlobalRect(rect);
-        EditData.instance.setSelectorShadowInstances(instances);
-        EditData.instance.regionSelectorControl.setRegion(rect);
+        Editor.instance.setSelectorShadowInstances(instances);
+        Editor.instance.regionSelectorControl.setRegion(rect);
     }
 
     endSelectRegion() {
-        const rect = this.calcRegion(EditData.instance.selectedRegionStartPos.x, EditData.instance.selectedRegionStartPos.y, EditData.instance.selectedRegionEndPos.x, EditData.instance.selectedRegionEndPos.y);
+        const rect = this.calcRegion(Editor.instance.selectedRegionStartPos.x, Editor.instance.selectedRegionStartPos.y, Editor.instance.selectedRegionEndPos.x, Editor.instance.selectedRegionEndPos.y);
         const instances = this.getInstancesInterGlobalRect(rect);
-        EditData.instance.clearSelectorShadows();
-        EditData.instance.regionSelector.active = false;
+        Editor.instance.clearSelectorShadows();
+        Editor.instance.regionSelector.active = false;
 
         this.selectInstances(instances);
     }
 
     createSelector(instance: EditInstance) {
         const selector = instantiate(SweetGlobal.selectorPrefab);
-        EditData.instance.selectorParent.addChild(selector);
+        Editor.instance.selectorParent.addChild(selector);
         this.selectors.set(instance, selector);
     }
 

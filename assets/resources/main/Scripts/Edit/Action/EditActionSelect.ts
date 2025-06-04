@@ -1,4 +1,4 @@
-import { EditData } from "../EditData";
+import { Editor } from "../Editor";
 import { EditInstance } from "../EditInstance";
 import { RoomEditPage } from "../Page/RoomEditPage";
 import { IEditAction } from "./IEditAction";
@@ -13,12 +13,12 @@ export class EditActionSelect implements IEditAction {
     }
 
     undo(): void {
-        const page = EditData.instance.nowPage as RoomEditPage;
+        const page = Editor.instance.nowPage as RoomEditPage;
         page.setSelectedInstances(this.before);
     }
 
     redo(): void {
-        const page = EditData.instance.nowPage as RoomEditPage;
+        const page = Editor.instance.nowPage as RoomEditPage;
         page.setSelectedInstances(this.after);
     }
 }

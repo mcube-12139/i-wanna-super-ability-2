@@ -1,5 +1,5 @@
 import { _decorator, Button, Component, EditBox, Label } from 'cc';
-import { EditData } from './Edit/EditData';
+import { Editor } from './Edit/Editor';
 const { ccclass, property } = _decorator;
 
 @ccclass('CreateRoomButtonController')
@@ -18,9 +18,9 @@ export class CreateRoomButtonController extends Component {
         if (roomName === "") {
             this.illegalLabel.string = "房间名不能是空";
         } else {
-            const result = EditData.instance.createRoom(roomName);
+            const result = Editor.instance.createRoom(roomName);
             if (result.ok) {
-                EditData.instance.closeWindow();
+                Editor.instance.closeWindow();
             } else {
                 this.illegalLabel.string = result.error!;
             }

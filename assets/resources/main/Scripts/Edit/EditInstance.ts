@@ -1,6 +1,6 @@
 import { Node, Rect, Vec2, Vec3 } from "cc";
 import { NodeData } from "./NodeData";
-import { EditData } from "./EditData";
+import { Editor } from "./Editor";
 import { RoomEditPage } from "./Page/RoomEditPage";
 
 export class EditInstance {

@@ -1,5 +1,5 @@
 import { _decorator, Component, Graphics, math } from 'cc';
-import { EditData } from './EditData';
+import { Editor } from './Editor';
 import { RoomEditPage } from './Page/RoomEditPage';
 const { ccclass, property } = _decorator;
 
@@ -12,7 +12,7 @@ export class GridControl extends Component {
     }
 
     redraw() {
-        const page = EditData.instance.nowPage as RoomEditPage;
+        const page = Editor.instance.nowPage as RoomEditPage;
 
         if (page.gridVisible) {
             this.graphics.enabled = true;

@@ -14,6 +14,14 @@ export class StartSceneController extends Component {
     sweetInputPrefab!: Prefab;
     @property(Prefab)
     resourceItemPrefab!: Prefab;
+    @property(Prefab)
+    editPagePrefab!: Prefab;
+    @property(Prefab)
+    nodeTreePagePrefab!: Prefab;
+    @property(Prefab)
+    nodePagePrefab!: Prefab;
+    @property(Prefab)
+    mainMenuOptionPrefab!: Prefab;
 
     @property(SpriteFrame)
     unknownSprite!: SpriteFrame;
@@ -36,6 +44,10 @@ export class StartSceneController extends Component {
         SweetGlobal.selectorShadowPrefab = this.selectorShadowPrefab;
         SweetGlobal.sweetInputPrefab = this.sweetInputPrefab;
         SweetGlobal.resourceItemPrefab = this.resourceItemPrefab;
+        SweetGlobal.editPagePrefab = this.editPagePrefab;
+        SweetGlobal.nodeTreePagePrefab = this.nodeTreePagePrefab;
+        SweetGlobal.nodePagePrefab = this.nodePagePrefab;
+        SweetGlobal.mainMenuOptionPrefab = this.mainMenuOptionPrefab;
 
         SweetGlobal.unknownSprite = this.unknownSprite;
         SweetGlobal.needleUSprite = this.needleUSprite;

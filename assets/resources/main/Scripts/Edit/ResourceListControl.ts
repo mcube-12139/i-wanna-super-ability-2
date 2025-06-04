@@ -1,6 +1,6 @@
 import { _decorator, Component, Node, ScrollView, Toggle } from 'cc';
 import { EditResourceTool } from './Resource/EditResourceTool';
-import { EditData } from './EditData';
+import { Editor } from './Editor';
 import { ResourceItemControl } from './ResourceItemControl';
 import { ButtonController } from '../ButtonController';
 const { ccclass, property } = _decorator;
@@ -17,7 +17,7 @@ export class ResourceListControl extends Component {
     }) {
         this.scrollView = this.getComponent(ScrollView)!;
 
-        const node = EditResourceTool.createItemNode(EditData.instance.rootResource);
+        const node = EditResourceTool.createItemNode(Editor.instance.rootResource);
         const nodeControl = node.getComponent(ResourceItemControl)!;
         nodeControl.setEvents({
             list: this,

@@ -9,7 +9,7 @@ import { IEditPage } from "../Page/IEditPage";
 import { EditInstance } from "../EditInstance";
 import { RoomEditPage } from "../Page/RoomEditPage";
 import { StageControl } from "../StageControl";
-import { EditData } from "../EditData";
+import { Editor } from "../Editor";
 import { LinkedArray } from "../LinkedArray";
 import { SweetGlobal } from "../../SweetGlobal";
 
@@ -25,6 +25,10 @@ export class RoomResource implements IEditResource {
     id: string;
     name: string;
     parent?: IEditResource | undefined;
+    previous?: IEditResource;
+    next?: IEditResource;
+    firstChild?: IEditResource;
+    lastChild?: IEditResource;
     get children(): undefined {
         return undefined;
     }
@@ -88,7 +92,7 @@ export class RoomResource implements IEditResource {
             true,
             root,
             root,
-            EditData.instance.prefabData[0]
+            Editor.instance.prefabData[0]
         );
 
         return page;

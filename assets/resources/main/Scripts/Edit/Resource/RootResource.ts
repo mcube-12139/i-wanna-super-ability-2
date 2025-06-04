@@ -9,6 +9,10 @@ export class RootResource implements IEditResource {
     }
     name: string;
     parent: undefined;
+    previous?: IEditResource;
+    next?: IEditResource;
+    firstChild?: IEditResource;
+    lastChild?: IEditResource;
     children: IEditResource[] | undefined;
     get icon(): undefined {
         return undefined;

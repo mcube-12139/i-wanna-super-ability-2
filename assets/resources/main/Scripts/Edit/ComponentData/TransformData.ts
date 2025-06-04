@@ -3,7 +3,7 @@ import { IComponentData } from "./IComponentData";
 import { ComponentType } from "./ComponentType";
 import { LinkedValue } from "../LinkedValue";
 import { SweetUid } from "../../SweetUid";
-import { EditData } from "../EditData";
+import { Editor } from "../Editor";
 import { Vec3File } from "../../Vec3File";
 import { TransformDataFile } from "./TransformFile";
 
@@ -26,7 +26,7 @@ export class TransformData implements IComponentData {
     static deserialize(data: TransformDataFile) {
         return new TransformData(
             data.id,
-            EditData.instance.getComponentPrefab(data.prefab ?? undefined) as (TransformData | undefined),
+            Editor.instance.getComponentPrefab(data.prefab ?? undefined) as (TransformData | undefined),
             LinkedValue.deserializeSpecial(data.position, (value: Vec3File) => new Vec3(value.x, value.y, value.z)),
             LinkedValue.deserializeSpecial(data.rotation, (value: Vec3File) => new Vec3(value.x, value.y, value.z)),
             LinkedValue.deserializeSpecial(data.scale, (value: Vec3File) => new Vec3(value.x, value.y, value.z)),

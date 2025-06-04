@@ -14,36 +14,72 @@ import { EditResourceTool } from './Resource/EditResourceTool';
 import { RootResource } from './Resource/RootResource';
 import { IEditResource } from './Resource/IEditResource';
 import { IComponentData } from './ComponentData/IComponentData';
-import { MainMenuWindowController } from '../MainMenuWindowController';
+import { MainMenuWindowControl } from '../MainMenuWindowControl';
 import { EditSprite } from './EditSprite';
 import { SpriteData } from './ComponentData/SpriteData';
 import { TransformData } from './ComponentData/TransformData';
 import { LinkedArray } from './LinkedArray';
 import { LinkedValue } from './LinkedValue';
+import { EditResourceFile } from './Resource/EditResourceFile';
 
-export class EditData {
-    camera: Camera;
-    grid: Node;
-    gridControl: GridControl;
+export class Editor {
+    optionalCamera?: Camera;
+    get camera(): Camera {
+        return this.optionalCamera!;
+    }
 
-    selectorShadow: Node;
-    selectorParent: Node;
+    optionalGrid?: Node;
+    get grid(): Node {
+        return this.optionalGrid!;
+    }
+    optionalGridControl?: GridControl;
+    get gridControl(): GridControl {
+        return this.optionalGridControl!;
+    }
+
+    optionalSelectorShadow?: Node;
+    get selectorShadow(): Node {
+        return this.optionalSelectorShadow!;
+    }
+    optionalSelectorParent?: Node;
+    get selectorParent(): Node {
+        return this.optionalSelectorParent!;
+    }
     selectorShadowMap = new Map<EditInstance, Node>;
 
-    objectShadow: Node;
-    objectShadowController: ObjectShadowControl;
+    optionalObjectShadow?: Node;
+    get objectShadow(): Node {
+        return this.optionalObjectShadow!;
+    }
+    optionalObjectShadowControl?: ObjectShadowControl;
+    get objectShadowControl(): ObjectShadowControl {
+        return this.optionalObjectShadowControl!;
+    }
 
     selectedRegionStartPos = new Vec2(0, 0);
     selectedRegionEndPos = new Vec2(0, 0);
-    regionSelector: Node;
-    regionSelectorControl: RegionSelectorController;
+    optionalRegionSelector?: Node;
+    get regionSelector(): Node {
+        return this.optionalRegionSelector!;
+    }
 
-    windowParent: Node;
-    nowWindow?: Node;
+    optionalRegionSelectorControl?: RegionSelectorController;
+    get regionSelectorControl(): RegionSelectorController {
+        return this.optionalRegionSelectorControl!;
+    }
 
-    pageParent: Node;
+    optionalWindowParent?: Node;
+    get windowParent(): Node {
+        return this.optionalWindowParent!;
+    }
+    nowWindow?: Node = undefined;
+
+    optionalPageParent?: Node;
+    get pageParent(): Node {
+        return this.optionalPageParent!;
+    }
     pages: IEditPage[] = [];
-    nowPage?: IEditPage;
+    nowPage?: IEditPage = undefined;
 
     rootResource: RootResource;
     
@@ -59,34 +95,64 @@ export class EditData {
     dragStartPos: Vec2 = new Vec2();
     dragEndPos: Vec2 = new Vec2();
 
-    static optionalInstance?: EditData = undefined;
-    static get instance(): EditData {
+    static optionalInstance?: Editor = undefined;
+    static get instance(): Editor {
         return this.optionalInstance!;
     }
 
-    constructor(nodes: {
-        camera: Camera,
-        grid: Node,
-        selectorShadow: Node,
-        selectorParent: Node,
-        objectShadow: Node,
-        windowParent: Node,
-        regionSelector: Node,
-        pageParent: Node
-    }, rootResource: RootResource) {
-        this.camera = nodes.camera;
-        this.grid = nodes.grid;
-        this.selectorShadow = nodes.selectorShadow,
-        this.selectorParent = nodes.selectorParent;
-        this.objectShadow = nodes.objectShadow;
-        this.windowParent = nodes.windowParent;
-        this.regionSelector = nodes.regionSelector;
-        this.pageParent = nodes.pageParent;
-        this.rootResource = rootResource;
+    constructor() {
+        const resourcesStr = sys.localStorage.getItem("edit:resources");
+        let rootResource!: RootResource;
+        if (resourcesStr !== null) {
+            // 读取资源
+            const resourceIds: string[] = JSON.parse(resourcesStr);
 
-        this.gridControl = this.grid.getComponent(GridControl)!;
-        this.objectShadowController = this.objectShadow.getComponent(ObjectShadowControl)!;
-        this.regionSelectorControl = this.regionSelector.getComponent(RegionSelectorController)!;
+            const resourceMap = new Map<string, {
+                file: EditResourceFile,
+                resource: IEditResource
+            }>();
+            for (const id of resourceIds) {
+                const resourceStr = sys.localStorage.getItem(`edit:resource:${id}`)!;
+
+                const resourceFile = JSON.parse(resourceStr);
+                const resource = EditResourceTool.deserialize(resourceFile);
+                resourceMap.set(id, {
+                    file: resourceFile,
+                    resource: resource
+                });
+            }
+            for (const {file, resource} of resourceMap.values()) {
+                if (file.parentId === null) {
+                    // 设置为根资源
+                    rootResource = resource as RootResource;
+                } else {
+                    // 设置长资源
+                    const parentResource = resourceMap.get(file.parentId)!.resource;
+                    resource.parent = parentResource;
+                    if (file.previousId === null) {
+                        // 设置为长资源的首子资源
+                        parentResource.firstChild = resource;
+                    }
+                    if (file.nextId === null) {
+                        // 设置为长资源的尾子资源
+                        parentResource.lastChild = resource;
+                    }
+                }
+
+                if (file.previousId !== null) {
+                    // 设置前资源
+                    resource.previous = resourceMap.get(file.previousId)!.resource;
+                }
+                if (file.nextId !== null) {
+                    // 设置后资源
+                    resource.next = resourceMap.get(file.nextId)!.resource;
+                }
+            }
+        } else {
+            // 初始化资源
+            rootResource = new RootResource(SweetUid.create(), "root", []);
+        }
+        this.rootResource = rootResource;
 
         this.editSprites = [
             new EditSprite(
@@ -187,7 +253,16 @@ export class EditData {
         }
     }
 
-    static initData(nodes: {
+    startScene({
+        camera,
+        grid,
+        selectorShadow,
+        selectorParent,
+        objectShadow,
+        windowParent,
+        regionSelector,
+        pageParent
+    }: {
         camera: Camera,
         grid: Node,
         selectorShadow: Node,
@@ -197,19 +272,24 @@ export class EditData {
         regionSelector: Node,
         pageParent: Node
     }) {
-        const rootResourceStr = sys.localStorage.getItem("editResources");
-        let rootResource: RootResource;
-        if (rootResourceStr !== null) {
-            rootResource = EditResourceTool.deserialize(JSON.parse(rootResourceStr)) as RootResource;
-        } else {
-            rootResource = new RootResource(SweetUid.create(), "root", []);
-        }
-        this.optionalInstance = new EditData(nodes, rootResource);
+        // 恢复节点
+        this.optionalCamera = camera;
+        this.optionalGrid = grid;
+        this.optionalSelectorShadow = selectorShadow,
+        this.optionalSelectorParent = selectorParent;
+        this.optionalObjectShadow = objectShadow;
+        this.optionalWindowParent = windowParent;
+        this.optionalRegionSelector = regionSelector;
+        this.optionalPageParent = pageParent;
 
-        if (this.instance.nowPage === undefined) {
-            this.instance.openMainMenuWindow(MainMenuOptionId.RESOURCE);
+        this.optionalGridControl = this.optionalGrid.getComponent(GridControl)!;
+        this.optionalObjectShadowControl = this.optionalObjectShadow.getComponent(ObjectShadowControl)!;
+        this.optionalRegionSelectorControl = this.optionalRegionSelector.getComponent(RegionSelectorController)!;
+        
+        if (this.nowPage === undefined) {
+            this.openMainMenuWindow([], MainMenuOptionId.RESOURCE);
         } else {
-            this.instance.nowPage.open();
+            this.nowPage.open();
         }
     }
 
@@ -278,7 +358,7 @@ export class EditData {
     }
 
     dispose() {
-        EditData.optionalInstance = undefined;
+        Editor.optionalInstance = undefined;
     }
 
     toggleWindow(prefab: Prefab) {
@@ -288,7 +368,7 @@ export class EditData {
         const window = instantiate(prefab);
         this.windowParent.addChild(window);
         this.nowWindow = window;
-        this.objectShadowController.disable();
+        this.objectShadowControl.disable();
     }
 
     closeWindow() {
@@ -296,12 +376,14 @@ export class EditData {
             this.nowWindow.destroy();
         }
         this.nowWindow = undefined;
-        this.objectShadowController.enable();
+        this.objectShadowControl.enable();
     }
 
-    openMainMenuWindow(option: MainMenuOptionId) {
+    openMainMenuWindow(enabledOptions: MainMenuOptionId[], selectedOption: MainMenuOptionId) {
         this.toggleWindow(SweetGlobal.mainMenuWindowPrefab);
-        this.nowWindow!.getComponent(MainMenuWindowController)!.toggleOption(option);
+        const control = this.nowWindow!.getComponent(MainMenuWindowControl)!;
+        control.createOptions(enabledOptions);
+        control.toggleOption(selectedOption);
     }
 
     openPage(resource: IEditResource) {

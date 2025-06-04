@@ -1,5 +1,5 @@
 import { _decorator, Camera, Component, Node, Prefab } from 'cc';
-import { EditData } from './EditData';
+import { Editor } from './Editor';
 const { ccclass, property } = _decorator;
 
 @ccclass('EditSceneControl')
@@ -22,17 +22,15 @@ export class EditSceneControl extends Component {
     windowParent!: Node;
 
     start() {
-        if (EditData.optionalInstance === undefined) {
-            EditData.initData({
-                camera: this.camera,
-                grid: this.grid,
-                selectorShadow: this.selectorShadow,
-                selectorParent: this.selectorParent,
-                objectShadow: this.objectShadow,
-                windowParent: this.windowParent,
-                regionSelector: this.regionSelector,
-                pageParent: this.pageParent
-            });
-        }
+        Editor.instance.startScene({
+            camera: this.camera,
+            grid: this.grid,
+            selectorShadow: this.selectorShadow,
+            selectorParent: this.selectorParent,
+            objectShadow: this.objectShadow,
+            windowParent: this.windowParent,
+            regionSelector: this.regionSelector,
+            pageParent: this.pageParent
+        });
     }
 }

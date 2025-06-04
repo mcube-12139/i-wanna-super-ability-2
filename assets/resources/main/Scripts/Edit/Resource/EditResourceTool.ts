@@ -13,19 +13,24 @@ export class EditResourceTool {
         const control = node.getComponent(ResourceItemControl)!;
         control.setData(resource);
 
-        if (resource.children !== undefined) {
-            for (const child of resource.children) {
-                const childNode = this.createItemNode(child);
-                childNode.getComponent(ResourceItemControl)!.parent = control;
-                control.children!.addChild(childNode);
-            }
+        // 创建子资源节点
+        for (let child = resource.firstChild; child !== undefined; child = child.next) {
+            const childNode = this.createItemNode(child);
+            childNode.getComponent(ResourceItemControl)!.parent = control;
+            control.children!.addChild(childNode);
         }
 
         return node;
     }
 
     static addChild(resource: IEditResource, child: IEditResource): void {
-        resource.children!.push(child);
+        if (resource.lastChild !== undefined) {
+            resource.lastChild.next = child;
+            child.previous = resource.lastChild;
+        } else {
+            resource.firstChild = child;
+        }
+        resource.lastChild = child;
         child.parent = resource;
     }
 

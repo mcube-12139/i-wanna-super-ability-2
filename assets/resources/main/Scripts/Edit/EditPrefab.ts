@@ -5,7 +5,7 @@ import { TransformData } from "./ComponentData/TransformData";
 import { SpriteData } from "./ComponentData/SpriteData";
 import { LinkedArray } from "./LinkedArray";
 import { IComponentData } from "./ComponentData/IComponentData";
-import { EditData } from "./EditData";
+import { Editor } from "./Editor";
 import { SweetGlobal } from "../SweetGlobal";
 
 export class EditPrefab {
@@ -49,7 +49,7 @@ export class EditPrefab {
                         new SpriteData(
                             "u263duyqzrcwgjrasikjy1i0rb8slopv",
                             undefined,
-                            LinkedValue.createUnlinked(EditData.instance.getSprite("gdcxldhbojyo9xmpcfhr44typmermhs5")),
+                            LinkedValue.createUnlinked(Editor.instance.getSprite("gdcxldhbojyo9xmpcfhr44typmermhs5")),
                             LinkedValue.createUnlinked(Color.WHITE.clone())
                         )
                     ] as IComponentData[]),
@@ -79,7 +79,7 @@ export class EditPrefab {
                         new SpriteData(
                             "2c28csromzl4t6zkovmrcmklmzu16iln",
                             undefined,
-                            LinkedValue.createUnlinked(EditData.instance.getSprite("166mzd8ya885uq1q5bpsiamwvk0dlokv")),
+                            LinkedValue.createUnlinked(Editor.instance.getSprite("166mzd8ya885uq1q5bpsiamwvk0dlokv")),
                             LinkedValue.createUnlinked(Color.WHITE.clone())
                         )
                     ] as IComponentData[]),

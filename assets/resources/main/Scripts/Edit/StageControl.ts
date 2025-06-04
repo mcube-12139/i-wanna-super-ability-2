@@ -1,5 +1,5 @@
 import { _decorator, Component, director, EventKeyboard, EventMouse, Input, input, KeyCode, UITransform, Vec2, Vec3 } from 'cc';
-import { EditData } from './EditData';
+import { Editor } from './Editor';
 import { MainMenuOptionId } from '../MainMenuOptionController';
 import { RoomEditPage } from './Page/RoomEditPage';
 const { ccclass } = _decorator;
@@ -31,14 +31,15 @@ export class StageControl extends Component {
 
     startAction(action: StageAction) {
         this.action = action;
-        EditData.instance.selectorShadow.active = false;
-        EditData.instance.objectShadow.active = false;
+        Editor.instance.selectorShadow.active = false;
+        Editor.instance.objectShadow.active = false;
     }
 
     onMouseDown(event: EventMouse) {
-        const page = EditData.instance.nowPage as RoomEditPage;
+        console.log("fuck");
+        const page = Editor.instance.nowPage as RoomEditPage;
 
-        if (EditData.instance.nowWindow === undefined) {
+        if (Editor.instance.nowWindow === undefined) {
             const button = event.getButton();
             const uiLocation = event.getUILocation();
             this.setMousePosition(uiLocation);
@@ -80,9 +81,9 @@ export class StageControl extends Component {
     }
 
     onMouseMove(event: EventMouse) {
-        const page = EditData.instance.nowPage as RoomEditPage;
+        const page = Editor.instance.nowPage as RoomEditPage;
 
-        if (EditData.instance.nowWindow === undefined) {
+        if (Editor.instance.nowWindow === undefined) {
             const uiLocation = event.getUILocation();
             const localPos = new Vec3();
             this.node.inverseTransformPoint(localPos, new Vec3(uiLocation.x, uiLocation.y, 0));
@@ -109,25 +110,25 @@ export class StageControl extends Component {
                 // 无操作
                 if (instance !== undefined) {
                     // 指向了实例，显示选择框影子
-                    EditData.instance.objectShadow.active = false;
+                    Editor.instance.objectShadow.active = false;
 
-                    const shadow = EditData.instance.selectorShadow;
+                    const shadow = Editor.instance.selectorShadow;
                     shadow.active = true;
                     const rect = instance.data.getGlobalRect()!;
                     shadow.setPosition(rect.x - 3, rect.y - 3);
                     shadow.getComponent(UITransform)!.setContentSize(rect.width + 6, rect.height + 6);
                 } else {
-                    EditData.instance.objectShadow.active = true;
-                    EditData.instance.selectorShadow.active = false;
+                    Editor.instance.objectShadow.active = true;
+                    Editor.instance.selectorShadow.active = false;
                 }
             }
         }
     }
 
     onMouseUp(event: EventMouse) {
-        const page = EditData.instance.nowPage as RoomEditPage;
+        const page = Editor.instance.nowPage as RoomEditPage;
 
-        if (EditData.instance.nowWindow === undefined) {
+        if (Editor.instance.nowWindow === undefined) {
             const button = event.getButton();
             if (button === EventMouse.BUTTON_LEFT) {
                 if (this.action === StageAction.CREATE) {
@@ -149,10 +150,22 @@ export class StageControl extends Component {
         }
     }
 
-    onKeyDown(event: EventKeyboard) {
-        const page = EditData.instance.nowPage as RoomEditPage;
+    openMainMenuWindow(optionId: MainMenuOptionId) {
+        const page = Editor.instance.nowPage as RoomEditPage;
 
-        if (EditData.instance.nowWindow === undefined) {
+        const options = [];
+        if (page.selectors.size > 0) {
+            options.push(MainMenuOptionId.EDIT, MainMenuOptionId.NODE_TREE, MainMenuOptionId.NODE);
+        } else {
+            options.push(MainMenuOptionId.EDIT, MainMenuOptionId.NODE_TREE);
+        }
+        Editor.instance.openMainMenuWindow(options, optionId);
+    }
+
+    onKeyDown(event: EventKeyboard) {
+        const page = Editor.instance.nowPage as RoomEditPage;
+
+        if (Editor.instance.nowWindow === undefined) {
             if (event.keyCode === KeyCode.ALT_LEFT) {
                 this.altHeld = true;
             } else if (event.keyCode === KeyCode.SHIFT_LEFT) {
@@ -161,16 +174,16 @@ export class StageControl extends Component {
                 this.ctrlHeld = true;
             } else if (event.keyCode === KeyCode.F1) {
                 // F1 - 打开"资源"页面
-                EditData.instance.openMainMenuWindow(MainMenuOptionId.RESOURCE);
+                this.openMainMenuWindow(MainMenuOptionId.RESOURCE);
             } else if (event.keyCode === KeyCode.F2) {
                 // F2 - 打开"编辑"页面
-                EditData.instance.openMainMenuWindow(MainMenuOptionId.EDIT);
+                this.openMainMenuWindow(MainMenuOptionId.EDIT);
             } else if (event.keyCode === KeyCode.F3) {
-                // F3 - 打开"房间"页面
-                EditData.instance.openMainMenuWindow(MainMenuOptionId.ROOM);
-            } else if (event.keyCode === KeyCode.F5) {
-                // F5 - 打开"实例"页面
-                EditData.instance.openMainMenuWindow(MainMenuOptionId.INSTANCE);
+                // F3 - 打开"节点树"页面
+                this.openMainMenuWindow(MainMenuOptionId.NODE_TREE);
+            } else if (event.keyCode === KeyCode.F4) {
+                // F4 - 打开"节点"页面
+                this.openMainMenuWindow(MainMenuOptionId.NODE);
             } else if (event.keyCode === KeyCode.KEY_Z && this.ctrlHeld) {
                 // Ctrl + Z - 撤销
                 page.undo();
@@ -188,7 +201,7 @@ export class StageControl extends Component {
     }
 
     onKeyUp(event: EventKeyboard) {
-        if (EditData.instance.nowWindow === undefined) {
+        if (Editor.instance.nowWindow === undefined) {
             if (event.keyCode === KeyCode.ALT_LEFT) {
                 this.altHeld = false;
             } else if (event.keyCode === KeyCode.CTRL_LEFT) {
@@ -200,7 +213,7 @@ export class StageControl extends Component {
     }
 
     setMousePosition(position: Vec2): boolean {
-        const page = EditData.instance.nowPage as RoomEditPage;
+        const page = Editor.instance.nowPage as RoomEditPage;
 
         this.noSnapMousePos.set(position);
 
@@ -219,7 +232,7 @@ export class StageControl extends Component {
         if (updated) {
             this.mousePos.set(mouseX, mouseY);
             // 更新影子坐标
-            EditData.instance.objectShadow.setPosition(mouseX, mouseY);
+            Editor.instance.objectShadow.setPosition(mouseX, mouseY);
         }
         return updated;
     }

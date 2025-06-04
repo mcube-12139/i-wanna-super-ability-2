@@ -1,6 +1,6 @@
 import { _decorator, Color, Component, EditBox, Node, Toggle, Vec2 } from 'cc';
 import { ButtonController } from '../ButtonController';
-import { EditData } from './EditData';
+import { Editor } from './Editor';
 import { RoomEditPage } from './Page/RoomEditPage';
 const { ccclass, property } = _decorator;
 
@@ -24,7 +24,7 @@ export class EditPageControl extends Component {
     gridColor!: EditBox;
 
     start() {
-        const page = EditData.instance.nowPage as RoomEditPage;
+        const page = Editor.instance.nowPage as RoomEditPage;
 
         this.gridVisible.isChecked = page.gridVisible;
         this.gridVisible.node.on("toggle", (toggle: Toggle) => {
@@ -69,7 +69,7 @@ export class EditPageControl extends Component {
 
     getSizeButtonFun(size: number): (event: TouchEvent) => void {
         return (event: TouchEvent) => {
-            const page = EditData.instance.nowPage as RoomEditPage;
+            const page = Editor.instance.nowPage as RoomEditPage;
 
             this.gridSizeInputX.string = size.toString();
             this.gridSizeInputY.string = size.toString();
